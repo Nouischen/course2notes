@@ -1,0 +1,5 @@
+[
+  { "id": "time", "icon": "⏰", "title": "Time Management in Practice", "sub": "Sample course · 3 units", "dir": "time-mgmt", "pat": "^\\d+_note\\.md$" },
+  { "id": "slide", "icon": "📊", "title": "Slide Design, Illustrated", "sub": "Sample course · 3 units", "dir": "slide-design", "pat": "^\\d+_note\\.md$" },
+  { "id": "brand", "icon": "✨", "title": "Personal Branding 101", "sub": "Sample talk · single session", "file": "personal-brand.md" }
+]

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Course2Notes Sample Notes</title>
+<style>
+:root{--bg:#f6f8f9;--panel:#ffffff;--ink:#26302f;--muted:#6b7778;--line:#e6eced;--accent:#0091AC;--accent2:#00778e;--soft:#eaf3f5;--code:#eef2f3}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"Segoe UI",Roboto,system-ui,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;line-height:1.9;font-size:var(--fs,16.5px);-webkit-font-smoothing:antialiased}
+.fontctl{display:flex;align-items:center;gap:6px;padding:4px 10px 12px;margin-bottom:8px;border-bottom:1px solid var(--line);font-size:12px;color:var(--muted)}
+.fontctl button{border:1px solid var(--line);background:#fff;border-radius:7px;padding:3px 10px;cursor:pointer;font-family:inherit;color:var(--ink);line-height:1}
+.fontctl button:hover{background:var(--soft);border-color:var(--accent);color:var(--accent)}
+a{color:var(--accent2);text-decoration:none}
+a:hover{text-decoration:underline}
+/* layout */
+.wrap{display:flex;min-height:100vh}
+.sidebar{width:300px;flex:0 0 300px;background:var(--panel);border-right:1px solid var(--line);height:100vh;position:sticky;top:0;overflow-y:auto;padding:22px 14px 40px}
+.brand{padding:6px 10px 16px;border-bottom:1px solid var(--line);margin-bottom:12px}
+.brand h1{font-size:16px;margin:0 0 4px;letter-spacing:.3px}
+.brand p{font-size:12px;color:var(--muted);margin:0}
+.searchbox{width:100%;padding:8px 12px;border:1px solid var(--line);border-radius:9px;background:var(--soft);margin:8px 0 14px;font-size:13px;font-family:inherit}
+.navgroup{margin-bottom:2px}
+.navhead{width:100%;display:flex;align-items:center;gap:8px;background:none;border:0;padding:9px 10px;border-radius:9px;cursor:pointer;font:inherit;color:var(--ink);text-align:left}
+.navhead:hover{background:var(--soft)}
+.navhead .ic{font-size:15px}
+.navhead .nt{flex:1;font-size:13.5px;font-weight:600}
+.navhead .chev{color:var(--muted);font-size:11px;transition:transform .18s}
+.navgroup.open .chev{transform:rotate(90deg)}
+.navsubs{display:none;padding:2px 0 6px 30px}
+.navgroup.open .navsubs{display:block}
+.navsub{display:block;padding:5px 10px;font-size:12.5px;color:var(--muted);border-radius:7px;border-left:2px solid transparent;line-height:1.5}
+.navsub:hover{background:var(--soft);color:var(--ink);text-decoration:none}
+.navsub.active{color:var(--accent);border-left-color:var(--accent);background:var(--soft);font-weight:600}
+/* main */
+.main{flex:1;min-width:0}
+.hero{background:linear-gradient(135deg,#0091AC,#006d84);color:#fff;padding:54px 48px 46px}
+.hero h1{margin:0 0 10px;font-size:30px;letter-spacing:.5px}
+.hero p{margin:0;font-size:15px;opacity:.92;max-width:640px}
+.hero .stat{margin-top:20px;display:flex;gap:26px;font-size:13px;opacity:.95}
+.hero .stat b{font-size:20px;display:block;font-weight:700}
+.content{max-width:840px;margin:0 auto;padding:8px 48px 120px}
+.course{padding-top:26px}
+.coursebar{display:flex;align-items:center;gap:14px;margin:34px 0 6px;padding:16px 18px;background:var(--panel);border:1px solid var(--line);border-radius:14px;border-left:5px solid var(--accent)}
+.coursebar .cic{font-size:26px}
+.ctitle{margin:0;font-size:21px}
+.csub{color:var(--muted);font-size:13px;margin-top:2px}
+.note{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:8px 26px 20px;margin:16px 0}
+.ntitle{font-size:18px;margin:18px 0 6px;padding-bottom:8px;border-bottom:1px dashed var(--line);scroll-margin-top:16px}
+.nbody h4{font-size:15px;margin:20px 0 8px;color:var(--accent);letter-spacing:.3px}
+.nbody h5{font-size:14px;margin:16px 0 6px;color:#333}
+.nbody p{margin:9px 0}
+.nbody p.lead{margin:16px 0 6px;font-weight:600;color:#1c1c19}
+.nbody ul,.nbody ol{margin:8px 0;padding-left:22px}
+.nbody li{margin:5px 0}
+.nbody li>ul,.nbody li>ol{margin:4px 0}
+.nbody code{background:var(--code);padding:2px 6px;border-radius:6px;font-family:"SF Mono",Consolas,monospace;font-size:.9em}
+blockquote{margin:14px 0;padding:12px 18px;background:#fbf7ef;border-left:4px solid #d9a441;border-radius:0 10px 10px 0;color:#5c4a1f}
+.tablewrap{overflow-x:auto;margin:14px 0}
+.nbody table{border-collapse:collapse;width:100%;font-size:14px;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.nbody th{background:var(--soft);text-align:left;padding:10px 12px;font-weight:700;border-bottom:2px solid var(--line)}
+.nbody td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.nbody tr:last-child td{border-bottom:0}
+hr{border:0;border-top:1px solid var(--line);margin:18px 0}
+.totop{position:fixed;right:26px;bottom:26px;background:var(--accent);color:#fff;border:0;width:44px;height:44px;border-radius:50%;font-size:18px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.18);opacity:0;pointer-events:none;transition:opacity .2s}
+.totop.show{opacity:1;pointer-events:auto}
+.foot{color:var(--muted);font-size:12px;text-align:center;padding:30px}
+mark{background:#fde68a;padding:0 2px}
+/* mobile */
+@media(max-width:860px){.sidebar{display:none}.hero,.content{padding-left:22px;padding-right:22px}}
+/* print */
+@media print{.sidebar,.totop{display:none}.main{width:100%}.hero{background:#0091AC!important;-webkit-print-color-adjust:exact}.note,.coursebar{break-inside:avoid;border:1px solid #ddd}.navsubs{display:block}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <aside class="sidebar">
+    <div class="brand"><h1>Course2Notes Sample Notes</h1><p>Turn courses you never finish into notes you’ll actually read.</p></div>
+    <input class="searchbox" id="search" placeholder="🔍 Search notes…" oninput="doSearch(this.value)">
+    <div class="fontctl"><span>Size</span><button onclick="setFs(-1)" title="Smaller">A−</button><button onclick="setFs(0)" title="Default">A</button><button onclick="setFs(1)" title="Larger">A+</button></div>
+    
+  <div class="navgroup" data-course="time">
+    <button class="navhead" onclick="toggleGroup('time')"><span class="ic">⏰</span><span class="nt">Time Management in Practice</span><span class="chev">▸</span></button>
+    <div class="navsubs" id="subs-time">
+      <a href="#time-0" class="navsub">1.1 Why you always feel short on time</a><a href="#time-1" class="navsub">1.2 The Eisenhower Matrix: separate "urgent" from "important"</a><a href="#time-2" class="navsub">1.3 The Pomodoro technique &amp; deep work</a>
+    </div>
+  </div>
+  <div class="navgroup" data-course="slide">
+    <button class="navhead" onclick="toggleGroup('slide')"><span class="ic">📊</span><span class="nt">Slide Design, Illustrated</span><span class="chev">▸</span></button>
+    <div class="navsubs" id="subs-slide">
+      <a href="#slide-0" class="navsub">2.1 One idea per slide</a><a href="#slide-1" class="navsub">2.2 Contrast, alignment, white space</a><a href="#slide-2" class="navsub">2.3 Data visualization: pick the right chart</a>
+    </div>
+  </div>
+  <div class="navgroup" data-course="brand">
+    <button class="navhead" onclick="toggleGroup('brand')"><span class="ic">✨</span><span class="nt">Personal Branding 101</span><span class="chev">▸</span></button>
+    <div class="navsubs" id="subs-brand">
+      <a href="#brand-0" class="navsub">Personal Branding 101</a>
+    </div>
+  </div>
+  </aside>
+  <div class="main">
+    <div class="hero">
+      <h1>Course2Notes Sample Notes</h1>
+      <p>Turn courses you never finish into notes you’ll actually read.</p>
+      <div class="stat"><span><b>3</b>courses</span><span><b>7</b>notes</span><span><b>1-click</b>auto-organized</span></div>
+    </div>
+    <div class="content">
+      
+  <section class="course" id="course-time">
+    <div class="coursebar"><span class="cic">⏰</span><div><h2 class="ctitle">Time Management in Practice</h2><div class="csub">Sample course · 3 units · 3 notes</div></div></div>
+    
+      <article class="note" id="time-0">
+        <h3 class="ntitle">1.1 Why you always feel short on time</h3>
+        <div class="nbody"><blockquote>Course: Time Management in Practice (sample)</blockquote>
+<h3>Key points</h3>
+<ul><li>Running out of time usually isn't about <em>hours</em> — it's about <strong>scattered attention</strong> and <strong>no priorities</strong>.</li><li>Most people overestimate what they can do in a day and underestimate what they can do in a week — so they're always behind.</li><li>The first move isn't doing more; it's <strong>deciding what NOT to do</strong>.</li></ul>
+<h3>Notes</h3>
+<p class="lead"><strong>Three real time thieves</strong></p>
+<ul><li><strong>Switching cost</strong>: every interruption costs ~10+ minutes to get back into flow. It looks like "just a second," but the loss is huge.</li><li><strong>Fake productivity</strong>: busy all day, replying to lots of messages — while moving nothing that actually matters.</li><li><strong>No boundaries</strong>: if anyone can reach you anytime, your day fills up with other people's urgencies.</li></ul>
+<p class="lead"><strong>One mindset shift</strong></p>
+<blockquote>You don't "have no time." You just haven't decided whether this thing is important enough.</blockquote>
+<h3>Takeaways</h3>
+<ul><li>Make a <strong>not-to-do list</strong> today: three things you'll stop or hand off.</li><li>Turn off notifications; keep only the truly urgent sources.</li></ul></div>
+      </article>
+      <article class="note" id="time-1">
+        <h3 class="ntitle">1.2 The Eisenhower Matrix: separate "urgent" from "important"</h3>
+        <div class="nbody"><blockquote>Course: Time Management in Practice (sample)</blockquote>
+<h3>Key points</h3>
+<ul><li><strong>Urgent ≠ important.</strong> Most people spend the day on "urgent but not important," and keep pushing "important but not urgent" away.</li><li>What actually shapes your life is Quadrant 2 (important, not urgent): health, relationships, learning, long-term bets.</li><li>The goal: <strong>grow Quadrant 2, shrink Quadrant 1, delete 3 and 4.</strong></li></ul>
+<h3>Notes</h3>
+<p class="lead"><strong>The four quadrants</strong></p>
+<div class="tablewrap"><table><thead><tr><th>Quadrant</th><th>Type</th><th>What to do</th></tr></thead><tbody><tr><td>1</td><td>Urgent &amp; important (crises, deadlines)</td><td>Do it now — but ask why it became urgent</td></tr><tr><td>2</td><td>Important, not urgent (planning, learning, exercise)</td><td>Schedule it and protect it</td></tr><tr><td>3</td><td>Urgent, not important (most meetings, noise)</td><td>Delegate, decline, or batch</td></tr><tr><td>4</td><td>Neither (doomscrolling, busywork)</td><td>Cut it</td></tr></tbody></table></div>
+<p class="lead"><strong>Key insight</strong></p>
+<ul><li>A lot of Quadrant 1 fires are just Quadrant 2 work you skipped. <strong>Invest in Quadrant 2 early and you fight fewer fires later.</strong></li></ul>
+<h3>Takeaways</h3>
+<ul><li>Put three "important, not urgent" tasks straight onto your calendar this week.</li><li>Next time someone hands you a task, ask: which quadrant is this?</li></ul></div>
+      </article>
+      <article class="note" id="time-2">
+        <h3 class="ntitle">1.3 The Pomodoro technique &amp; deep work</h3>
+        <div class="nbody"><blockquote>Course: Time Management in Practice (sample)</blockquote>
+<h3>Key points</h3>
+<ul><li><strong>Deep work</strong> — long, uninterrupted, focused stretches — is what produces high-value output, and it needs to be protected on purpose.</li><li>The <strong>Pomodoro</strong> is the easiest way in: 25 minutes focused, 5 minutes rest. Use rhythm to beat distraction.</li><li>Two to four real deep-work blocks a day already beats most people.</li></ul>
+<h3>Notes</h3>
+<p class="lead"><strong>How to run a Pomodoro</strong></p>
+<ol><li>Pick one task, set 25 minutes, and do only that.</li><li>If another thought pops up, write it on paper and come back later — don't jump out now.</li><li>When the timer ends, take 5 minutes and leave your seat.</li><li>After 4 Pomodoros, take a longer break (15–30 minutes).</li></ol>
+<p class="lead"><strong>Three conditions that make deep work happen</strong></p>
+<ul><li><strong>Fixed time slot</strong>: same time each day so your brain forms the habit.</li><li><strong>Remove temptation</strong>: phone away, notifications off, only the tabs you need.</li><li><strong>A clear output</strong>: before you start, write down what "done" looks like for this block.</li></ul>
+<blockquote>Focus is a muscle: at first you can only hold 25 minutes; with practice you can dive for 90.</blockquote>
+<h3>Takeaways</h3>
+<ul><li>Schedule one 25-minute Pomodoro tomorrow morning for your most important task.</li><li>Keep a "distraction parking" sheet for thoughts that show up mid-session.</li></ul></div>
+      </article>
+  </section>
+  <section class="course" id="course-slide">
+    <div class="coursebar"><span class="cic">📊</span><div><h2 class="ctitle">Slide Design, Illustrated</h2><div class="csub">Sample course · 3 units · 3 notes</div></div></div>
+    
+      <article class="note" id="slide-0">
+        <h3 class="ntitle">2.1 One idea per slide</h3>
+        <div class="nbody"><blockquote>Course: Slide Design, Illustrated (sample)</blockquote>
+<h3>Key points</h3>
+<ul><li>One slide should carry <strong>one message</strong>. Cram in more and you've said nothing.</li><li>The audience can only "read" or "listen" at once — the slide supports your talk, it isn't the script.</li><li>Write the slide's <strong>one-sentence conclusion first</strong>, then decide what goes on it.</li></ul>
+<h3>Notes</h3>
+<p class="lead"><strong>Why one idea per slide</strong></p>
+<ul><li>Short-term memory holds only 3–4 chunks at a time. Five bullets and they remember none.</li><li>Dense ≠ professional. It makes people anxious and glaze over.</li></ul>
+<p class="lead"><strong>How to do it</strong></p>
+<ol><li>For each slide, write "what should the audience remember" in one line.</li><li>Delete everything unrelated to that line.</li><li>Make that line big and put it where the eye lands first.</li></ol>
+<blockquote>If a slide needs to say three things, split it into three slides. Slides are cheap; attention isn't.</blockquote>
+<h3>Takeaways</h3>
+<ul><li>Open your last deck and find slides with 3+ points — split them.</li></ul></div>
+      </article>
+      <article class="note" id="slide-1">
+        <h3 class="ntitle">2.2 Contrast, alignment, white space</h3>
+        <div class="nbody"><blockquote>Course: Slide Design, Illustrated (sample)</blockquote>
+<h3>Key points</h3>
+<ul><li>Good-looking slides rest on three basics: <strong>contrast</strong> (rank what matters), <strong>alignment</strong> (create order), <strong>white space</strong> (let it breathe).</li><li>You don't need to be a designer — getting these three right already lifts the quality a lot.</li><li><strong>White space isn't wasted space; it's what makes the point stand out.</strong></li></ul>
+<h3>Notes</h3>
+<p class="lead"><strong>How to use the three basics</strong></p>
+<ul><li><strong>Contrast</strong>: the key point should be "big, bold, colored"; secondary info "small, thin, gray." Widen the gap — don't make everything the same.</li><li><strong>Alignment</strong>: line elements up along the same invisible line. Left to left, center to center, and the page instantly looks clean.</li><li><strong>White space</strong>: keep margins generous and space between elements. A crammed layout looks cheap and tiring.</li></ul>
+<p class="lead"><strong>Common mistakes</strong></p>
+<ul><li>All text the same size → the audience doesn't know where to look.</li><li>Everything centered but different widths → it looks crooked.</li><li>Content pushed to the edges → no room to breathe.</li></ul>
+<h3>Takeaways</h3>
+<ul><li>Take one slide and do just one thing: bump the key line up two sizes and shrink the rest to gray. See the difference.</li></ul></div>
+      </article>
+      <article class="note" id="slide-2">
+        <h3 class="ntitle">2.3 Data visualization: pick the right chart</h3>
+        <div class="nbody"><blockquote>Course: Slide Design, Illustrated (sample)</blockquote>
+<h3>Key points</h3>
+<ul><li>A chart exists to <strong>make the conclusion obvious in a second</strong>, not to dump numbers.</li><li>Different goals need different charts: compare sizes, show a trend, show a share, show a relationship.</li><li>Decide "what should the audience see" first, then choose the chart.</li></ul>
+<h3>Notes</h3>
+<p class="lead"><strong>Choosing a common chart</strong></p>
+<div class="tablewrap"><table><thead><tr><th>You want to show</th><th>Use</th><th>Watch out</th></tr></thead><tbody><tr><td>Compare sizes</td><td>Bar chart</td><td>Sort high-to-low for easier reading</td></tr><tr><td>Change over time</td><td>Line chart</td><td>Keep it to 3–4 lines</td></tr><tr><td>Share of a whole</td><td>Pie / stacked bar</td><td>Avoid pie beyond ~5 categories</td></tr><tr><td>Relationship between two variables</td><td>Scatter plot</td><td>Highlight the group you care about</td></tr></tbody></table></div>
+<p class="lead"><strong>Three ways to make a chart hit harder</strong></p>
+<ul><li><strong>Label the conclusion</strong>: don't title it "Revenue"; title it "Q3 revenue up 28%."</li><li><strong>Mute the rest, highlight the point</strong>: color the one bar you mean; gray out the others.</li><li><strong>Delete clutter</strong>: gridlines, borders, extra ticks can all go.</li></ul>
+<blockquote>A good chart needs no explanation — the audience gets it on their own.</blockquote>
+<h3>Takeaways</h3>
+<ul><li>Take one chart in your deck and rename its title to the conclusion it's making.</li></ul></div>
+      </article>
+  </section>
+  <section class="course" id="course-brand">
+    <div class="coursebar"><span class="cic">✨</span><div><h2 class="ctitle">Personal Branding 101</h2><div class="csub">Sample talk · single session · 1 notes</div></div></div>
+    
+      <article class="note" id="brand-0">
+        <h3 class="ntitle">Personal Branding 101</h3>
+        <div class="nbody"><blockquote>Sample talk · the first step to being seen for your expertise</blockquote>
+<h3>In one sentence</h3>
+<p>A personal brand isn't "packaging yourself" — it's making <strong>the right people, at the right moment, think of you for the right reason</strong> — built on consistent, genuine, compounding expression of your expertise.</p>
+<h3>TL;DR</h3>
+<ul><li>Personal brand = <strong>your expertise × your recognizability × other people's trust</strong> — all three matter.</li><li>You don't need to be an influencer. The goal isn't "lots of people know you," it's "the right people trust you."</li><li>Content should <strong>compound</strong>: every post and share raises the credibility of the next one.</li><li>Don't chase hype or force a persona. <strong>Lasting beats loud.</strong></li></ul>
+<h3>Notes</h3>
+<h4>1. First, decide: for whom, solving what</h4>
+<ul><li>The starting point isn't "I want to be famous" but "who do I want thinking of me, and for what?"</li><li>Narrow the audience and topic: rather than "the person who knows everything," be "the first person people think of in one area."</li></ul>
+<h4>2. Recognizability: be memorable</h4>
+<ul><li>A consistent topic, tone, and look — even a signature phrase — build memory hooks.</li><li>Consistency beats flashiness: show up the same every time, and trust accumulates.</li></ul>
+<h4>3. Trust: show, don't claim</h4>
+<blockquote>How others see you is more convincing than how you describe yourself.</blockquote>
+<ul><li>Real cases, results, and testimonials beat any self-description.</li><li>Collect them as you go: what you did, who you helped, and what they said.</li></ul>
+<h4>4. A compounding content rhythm</h4>
+<ul><li>Rather than one big post now and then, publish small ones steadily.</li><li>Start with the questions people ask you most — each question is one piece of content.</li></ul>
+<h3>Takeaways</h3>
+<ul><li>[ ] In one line, write: who do you want thinking of you, and for what.</li><li>[ ] List the 5 questions people ask you most — those are your first 5 topics.</li><li>[ ] Start a running list of your results and testimonials you can cite anytime.</li></ul>
+<h3>Worth remembering</h3>
+<blockquote>A personal brand isn't one viral moment — it's <strong>long-term, genuine, compounding</strong> trust.</blockquote></div>
+      </article>
+  </section>
+      <div class="foot">Generated by Course2Notes · your own courses, your personal study notes</div>
+    </div>
+  </div>
+</div>
+<button class="totop" id="totop" onclick="scrollTo({top:0,behavior:'smooth'})">↑</button>
+<script>
+var _fs=parseFloat(localStorage.getItem('c2n_fs'))||16.5;
+function applyFs(){document.documentElement.style.setProperty('--fs',_fs+'px')}
+function setFs(d){_fs=d===0?16.5:Math.max(13,Math.min(27,_fs+d*2));applyFs();localStorage.setItem('c2n_fs',_fs)}
+applyFs();
+function toggleGroup(id){document.querySelector('.navgroup[data-course="'+id+'"]').classList.toggle('open')}
+// 展開第一個
+document.querySelector('.navgroup')&&document.querySelector('.navgroup').classList.add('open');
+// active on scroll
+const subs=[...document.querySelectorAll('.navsub')];
+const map={};subs.forEach(a=>map[a.getAttribute('href').slice(1)]=a);
+const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){subs.forEach(s=>s.classList.remove('active'));const a=map[e.target.id];if(a){a.classList.add('active');a.closest('.navsubs').parentElement.classList.add('open')}}})},{rootMargin:'-10% 0px -80% 0px'});
+document.querySelectorAll('.note').forEach(n=>io.observe(n));
+// back to top
+addEventListener('scroll',()=>{document.getElementById('totop').classList.toggle('show',scrollY>500)});
+// search: 隱藏不含關鍵字的 note
+function doSearch(q){q=q.trim().toLowerCase();document.querySelectorAll('.note').forEach(n=>{const hit=!q||n.textContent.toLowerCase().includes(q);n.style.display=hit?'':'none'});document.querySelectorAll('.course').forEach(c=>{const any=[...c.querySelectorAll('.note')].some(n=>n.style.display!=='none');c.style.display=any?'':'none'})}
+</script>
+</body>
+</html>
