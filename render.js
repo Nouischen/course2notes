@@ -1,0 +1,274 @@
+// M7 HTML 產生器：讀 notes/ → 一份 self-contained 漂亮 HTML
+// 用法：node render.js  (預設吃 doctorally-tools/notes，輸出 sample/course-notes.html)
+const fs = require('fs');
+const path = require('path');
+
+const NOTES = process.argv[2] || 'C:\\Users\\USER\\doctorally-tools\\notes';
+const OUT = process.argv[3] || 'C:\\Users\\USER\\course2notes\\sample\\course-notes.html';
+const SITE_TITLE = process.argv[4] || '醫師職涯成長學院 · 課程筆記';
+const SITE_SUB = '把買了看不完的線上課程，一鍵變成能讀完的筆記。';
+
+// 課程設定：優先讀 <notesDir>/courses.json；沒有就自動探索（子資料夾＝多單元課，頂層 .md＝單堂）
+function loadCourses(notesDir) {
+  const cj = path.join(notesDir, 'courses.json');
+  if (fs.existsSync(cj)) return JSON.parse(fs.readFileSync(cj, 'utf8'));
+  const entries = fs.readdirSync(notesDir, { withFileTypes: true });
+  const courses = [];
+  for (const e of entries.filter(x => x.isDirectory()).sort((a, b) => a.name.localeCompare(b.name)))
+    courses.push({ id: e.name, icon: '📘', title: e.name, dir: e.name, pat: '\\.md$', indexFirst: true });
+  for (const e of entries.filter(x => x.isFile() && x.name.endsWith('.md') && x.name !== 'courses.json').sort((a, b) => a.name.localeCompare(b.name)))
+    courses.push({ id: e.name.replace(/\.md$/, ''), icon: '📄', title: e.name.replace(/\.md$/, ''), file: e.name });
+  return courses;
+}
+const COURSES = loadCourses(NOTES);
+
+// ---------- Markdown → HTML ----------
+function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function inline(s) {
+  s = esc(s);
+  s = s.replace(/`([^`]+)`/g, (m, c) => `<code>${c}</code>`);
+  s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  s = s.replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g, '$1<em>$2</em>');
+  s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  return s;
+}
+function indentOf(line) { const m = line.match(/^(\s*)/); return m[1].replace(/\t/g, '  ').length; }
+
+function mdToHtml(md) {
+  const lines = md.replace(/\r\n/g, '\n').split('\n');
+  const out = [];
+  let i = 0;
+  while (i < lines.length) {
+    let line = lines[i];
+    if (!line.trim()) { i++; continue; }
+    // heading
+    let hm = line.match(/^(#{1,6})\s+(.*)$/);
+    if (hm) { const lvl = Math.min(hm[1].length + 1, 6); out.push(`<h${lvl}>${inline(hm[2].trim())}</h${lvl}>`); i++; continue; }
+    // hr
+    if (/^(-{3,}|\*{3,})\s*$/.test(line)) { out.push('<hr>'); i++; continue; }
+    // table (GFM)：下一行是「只由 空白/冒號/管線/連字號 組成、且含 - 與 |」的分隔列
+    if (line.includes('|') && i + 1 < lines.length && /^[\s:|-]+$/.test(lines[i + 1]) && lines[i + 1].includes('-') && lines[i + 1].includes('|')) {
+      const header = line.split('|').map(c => c.trim()).filter((c, idx, a) => !(idx === 0 && c === '') && !(idx === a.length - 1 && c === ''));
+      i += 2;
+      const rows = [];
+      while (i < lines.length && lines[i].includes('|')) {
+        const cells = lines[i].split('|').map(c => c.trim());
+        if (cells[0] === '') cells.shift(); if (cells[cells.length - 1] === '') cells.pop();
+        rows.push(cells); i++;
+      }
+      let t = '<div class="tablewrap"><table><thead><tr>' + header.map(h => `<th>${inline(h)}</th>`).join('') + '</tr></thead><tbody>';
+      for (const r of rows) t += '<tr>' + r.map(c => `<td>${inline(c)}</td>`).join('') + '</tr>';
+      t += '</tbody></table></div>'; out.push(t); continue;
+    }
+    // blockquote (group)
+    if (/^\s*>\s?/.test(line)) {
+      const buf = [];
+      while (i < lines.length && /^\s*>\s?/.test(lines[i])) { buf.push(lines[i].replace(/^\s*>\s?/, '')); i++; }
+      out.push(`<blockquote>${buf.map(b => inline(b)).join('<br>')}</blockquote>`);
+      continue;
+    }
+    // list (group, handle 1-level nesting)
+    if (/^\s*([-*]|\d+\.)\s+/.test(line)) {
+      const rendered = renderList(lines, i);
+      out.push(rendered.html); i = rendered.next; continue;
+    }
+    // paragraph (group consecutive non-block lines)
+    const startI = i;
+    const buf = [];
+    while (i < lines.length && lines[i].trim() && !/^(#{1,6}\s|>|\s*([-*]|\d+\.)\s|-{3,}|\*{3,})/.test(lines[i])) {
+      // stop if a GFM table starts on this line
+      if (lines[i].includes('|') && lines[i + 1] && /^\s*\|?[\s:|-]*-[\s:|-]*$/.test(lines[i + 1])) break;
+      buf.push(lines[i].trim()); i++;
+    }
+    if (i === startI) { // 防呆：本輪沒吃掉任何行 → 強制消化一行，杜絕無窮迴圈
+      out.push(`<p>${inline(lines[i].trim())}</p>`); i++; continue;
+    }
+    if (buf.length) {
+      const txt = buf.join(' ');
+      // 純 **粗體** 的一行 → 當小標籤
+      if (/^\*\*[^*]+\*\*$/.test(buf[0]) && buf.length === 1) out.push(`<p class="lead">${inline(buf[0])}</p>`);
+      else out.push(`<p>${inline(txt)}</p>`);
+    }
+  }
+  return out.join('\n');
+}
+function renderList(lines, start) {
+  const baseIndent = indentOf(lines[start]);
+  const ordered = /^\s*\d+\.\s/.test(lines[start]);
+  let i = start; const items = [];
+  while (i < lines.length && /^\s*([-*]|\d+\.)\s+/.test(lines[i]) && indentOf(lines[i]) >= baseIndent) {
+    const ind = indentOf(lines[i]);
+    if (ind > baseIndent) { // nested → attach to last item
+      const sub = renderList(lines, i);
+      if (items.length) items[items.length - 1].children = sub.html;
+      i = sub.next; continue;
+    }
+    const text = lines[i].replace(/^\s*([-*]|\d+\.)\s+/, '');
+    items.push({ text, children: '' });
+    i++;
+  }
+  const tag = ordered ? 'ol' : 'ul';
+  const html = `<${tag}>` + items.map(it => `<li>${inline(it.text)}${it.children || ''}</li>`).join('') + `</${tag}>`;
+  return { html, next: i };
+}
+
+// ---------- 收集筆記 ----------
+function readCourse(c) {
+  const sections = [];
+  if (c.file) {
+    const p = path.join(NOTES, c.file);
+    if (fs.existsSync(p)) sections.push(oneSection(fs.readFileSync(p, 'utf8')));
+  } else {
+    const pat = c.pat instanceof RegExp ? c.pat : new RegExp(c.pat || '\\.md$');
+    let files = fs.readdirSync(path.join(NOTES, c.dir)).filter(f => pat.test(f) && f !== 'courses.json');
+    files.sort();
+    if (c.indexFirst) files.sort((a, b) => (a.startsWith('_index') ? -1 : b.startsWith('_index') ? 1 : a.localeCompare(b)));
+    for (const f of files) sections.push(oneSection(fs.readFileSync(path.join(NOTES, c.dir, f), 'utf8')));
+  }
+  return sections;
+}
+function oneSection(md) {
+  const lines = md.replace(/\r\n/g, '\n').split('\n');
+  let title = '（無標題）', bodyStart = 0;
+  for (let j = 0; j < lines.length; j++) { const m = lines[j].match(/^#\s+(.*)$/); if (m) { title = m[1].trim(); bodyStart = j + 1; break; } }
+  const body = lines.slice(bodyStart).join('\n');
+  return { title, html: mdToHtml(body) };
+}
+
+// ---------- 組頁 ----------
+const data = COURSES.map(c => ({ ...c, sections: readCourse(c) }));
+const totalNotes = data.reduce((s, c) => s + c.sections.length, 0);
+
+function slug(id, i) { return `${id}-${i}`; }
+const sidebar = data.map(c => `
+  <div class="navgroup" data-course="${c.id}">
+    <button class="navhead" onclick="toggleGroup('${c.id}')"><span class="ic">${c.icon}</span><span class="nt">${esc(c.title)}</span><span class="chev">▸</span></button>
+    <div class="navsubs" id="subs-${c.id}">
+      ${c.sections.map((s, i) => `<a href="#${slug(c.id, i)}" class="navsub">${esc(s.title)}</a>`).join('')}
+    </div>
+  </div>`).join('');
+
+const main = data.map(c => `
+  <section class="course" id="course-${c.id}">
+    <div class="coursebar"><span class="cic">${c.icon}</span><div><h2 class="ctitle">${esc(c.title)}</h2><div class="csub">${esc(c.sub || '')} · ${c.sections.length} 篇</div></div></div>
+    ${c.sections.map((s, i) => `
+      <article class="note" id="${slug(c.id, i)}">
+        <h3 class="ntitle">${esc(s.title)}</h3>
+        <div class="nbody">${s.html}</div>
+      </article>`).join('')}
+  </section>`).join('');
+
+const html = `<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${esc(SITE_TITLE)}</title>
+<style>
+:root{--bg:#f6f8f9;--panel:#ffffff;--ink:#26302f;--muted:#6b7778;--line:#e6eced;--accent:#0091AC;--accent2:#00778e;--soft:#eaf3f5;--code:#eef2f3}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",-apple-system,"Segoe UI",system-ui,sans-serif;line-height:1.85;font-size:16px;-webkit-font-smoothing:antialiased}
+a{color:var(--accent2);text-decoration:none}
+a:hover{text-decoration:underline}
+/* layout */
+.wrap{display:flex;min-height:100vh}
+.sidebar{width:300px;flex:0 0 300px;background:var(--panel);border-right:1px solid var(--line);height:100vh;position:sticky;top:0;overflow-y:auto;padding:22px 14px 40px}
+.brand{padding:6px 10px 16px;border-bottom:1px solid var(--line);margin-bottom:12px}
+.brand h1{font-size:16px;margin:0 0 4px;letter-spacing:.3px}
+.brand p{font-size:12px;color:var(--muted);margin:0}
+.searchbox{width:100%;padding:8px 12px;border:1px solid var(--line);border-radius:9px;background:var(--soft);margin:8px 0 14px;font-size:13px;font-family:inherit}
+.navgroup{margin-bottom:2px}
+.navhead{width:100%;display:flex;align-items:center;gap:8px;background:none;border:0;padding:9px 10px;border-radius:9px;cursor:pointer;font:inherit;color:var(--ink);text-align:left}
+.navhead:hover{background:var(--soft)}
+.navhead .ic{font-size:15px}
+.navhead .nt{flex:1;font-size:13.5px;font-weight:600}
+.navhead .chev{color:var(--muted);font-size:11px;transition:transform .18s}
+.navgroup.open .chev{transform:rotate(90deg)}
+.navsubs{display:none;padding:2px 0 6px 30px}
+.navgroup.open .navsubs{display:block}
+.navsub{display:block;padding:5px 10px;font-size:12.5px;color:var(--muted);border-radius:7px;border-left:2px solid transparent;line-height:1.5}
+.navsub:hover{background:var(--soft);color:var(--ink);text-decoration:none}
+.navsub.active{color:var(--accent);border-left-color:var(--accent);background:var(--soft);font-weight:600}
+/* main */
+.main{flex:1;min-width:0}
+.hero{background:linear-gradient(135deg,#0091AC,#006d84);color:#fff;padding:54px 48px 46px}
+.hero h1{margin:0 0 10px;font-size:30px;letter-spacing:.5px}
+.hero p{margin:0;font-size:15px;opacity:.92;max-width:640px}
+.hero .stat{margin-top:20px;display:flex;gap:26px;font-size:13px;opacity:.95}
+.hero .stat b{font-size:20px;display:block;font-weight:700}
+.content{max-width:840px;margin:0 auto;padding:8px 48px 120px}
+.course{padding-top:26px}
+.coursebar{display:flex;align-items:center;gap:14px;margin:34px 0 6px;padding:16px 18px;background:var(--panel);border:1px solid var(--line);border-radius:14px;border-left:5px solid var(--accent)}
+.coursebar .cic{font-size:26px}
+.ctitle{margin:0;font-size:21px}
+.csub{color:var(--muted);font-size:13px;margin-top:2px}
+.note{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:8px 26px 20px;margin:16px 0}
+.ntitle{font-size:18px;margin:18px 0 6px;padding-bottom:8px;border-bottom:1px dashed var(--line);scroll-margin-top:16px}
+.nbody h4{font-size:15px;margin:20px 0 8px;color:var(--accent);letter-spacing:.3px}
+.nbody h5{font-size:14px;margin:16px 0 6px;color:#333}
+.nbody p{margin:9px 0}
+.nbody p.lead{margin:16px 0 6px;font-weight:600;color:#1c1c19}
+.nbody ul,.nbody ol{margin:8px 0;padding-left:22px}
+.nbody li{margin:5px 0}
+.nbody li>ul,.nbody li>ol{margin:4px 0}
+.nbody code{background:var(--code);padding:2px 6px;border-radius:6px;font-family:"SF Mono",Consolas,monospace;font-size:.9em}
+blockquote{margin:14px 0;padding:12px 18px;background:#fbf7ef;border-left:4px solid #d9a441;border-radius:0 10px 10px 0;color:#5c4a1f}
+.tablewrap{overflow-x:auto;margin:14px 0}
+.nbody table{border-collapse:collapse;width:100%;font-size:14px;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.nbody th{background:var(--soft);text-align:left;padding:10px 12px;font-weight:700;border-bottom:2px solid var(--line)}
+.nbody td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.nbody tr:last-child td{border-bottom:0}
+hr{border:0;border-top:1px solid var(--line);margin:18px 0}
+.totop{position:fixed;right:26px;bottom:26px;background:var(--accent);color:#fff;border:0;width:44px;height:44px;border-radius:50%;font-size:18px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.18);opacity:0;pointer-events:none;transition:opacity .2s}
+.totop.show{opacity:1;pointer-events:auto}
+.foot{color:var(--muted);font-size:12px;text-align:center;padding:30px}
+mark{background:#fde68a;padding:0 2px}
+/* mobile */
+@media(max-width:860px){.sidebar{display:none}.hero,.content{padding-left:22px;padding-right:22px}}
+/* print */
+@media print{.sidebar,.totop{display:none}.main{width:100%}.hero{background:#0091AC!important;-webkit-print-color-adjust:exact}.note,.coursebar{break-inside:avoid;border:1px solid #ddd}.navsubs{display:block}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <aside class="sidebar">
+    <div class="brand"><h1>${esc(SITE_TITLE)}</h1><p>${esc(SITE_SUB)}</p></div>
+    <input class="searchbox" id="search" placeholder="🔍 搜尋筆記…" oninput="doSearch(this.value)">
+    ${sidebar}
+  </aside>
+  <div class="main">
+    <div class="hero">
+      <h1>${esc(SITE_TITLE)}</h1>
+      <p>${esc(SITE_SUB)}</p>
+      <div class="stat"><span><b>${data.length}</b>門課程</span><span><b>${totalNotes}</b>篇筆記</span><span><b>一鍵</b>自動整理</span></div>
+    </div>
+    <div class="content">
+      ${main}
+      <div class="foot">由 Course2Notes 自動生成 · 內容為使用者自有課程的個人學習筆記</div>
+    </div>
+  </div>
+</div>
+<button class="totop" id="totop" onclick="scrollTo({top:0,behavior:'smooth'})">↑</button>
+<script>
+function toggleGroup(id){document.querySelector('.navgroup[data-course="'+id+'"]').classList.toggle('open')}
+// 展開第一個
+document.querySelector('.navgroup')&&document.querySelector('.navgroup').classList.add('open');
+// active on scroll
+const subs=[...document.querySelectorAll('.navsub')];
+const map={};subs.forEach(a=>map[a.getAttribute('href').slice(1)]=a);
+const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){subs.forEach(s=>s.classList.remove('active'));const a=map[e.target.id];if(a){a.classList.add('active');a.closest('.navsubs').parentElement.classList.add('open')}}})},{rootMargin:'-10% 0px -80% 0px'});
+document.querySelectorAll('.note').forEach(n=>io.observe(n));
+// back to top
+addEventListener('scroll',()=>{document.getElementById('totop').classList.toggle('show',scrollY>500)});
+// search: 隱藏不含關鍵字的 note
+function doSearch(q){q=q.trim().toLowerCase();document.querySelectorAll('.note').forEach(n=>{const hit=!q||n.textContent.toLowerCase().includes(q);n.style.display=hit?'':'none'});document.querySelectorAll('.course').forEach(c=>{const any=[...c.querySelectorAll('.note')].some(n=>n.style.display!=='none');c.style.display=any?'':'none'})}
+</script>
+</body>
+</html>`;
+
+fs.mkdirSync(path.dirname(OUT), { recursive: true });
+fs.writeFileSync(OUT, html, 'utf8');
+console.log(`OK → ${OUT}`);
+console.log(`課程 ${data.length}，筆記 ${totalNotes}，HTML ${(html.length / 1024).toFixed(0)} KB`);
+data.forEach(c => console.log(`  ${c.icon} ${c.title}: ${c.sections.length} 篇`));

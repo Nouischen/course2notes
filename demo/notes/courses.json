@@ -1,0 +1,5 @@
+[
+  { "id": "time", "icon": "⏰", "title": "時間管理實戰", "sub": "範例課程 · 3 單元", "dir": "time-mgmt", "pat": "^\\d+_note\\.md$" },
+  { "id": "slide", "icon": "📊", "title": "圖解簡報設計", "sub": "範例課程 · 3 單元", "dir": "slide-design", "pat": "^\\d+_note\\.md$" },
+  { "id": "brand", "icon": "✨", "title": "個人品牌經營入門", "sub": "範例講座 · 單堂", "file": "personal-brand.md" }
+]

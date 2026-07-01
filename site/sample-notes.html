@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Course2Notes 範例筆記</title>
+<style>
+:root{--bg:#f6f8f9;--panel:#ffffff;--ink:#26302f;--muted:#6b7778;--line:#e6eced;--accent:#0091AC;--accent2:#00778e;--soft:#eaf3f5;--code:#eef2f3}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",-apple-system,"Segoe UI",system-ui,sans-serif;line-height:1.85;font-size:16px;-webkit-font-smoothing:antialiased}
+a{color:var(--accent2);text-decoration:none}
+a:hover{text-decoration:underline}
+/* layout */
+.wrap{display:flex;min-height:100vh}
+.sidebar{width:300px;flex:0 0 300px;background:var(--panel);border-right:1px solid var(--line);height:100vh;position:sticky;top:0;overflow-y:auto;padding:22px 14px 40px}
+.brand{padding:6px 10px 16px;border-bottom:1px solid var(--line);margin-bottom:12px}
+.brand h1{font-size:16px;margin:0 0 4px;letter-spacing:.3px}
+.brand p{font-size:12px;color:var(--muted);margin:0}
+.searchbox{width:100%;padding:8px 12px;border:1px solid var(--line);border-radius:9px;background:var(--soft);margin:8px 0 14px;font-size:13px;font-family:inherit}
+.navgroup{margin-bottom:2px}
+.navhead{width:100%;display:flex;align-items:center;gap:8px;background:none;border:0;padding:9px 10px;border-radius:9px;cursor:pointer;font:inherit;color:var(--ink);text-align:left}
+.navhead:hover{background:var(--soft)}
+.navhead .ic{font-size:15px}
+.navhead .nt{flex:1;font-size:13.5px;font-weight:600}
+.navhead .chev{color:var(--muted);font-size:11px;transition:transform .18s}
+.navgroup.open .chev{transform:rotate(90deg)}
+.navsubs{display:none;padding:2px 0 6px 30px}
+.navgroup.open .navsubs{display:block}
+.navsub{display:block;padding:5px 10px;font-size:12.5px;color:var(--muted);border-radius:7px;border-left:2px solid transparent;line-height:1.5}
+.navsub:hover{background:var(--soft);color:var(--ink);text-decoration:none}
+.navsub.active{color:var(--accent);border-left-color:var(--accent);background:var(--soft);font-weight:600}
+/* main */
+.main{flex:1;min-width:0}
+.hero{background:linear-gradient(135deg,#0091AC,#006d84);color:#fff;padding:54px 48px 46px}
+.hero h1{margin:0 0 10px;font-size:30px;letter-spacing:.5px}
+.hero p{margin:0;font-size:15px;opacity:.92;max-width:640px}
+.hero .stat{margin-top:20px;display:flex;gap:26px;font-size:13px;opacity:.95}
+.hero .stat b{font-size:20px;display:block;font-weight:700}
+.content{max-width:840px;margin:0 auto;padding:8px 48px 120px}
+.course{padding-top:26px}
+.coursebar{display:flex;align-items:center;gap:14px;margin:34px 0 6px;padding:16px 18px;background:var(--panel);border:1px solid var(--line);border-radius:14px;border-left:5px solid var(--accent)}
+.coursebar .cic{font-size:26px}
+.ctitle{margin:0;font-size:21px}
+.csub{color:var(--muted);font-size:13px;margin-top:2px}
+.note{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:8px 26px 20px;margin:16px 0}
+.ntitle{font-size:18px;margin:18px 0 6px;padding-bottom:8px;border-bottom:1px dashed var(--line);scroll-margin-top:16px}
+.nbody h4{font-size:15px;margin:20px 0 8px;color:var(--accent);letter-spacing:.3px}
+.nbody h5{font-size:14px;margin:16px 0 6px;color:#333}
+.nbody p{margin:9px 0}
+.nbody p.lead{margin:16px 0 6px;font-weight:600;color:#1c1c19}
+.nbody ul,.nbody ol{margin:8px 0;padding-left:22px}
+.nbody li{margin:5px 0}
+.nbody li>ul,.nbody li>ol{margin:4px 0}
+.nbody code{background:var(--code);padding:2px 6px;border-radius:6px;font-family:"SF Mono",Consolas,monospace;font-size:.9em}
+blockquote{margin:14px 0;padding:12px 18px;background:#fbf7ef;border-left:4px solid #d9a441;border-radius:0 10px 10px 0;color:#5c4a1f}
+.tablewrap{overflow-x:auto;margin:14px 0}
+.nbody table{border-collapse:collapse;width:100%;font-size:14px;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.nbody th{background:var(--soft);text-align:left;padding:10px 12px;font-weight:700;border-bottom:2px solid var(--line)}
+.nbody td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.nbody tr:last-child td{border-bottom:0}
+hr{border:0;border-top:1px solid var(--line);margin:18px 0}
+.totop{position:fixed;right:26px;bottom:26px;background:var(--accent);color:#fff;border:0;width:44px;height:44px;border-radius:50%;font-size:18px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.18);opacity:0;pointer-events:none;transition:opacity .2s}
+.totop.show{opacity:1;pointer-events:auto}
+.foot{color:var(--muted);font-size:12px;text-align:center;padding:30px}
+mark{background:#fde68a;padding:0 2px}
+/* mobile */
+@media(max-width:860px){.sidebar{display:none}.hero,.content{padding-left:22px;padding-right:22px}}
+/* print */
+@media print{.sidebar,.totop{display:none}.main{width:100%}.hero{background:#0091AC!important;-webkit-print-color-adjust:exact}.note,.coursebar{break-inside:avoid;border:1px solid #ddd}.navsubs{display:block}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <aside class="sidebar">
+    <div class="brand"><h1>Course2Notes 範例筆記</h1><p>把買了看不完的線上課程，一鍵變成能讀完的筆記。</p></div>
+    <input class="searchbox" id="search" placeholder="🔍 搜尋筆記…" oninput="doSearch(this.value)">
+    
+  <div class="navgroup" data-course="time">
+    <button class="navhead" onclick="toggleGroup('time')"><span class="ic">⏰</span><span class="nt">時間管理實戰</span><span class="chev">▸</span></button>
+    <div class="navsubs" id="subs-time">
+      <a href="#time-0" class="navsub">1.1 為什麼你總覺得時間不夠</a><a href="#time-1" class="navsub">1.2 艾森豪四象限：把「緊急」和「重要」分開</a><a href="#time-2" class="navsub">1.3 番茄鐘與深度工作</a>
+    </div>
+  </div>
+  <div class="navgroup" data-course="slide">
+    <button class="navhead" onclick="toggleGroup('slide')"><span class="ic">📊</span><span class="nt">圖解簡報設計</span><span class="chev">▸</span></button>
+    <div class="navsubs" id="subs-slide">
+      <a href="#slide-0" class="navsub">2.1 一頁一重點</a><a href="#slide-1" class="navsub">2.2 對比、對齊、留白</a><a href="#slide-2" class="navsub">2.3 資料視覺化：選對圖表</a>
+    </div>
+  </div>
+  <div class="navgroup" data-course="brand">
+    <button class="navhead" onclick="toggleGroup('brand')"><span class="ic">✨</span><span class="nt">個人品牌經營入門</span><span class="chev">▸</span></button>
+    <div class="navsubs" id="subs-brand">
+      <a href="#brand-0" class="navsub">個人品牌經營入門</a>
+    </div>
+  </div>
+  </aside>
+  <div class="main">
+    <div class="hero">
+      <h1>Course2Notes 範例筆記</h1>
+      <p>把買了看不完的線上課程，一鍵變成能讀完的筆記。</p>
+      <div class="stat"><span><b>3</b>門課程</span><span><b>7</b>篇筆記</span><span><b>一鍵</b>自動整理</span></div>
+    </div>
+    <div class="content">
+      
+  <section class="course" id="course-time">
+    <div class="coursebar"><span class="cic">⏰</span><div><h2 class="ctitle">時間管理實戰</h2><div class="csub">範例課程 · 3 單元 · 3 篇</div></div></div>
+    
+      <article class="note" id="time-0">
+        <h3 class="ntitle">1.1 為什麼你總覺得時間不夠</h3>
+        <div class="nbody"><blockquote>課程：時間管理實戰（範例課程）</blockquote>
+<h3>本單元重點</h3>
+<ul><li>時間不夠通常不是「時數不足」，而是<strong>注意力被切碎</strong>與<strong>沒有優先序</strong>。</li><li>大多數人高估一天能做的事、低估一週能做的事——所以總在追趕。</li><li>管理時間的第一步不是排更多事，而是<strong>先決定「不做什麼」</strong>。</li></ul>
+<h3>內容筆記</h3>
+<p class="lead"><strong>三個真正的時間小偷</strong></p>
+<ul><li><strong>切換成本</strong>：每次被打斷，重新進入狀態平均要花十幾分鐘。看似只中斷一下，實際損失很大。</li><li><strong>假性生產力</strong>：整天很忙、回了很多訊息，卻沒推進任何真正重要的事。</li><li><strong>沒有邊界</strong>：所有人都能隨時找到你，你的一天就會被別人的急事填滿。</li></ul>
+<p class="lead"><strong>一個心態轉換</strong></p>
+<blockquote>你不是「沒有時間」，你是「還沒決定這件事夠不夠重要」。</blockquote>
+<h3>可執行要點</h3>
+<ul><li>今天先列出「<strong>不做清單</strong>」：三件你要停止或委外的事。</li><li>把手機通知關掉，只保留真正緊急的來源。</li></ul></div>
+      </article>
+      <article class="note" id="time-1">
+        <h3 class="ntitle">1.2 艾森豪四象限：把「緊急」和「重要」分開</h3>
+        <div class="nbody"><blockquote>課程：時間管理實戰（範例課程）</blockquote>
+<h3>本單元重點</h3>
+<ul><li><strong>緊急 ≠ 重要</strong>。多數人整天在處理「緊急但不重要」，把「重要但不緊急」一直往後拖。</li><li>真正決定人生的，是第二象限（重要但不緊急）：健康、關係、學習、長期佈局。</li><li>目標是<strong>擴大第二象限、壓縮第一象限、清掉第三與第四</strong>。</li></ul>
+<h3>內容筆記</h3>
+<p class="lead"><strong>四個象限怎麼分</strong></p>
+<div class="tablewrap"><table><thead><tr><th>象限</th><th>類型</th><th>怎麼處理</th></tr></thead><tbody><tr><td>第一</td><td>緊急且重要（危機、期限）</td><td>立刻做，但要檢討為何變緊急</td></tr><tr><td>第二</td><td>重要但不緊急（規劃、進修、運動）</td><td>排進行事曆、優先保護</td></tr><tr><td>第三</td><td>緊急但不重要（多數會議、雜訊）</td><td>授權、婉拒、批次處理</td></tr><tr><td>第四</td><td>不緊急也不重要（滑手機、瞎忙）</td><td>盡量刪除</td></tr></tbody></table></div>
+<p class="lead"><strong>關鍵洞察</strong></p>
+<ul><li>第一象限的事，很多其實是「以前的第二象限沒做」拖成的。<strong>提前投資第二象限，就能減少未來的救火</strong>。</li></ul>
+<h3>可執行要點</h3>
+<ul><li>把本週三件「重要但不緊急」的事，直接排進行事曆的固定時段。</li><li>下次有人塞事情給你，先問：這是第幾象限？</li></ul></div>
+      </article>
+      <article class="note" id="time-2">
+        <h3 class="ntitle">1.3 番茄鐘與深度工作</h3>
+        <div class="nbody"><blockquote>課程：時間管理實戰（範例課程）</blockquote>
+<h3>本單元重點</h3>
+<ul><li><strong>深度工作</strong>（不被打斷、高專注的整段時間）才能產生高價值成果，而它需要刻意保護。</li><li><strong>番茄鐘</strong>是最簡單的入門工具：25 分鐘專注 + 5 分鐘休息，用節奏對抗分心。</li><li>一天能有 2–4 段真正的深度工作，就已經勝過大多數人。</li></ul>
+<h3>內容筆記</h3>
+<p class="lead"><strong>番茄鐘怎麼跑</strong></p>
+<ol><li>選一件事，設 25 分鐘，這段時間只做它。</li><li>中途想到別的事，寫在紙上，回頭再處理，不要當下跳出去。</li><li>時間到就休息 5 分鐘，離開座位。</li><li>每 4 個番茄鐘，休息長一點（15–30 分鐘）。</li></ol>
+<p class="lead"><strong>讓深度工作發生的三個條件</strong></p>
+<ul><li><strong>固定時段</strong>：每天同一個時段最好，讓大腦形成慣性。</li><li><strong>移除誘因</strong>：手機收起來、關掉通知、瀏覽器只留必要分頁。</li><li><strong>明確產出</strong>：開始前先寫下「這段時間結束要完成什麼」。</li></ul>
+<blockquote>專注力像肌肉：一開始只能撐 25 分鐘，練久了能一次深潛 90 分鐘。</blockquote>
+<h3>可執行要點</h3>
+<ul><li>明天早上排一段 25 分鐘的番茄鐘，做你最重要的那件事。</li><li>準備一張「分心暫存紙」，把中途冒出來的雜念寫下來。</li></ul></div>
+      </article>
+  </section>
+  <section class="course" id="course-slide">
+    <div class="coursebar"><span class="cic">📊</span><div><h2 class="ctitle">圖解簡報設計</h2><div class="csub">範例課程 · 3 單元 · 3 篇</div></div></div>
+    
+      <article class="note" id="slide-0">
+        <h3 class="ntitle">2.1 一頁一重點</h3>
+        <div class="nbody"><blockquote>課程：圖解簡報設計（範例課程）</blockquote>
+<h3>本單元重點</h3>
+<ul><li>一張投影片只講<strong>一個訊息</strong>。塞太多，等於什麼都沒講。</li><li>觀眾同時只能處理「看」或「聽」其中之一——投影片是輔助你講，不是講稿本身。</li><li>先寫出這頁「一句話結論」，再決定要放什麼。</li></ul>
+<h3>內容筆記</h3>
+<p class="lead"><strong>為什麼一頁一重點</strong></p>
+<ul><li>人的短期記憶一次只能抓 3–4 個區塊。一頁塞五個重點，觀眾一個也記不住。</li><li>資訊密度高不等於專業，反而讓人焦慮、放空。</li></ul>
+<p class="lead"><strong>實作步驟</strong></p>
+<ol><li>每頁先用一句話寫下「我要觀眾記住什麼」。</li><li>刪掉所有跟這句話無關的元素。</li><li>把那句話放大、放在最顯眼的位置。</li></ol>
+<blockquote>如果一頁需要講三件事，那就拆成三頁。頁數不值錢，注意力才值錢。</blockquote>
+<h3>可執行要點</h3>
+<ul><li>打開你上一份簡報，找出塞了三個以上重點的頁，把它們拆開。</li></ul></div>
+      </article>
+      <article class="note" id="slide-1">
+        <h3 class="ntitle">2.2 對比、對齊、留白</h3>
+        <div class="nbody"><blockquote>課程：圖解簡報設計（範例課程）</blockquote>
+<h3>本單元重點</h3>
+<ul><li>好看的版面靠三個基本功：<strong>對比</strong>（分出主次）、<strong>對齊</strong>（產生秩序）、<strong>留白</strong>（給呼吸）。</li><li>不需要學設計，光把這三件事做對，質感就會大幅提升。</li><li><strong>留白不是浪費，是讓重點被看見。</strong></li></ul>
+<h3>內容筆記</h3>
+<p class="lead"><strong>三個基本功怎麼用</strong></p>
+<ul><li><strong>對比</strong>：重點要「大、粗、有顏色」，次要資訊要「小、細、灰」。差距要拉開，不要都差不多。</li><li><strong>對齊</strong>：所有元素靠同一條看不見的線排列。左邊對齊左邊、中線對中線，畫面立刻乾淨。</li><li><strong>留白</strong>：邊界留夠、元素之間留距離。擠滿的版面看起來廉價又累。</li></ul>
+<p class="lead"><strong>常見錯誤</strong></p>
+<ul><li>全部文字一樣大 → 觀眾不知道先看哪。</li><li>每個元素都置中又都不同寬 → 看起來歪歪的。</li><li>塞到邊 → 沒有喘息空間。</li></ul>
+<h3>可執行要點</h3>
+<ul><li>拿一頁投影片，只做一件事：把最重要的字放大兩級、其餘縮小變灰，看看差多少。</li></ul></div>
+      </article>
+      <article class="note" id="slide-2">
+        <h3 class="ntitle">2.3 資料視覺化：選對圖表</h3>
+        <div class="nbody"><blockquote>課程：圖解簡報設計（範例課程）</blockquote>
+<h3>本單元重點</h3>
+<ul><li>圖表的目的是<strong>讓結論一秒被看懂</strong>，不是把數字倒出來。</li><li>不同目的用不同圖：比大小、看趨勢、看占比、看關係，各有適合的圖型。</li><li>先想「我要觀眾看出什麼」，再選圖表。</li></ul>
+<h3>內容筆記</h3>
+<p class="lead"><strong>常見圖表怎麼選</strong></p>
+<div class="tablewrap"><table><thead><tr><th>你想表達</th><th>用什麼圖</th><th>提醒</th></tr></thead><tbody><tr><td>比較大小</td><td>長條圖</td><td>從高到低排序更好讀</td></tr><tr><td>隨時間變化</td><td>折線圖</td><td>線不要超過 3–4 條</td></tr><tr><td>占整體比例</td><td>圓餅／堆疊長條</td><td>類別超過 5 個就別用圓餅</td></tr><tr><td>兩變數關係</td><td>散布圖</td><td>標出你要強調的那群點</td></tr></tbody></table></div>
+<p class="lead"><strong>讓圖表更有力的三招</strong></p>
+<ul><li><strong>直接標結論</strong>：標題不要寫「營收圖」，要寫「Q3 營收成長 28%」。</li><li><strong>弱化其他、突出重點</strong>：把要強調的那根長條上色，其餘變灰。</li><li><strong>刪掉干擾</strong>：格線、外框、多餘刻度都能拿掉。</li></ul>
+<blockquote>好的圖表不需要解釋，觀眾自己就看懂了。</blockquote>
+<h3>可執行要點</h3>
+<ul><li>把你簡報裡的一張圖，標題改成「這張圖的結論」那句話。</li></ul></div>
+      </article>
+  </section>
+  <section class="course" id="course-brand">
+    <div class="coursebar"><span class="cic">✨</span><div><h2 class="ctitle">個人品牌經營入門</h2><div class="csub">範例講座 · 單堂 · 1 篇</div></div></div>
+    
+      <article class="note" id="brand-0">
+        <h3 class="ntitle">個人品牌經營入門</h3>
+        <div class="nbody"><blockquote>範例講座 · 讓專業被看見的第一步</blockquote>
+<h3>一句話總結</h3>
+<p>個人品牌不是「包裝自己」，而是<strong>讓對的人，在對的時機，因為對的理由想到你</strong>——靠的是持續、真實、可累積的專業表達。</p>
+<h3>重點摘要（TL;DR）</h3>
+<ul><li>個人品牌 = <strong>你的專業 × 你的辨識度 × 別人的信任</strong>，三者缺一不可。</li><li>不用當網紅。你要的不是「很多人知道你」，而是「對的一群人信任你」。</li><li>內容要<strong>可累積</strong>：每一篇、每一次分享，都在墊高下一次的可信度。</li><li>別追紅利、別硬擠人設，<strong>做得久</strong>比做得爆更重要。</li></ul>
+<h3>詳細筆記</h3>
+<h4>一、先想清楚：為誰、解決什麼</h4>
+<ul><li>個人品牌的起點不是「我想紅」，而是「我想被哪一群人、因為什麼事情想到」。</li><li>把受眾與主題縮窄：與其當「什麼都懂的人」，不如當「某個領域第一個被想到的人」。</li></ul>
+<h4>二、辨識度：讓人記得住</h4>
+<ul><li>固定的主題、語氣、視覺，甚至一句口頭禪，都能增加記憶點。</li><li>一致比華麗更重要：每次出現都像同一個人，信任才會累積。</li></ul>
+<h4>三、信任：靠證據不是靠說</h4>
+<blockquote>別人怎麼看你，比你怎麼形容自己更有說服力。</blockquote>
+<ul><li>真實案例、成果、他人見證，勝過任何自我宣稱。</li><li>平時就系統性地收集：做過什麼、幫誰解決了什麼、對方怎麼說。</li></ul>
+<h4>四、可累積的內容節奏</h4>
+<ul><li>與其偶爾發一篇大的，不如穩定地發小的。</li><li>從「別人最常問你的問題」開始，一個問題就是一篇內容。</li></ul>
+<h3>給你的可執行要點</h3>
+<ul><li>[ ] 用一句話寫下：你想被「哪一群人」因為「什麼」想到。</li><li>[ ] 列出別人最常問你的 5 個問題，當作前 5 篇內容題目。</li><li>[ ] 開始收集你的「成果與見證」，建立一個隨時能引用的清單。</li></ul>
+<h3>值得記住的一句話</h3>
+<blockquote>個人品牌不是一次爆紅，而是<strong>長期、真實、可累積</strong>的信任複利。</blockquote></div>
+      </article>
+  </section>
+      <div class="foot">由 Course2Notes 自動生成 · 內容為使用者自有課程的個人學習筆記</div>
+    </div>
+  </div>
+</div>
+<button class="totop" id="totop" onclick="scrollTo({top:0,behavior:'smooth'})">↑</button>
+<script>
+function toggleGroup(id){document.querySelector('.navgroup[data-course="'+id+'"]').classList.toggle('open')}
+// 展開第一個
+document.querySelector('.navgroup')&&document.querySelector('.navgroup').classList.add('open');
+// active on scroll
+const subs=[...document.querySelectorAll('.navsub')];
+const map={};subs.forEach(a=>map[a.getAttribute('href').slice(1)]=a);
+const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){subs.forEach(s=>s.classList.remove('active'));const a=map[e.target.id];if(a){a.classList.add('active');a.closest('.navsubs').parentElement.classList.add('open')}}})},{rootMargin:'-10% 0px -80% 0px'});
+document.querySelectorAll('.note').forEach(n=>io.observe(n));
+// back to top
+addEventListener('scroll',()=>{document.getElementById('totop').classList.toggle('show',scrollY>500)});
+// search: 隱藏不含關鍵字的 note
+function doSearch(q){q=q.trim().toLowerCase();document.querySelectorAll('.note').forEach(n=>{const hit=!q||n.textContent.toLowerCase().includes(q);n.style.display=hit?'':'none'});document.querySelectorAll('.course').forEach(c=>{const any=[...c.querySelectorAll('.note')].some(n=>n.style.display!=='none');c.style.display=any?'':'none'})}
+</script>
+</body>
+</html>

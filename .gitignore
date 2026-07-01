@@ -1,0 +1,16 @@
+node_modules/
+.wrangler/
+.dev.vars
+config.json
+__pycache__/
+*.pyc
+# 使用者跑出來的中間產物（只鎖根目錄，才不會誤忽略 demo/notes/）
+/audio/
+/transcripts/
+/manifest/
+/text/
+/notes/
+/chrome-profile/
+# sample/ 是院長 doctorally 真實付費課程筆記 → 不進公開 repo
+# （site/sample-notes.html 已改為 demo/ 產出的合成假資料，可公開）
+/sample/

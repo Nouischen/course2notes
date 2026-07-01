@@ -1,0 +1,9 @@
+name = "course2notes-analytics"
+main = "src/worker.js"
+compatibility_date = "2025-01-01"
+
+# 建立 D1 後把 database_id 貼進來（見 README 步驟）
+[[d1_databases]]
+binding = "DB"
+database_name = "course2notes"
+database_id = "REPLACE_AFTER_CREATE"
