@@ -168,7 +168,10 @@ const html = `<!DOCTYPE html>
 :root{--bg:#f6f8f9;--panel:#ffffff;--ink:#26302f;--muted:#6b7778;--line:#e6eced;--accent:#0091AC;--accent2:#00778e;--soft:#eaf3f5;--code:#eef2f3}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",-apple-system,"Segoe UI",system-ui,sans-serif;line-height:1.85;font-size:16px;-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",-apple-system,"Segoe UI",system-ui,sans-serif;line-height:1.9;font-size:var(--fs,16.5px);-webkit-font-smoothing:antialiased}
+.fontctl{display:flex;align-items:center;gap:6px;padding:4px 10px 12px;margin-bottom:8px;border-bottom:1px solid var(--line);font-size:12px;color:var(--muted)}
+.fontctl button{border:1px solid var(--line);background:#fff;border-radius:7px;padding:3px 10px;cursor:pointer;font-family:inherit;color:var(--ink);line-height:1}
+.fontctl button:hover{background:var(--soft);border-color:var(--accent);color:var(--accent)}
 a{color:var(--accent2);text-decoration:none}
 a:hover{text-decoration:underline}
 /* layout */
@@ -235,6 +238,7 @@ mark{background:#fde68a;padding:0 2px}
   <aside class="sidebar">
     <div class="brand"><h1>${esc(SITE_TITLE)}</h1><p>${esc(SITE_SUB)}</p></div>
     <input class="searchbox" id="search" placeholder="🔍 搜尋筆記…" oninput="doSearch(this.value)">
+    <div class="fontctl"><span>字級</span><button onclick="setFs(-1)" title="縮小">A−</button><button onclick="setFs(0)" title="預設">A</button><button onclick="setFs(1)" title="放大">A+</button></div>
     ${sidebar}
   </aside>
   <div class="main">
@@ -251,6 +255,10 @@ mark{background:#fde68a;padding:0 2px}
 </div>
 <button class="totop" id="totop" onclick="scrollTo({top:0,behavior:'smooth'})">↑</button>
 <script>
+var _fs=parseFloat(localStorage.getItem('c2n_fs'))||16.5;
+function applyFs(){document.documentElement.style.setProperty('--fs',_fs+'px')}
+function setFs(d){_fs=d===0?16.5:Math.max(13,Math.min(27,_fs+d*2));applyFs();localStorage.setItem('c2n_fs',_fs)}
+applyFs();
 function toggleGroup(id){document.querySelector('.navgroup[data-course="'+id+'"]').classList.toggle('open')}
 // 展開第一個
 document.querySelector('.navgroup')&&document.querySelector('.navgroup').classList.add('open');
