@@ -47,11 +47,22 @@ nav .sp{margin-left:auto}
 .frame .bar i{width:11px;height:11px;border-radius:50%;display:inline-block}
 .frame .bar .u{margin-left:12px;background:#fff;border-radius:7px;padding:4px 12px;font-size:12.5px;color:#8a9797;flex:1}
 .frame img{display:block;width:100%}
-/* prerequisite banner */
-.prereq{background:var(--dark);color:#dff2f4;border-radius:16px;padding:20px 26px;display:flex;gap:16px;align-items:center;margin:8px 0 0}
-.prereq .ic{font-size:26px}
-.prereq b{color:#fff}
-.prereq a{color:#7fe3ef}
+/* prerequisite: install Claude Code */
+.prereq{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-left:5px solid var(--accent);border-radius:16px;padding:24px 28px;margin:8px 0 0;box-shadow:0 6px 18px rgba(8,52,59,.06)}
+.pq-title{font-size:17px;margin-bottom:18px}
+.pq-opts{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.pq-opt{background:var(--soft);border-radius:14px;padding:18px 20px}
+.pq-h{font-weight:800;font-size:16.5px;margin-bottom:8px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.pq-badge{background:var(--accent);color:#fff;font-size:13px;font-weight:900;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center}
+.pq-rec{font-size:12px;color:var(--accent-d);font-weight:800;background:#cfeaee;padding:3px 9px;border-radius:999px}
+.pq-d{font-size:14.5px;color:var(--muted);margin-bottom:13px}
+.pq-btn{display:inline-block;background:var(--accent);color:#fff;padding:10px 18px;border-radius:11px;font-weight:800;font-size:14.5px}
+.pq-btn:hover{background:var(--accent-d);color:#fff}
+.pq-cmd{margin-bottom:9px}
+.pq-os{display:block;font-size:12px;font-weight:800;color:var(--muted);margin-bottom:3px}
+.prereq pre{font-size:13px;padding:11px 14px}
+.pq-note{margin-top:16px;font-size:14px;color:var(--muted)}
+@media(max-width:640px){.pq-opts{grid-template-columns:1fr}}
 /* sections */
 section{padding:58px 0}
 .sechead{margin:0 0 6px;font-size:30px;font-weight:900}
@@ -125,9 +136,8 @@ details .body td{padding:11px 14px;border-top:1px solid var(--line);color:var(--
 </div></div></header>
 
 <div class="wrap">
-  <div class="prereq">
-    <span class="ic">🤖</span>
-    <div data-i18n="prereq">本工具是 <b>Claude Code</b>（Anthropic 的 AI 工具）的一個「技能」。使用前請先安裝 Claude Code → <a href="https://www.claude.com/product/claude-code" target="_blank">下載 Claude Code</a>。<b>用桌面版 App（Local 本機模式）或終端機版皆可；網頁版跑在雲端、碰不到你電腦，不行。</b>裝好後，下面三步就能開始。</div>
+  <div class="prereq" data-i18n="prereq">
+    <div class="pq-title">🤖 本工具是 <b>Claude Code</b> 的技能，請先在你自己的電腦裝好 Claude Code（見下方兩個選項）。</div>
   </div>
 </div>
 
@@ -202,7 +212,7 @@ var DICT={
  hero_lead:'一鍵把整門課變成一份漂亮、能讀完的筆記。在你自己的電腦、你自己的 AI 上跑——<b>我們收不到你任何內容。</b>',
  hero_cta1:'🚀 三步驟開始',hero_cta2:'👀 看筆記成品',
  hero_micro:'桌機用 · 開源免費 · 輸出單一 HTML（免 Notion、免註冊、可列印 PDF）',
- prereq:'本工具是 <b>Claude Code</b>（Anthropic 的 AI 工具）的一個「技能」。使用前請先安裝 Claude Code → <a href="https://www.claude.com/product/claude-code" target="_blank">下載 Claude Code</a>。<b>用桌面版 App（Local 本機模式）或終端機版皆可；網頁版跑在雲端、碰不到你電腦，不行。</b>裝好後，下面三步就能開始。',
+ prereq:'<div class="pq-title">🤖 本工具是 <b>Claude Code</b>（Anthropic 的 AI 工具）的一個技能。先在<b>你自己的電腦</b>裝好 Claude Code —— 以下二選一：</div><div class="pq-opts"><div class="pq-opt"><div class="pq-h"><span class="pq-badge">A</span> 桌面版 App <span class="pq-rec">推薦・免終端機</span></div><div class="pq-d">圖形介面、最好上手。開啟時記得選「<b>Local 本機模式</b>」。</div><a class="pq-btn" href="https://code.claude.com/docs/en/desktop" target="_blank">下載桌面版 App ↗</a></div><div class="pq-opt"><div class="pq-h"><span class="pq-badge">B</span> 終端機安裝（CLI）</div><div class="pq-d">熟終端機的人，貼對應系統那行：</div><div class="pq-cmd"><span class="pq-os">Windows（PowerShell）</span><pre><button class="copy" onclick="cp(this)">複製</button><span class="cmd">irm https://claude.ai/install.ps1 | iex</span></pre></div><div class="pq-cmd"><span class="pq-os">Mac / Linux</span><pre><button class="copy" onclick="cp(this)">複製</button><span class="cmd">curl -fsSL https://claude.ai/install.sh | bash</span></pre></div></div></div><div class="pq-note">⚠️ 網頁版（claude.ai/code，跑在雲端）碰不到你的電腦，不能用。裝好後，下面三步就能開始。</div>',
  start_head:'開始使用：全程在 Claude Code 裡對話',
  start_sub:'<b>你不用開終端機、不用貼指令。</b>就是跟 Claude Code 講話，它自己幫你安裝、自己開瀏覽器、自己做完。你唯一要動手的，是<b>在它開的視窗登入你的課程平台</b>（為了安全，只能你本人登）。',
  step1_title:'叫它安裝（一次就好）',tag_cc:'🤖 對 Claude Code 說',
@@ -233,7 +243,7 @@ var DICT={
  hero_lead:'Turn a whole course into one clean, readable set of notes — with a single request. It runs on your own computer and your own AI, so <b>we never see any of your content.</b>',
  hero_cta1:'🚀 Get started in 3 steps',hero_cta2:'👀 See a sample',
  hero_micro:'Desktop · Free & open-source · One self-contained HTML (no Notion, no signup, print to PDF)',
- prereq:'This is a skill for <b>Claude Code</b> (Anthropic’s AI tool). Install Claude Code first → <a href="https://www.claude.com/product/claude-code" target="_blank">Get Claude Code</a>. <b>Use the desktop app (Local mode) or the terminal (CLI) — the web version runs in the cloud and can’t reach your computer.</b> Then the three steps below are all you need.',
+ prereq:'<div class="pq-title">🤖 This tool is a skill for <b>Claude Code</b> (an AI tool by Anthropic). First install Claude Code on <b>your own computer</b> — pick one:</div><div class="pq-opts"><div class="pq-opt"><div class="pq-h"><span class="pq-badge">A</span> Desktop app <span class="pq-rec">Recommended · no terminal</span></div><div class="pq-d">A graphical app — easiest to start. When you open it, choose <b>Local mode</b>.</div><a class="pq-btn" href="https://code.claude.com/docs/en/desktop" target="_blank">Download the desktop app ↗</a></div><div class="pq-opt"><div class="pq-h"><span class="pq-badge">B</span> Install the CLI (terminal)</div><div class="pq-d">Comfortable with a terminal? Paste the line for your OS:</div><div class="pq-cmd"><span class="pq-os">Windows (PowerShell)</span><pre><button class="copy" onclick="cp(this)">Copy</button><span class="cmd">irm https://claude.ai/install.ps1 | iex</span></pre></div><div class="pq-cmd"><span class="pq-os">Mac / Linux</span><pre><button class="copy" onclick="cp(this)">Copy</button><span class="cmd">curl -fsSL https://claude.ai/install.sh | bash</span></pre></div></div></div><div class="pq-note">⚠️ The web version (claude.ai/code, running in the cloud) cannot reach your computer, so it will not work. Once installed, the three steps below are all you need.</div>',
  start_head:'Getting started: it all happens by chatting with Claude Code',
  start_sub:'<b>No terminal, no commands to paste.</b> You just talk to Claude Code — it installs itself, opens the browser, and does everything. The only thing you do by hand is <b>log in to your course platform</b> in the window it opens (for security, only you can do that).',
  step1_title:'Tell it to install (just once)',tag_cc:'🤖 Say to Claude Code',
