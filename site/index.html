@@ -33,7 +33,9 @@ nav .sp{margin-left:auto}
 /* hero */
 .hero{padding:64px 0 46px}
 .hero .grid{display:grid;grid-template-columns:1.05fr .95fr;gap:52px;align-items:center}
-.eyebrow{display:inline-block;background:var(--soft);color:var(--accent-d);font-weight:800;font-size:14px;padding:6px 14px;border-radius:999px;margin-bottom:20px}
+.eyebrow{display:inline-block;background:var(--soft);color:var(--accent-d);font-weight:800;font-size:14px;padding:6px 14px;border-radius:999px;margin-bottom:14px}
+.byline{color:var(--muted);font-size:15px;margin:0 0 18px}
+.byline b{color:var(--accent-d);font-weight:800}
 .hero h1{font-size:clamp(34px,4.6vw,52px);font-weight:900;margin:0 0 20px}
 .hero h1 .u{background:linear-gradient(transparent 62%,#a9e4ec 62%);padding:0 3px}
 .hero p.lead{font-size:19px;color:var(--muted);margin:0 0 30px;max-width:520px}
@@ -119,6 +121,7 @@ details .body td{padding:11px 14px;border-top:1px solid var(--line);color:var(--
 <header class="hero"><div class="wrap"><div class="grid">
   <div>
     <span class="eyebrow" data-i18n="eyebrow">給「課買太多、看太少」的你</span>
+    <div class="byline" data-i18n="byline">✍️ 作者：<b>陳昱傑醫師</b></div>
     <h1 data-i18n="hero_h1">買了一堆線上課，<br>卻永遠<span class="u">看不完？</span></h1>
     <p class="lead" data-i18n="hero_lead">一鍵把整門課變成一份漂亮、能讀完的筆記。在你自己的電腦、你自己的 AI 上跑——<b>我們收不到你任何內容。</b></p>
     <div class="cta">
@@ -208,6 +211,7 @@ var DICT={
  copy:'複製',
  nav_platforms:'支援平台',nav_how:'運作原理',nav_start:'開始使用',
  eyebrow:'給「課買太多、看太少」的你',
+ byline:'✍️ 作者：<b>陳昱傑醫師</b>',
  hero_h1:'買了一堆線上課，<br>卻永遠<span class="u">看不完？</span>',
  hero_lead:'一鍵把整門課變成一份漂亮、能讀完的筆記。在你自己的電腦、你自己的 AI 上跑——<b>我們收不到你任何內容。</b>',
  hero_cta1:'🚀 三步驟開始',hero_cta2:'👀 看筆記成品',
@@ -239,6 +243,7 @@ var DICT={
  copy:'Copy',
  nav_platforms:'Platforms',nav_how:'How it works',nav_start:'Get started',
  eyebrow:'For everyone who buys courses faster than they finish them',
+ byline:'✍️ by <b>Dr. Yu-Chieh Chen</b>',
  hero_h1:'Bought a stack of online courses<br>you’ll <span class="u">never finish?</span>',
  hero_lead:'Turn a whole course into one clean, readable set of notes — with a single request. It runs on your own computer and your own AI, so <b>we never see any of your content.</b>',
  hero_cta1:'🚀 Get started in 3 steps',hero_cta2:'👀 See a sample',
