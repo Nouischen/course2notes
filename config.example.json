@@ -6,5 +6,5 @@
   "brandColor": "#0091AC",
   "siteTitle": "我的課程筆記",
   "telemetry": true,
-  "telemetryEndpoint": "https://REPLACE-ME.workers.dev/event"
+  "telemetryEndpoint": "https://course2notes-analytics.nouischen.workers.dev/event"
 }

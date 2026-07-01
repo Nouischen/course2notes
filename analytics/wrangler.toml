@@ -6,4 +6,4 @@ compatibility_date = "2025-01-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "course2notes"
-database_id = "REPLACE_AFTER_CREATE"
+database_id = "d9b336ee-4655-4734-95d8-dcabcc5c4dc8"
