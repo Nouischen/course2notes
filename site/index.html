@@ -173,6 +173,7 @@ details .body td{padding:11px 14px;border-top:1px solid var(--line);color:var(--
   <div class="priv" data-i18n="priv_body">
     <p style="margin-top:0"><b>預設會回傳一筆「匿名使用計數」</b>，幫我們判斷有多少人在用。只收：一組本機隨機碼（無法對應到你）、事件（安裝／完成筆記）、這次幾份筆記、平台類型、版本、時間。</p>
     <p style="margin:0"><b>絕對不收：</b>你的筆記內容、課程名稱、網址、任何個資或檔案。程式碼開源可自查。關閉：設 <code class="k">COURSE2NOTES_TELEMETRY=off</code>。</p>
+    <p style="margin:12px 0 0">🎙️ <b>關於轉錄：</b>有 NVIDIA 顯卡時，音檔在本機轉錄、不離開你的電腦；沒有顯卡而改用 OpenAI API 模式時，你的音檔會上傳給 OpenAI 轉錄（適用 OpenAI 的 API 資料政策），但作者端一樣收不到任何東西。</p>
   </div>
 </div></section>
 
@@ -230,7 +231,7 @@ var DICT={
  step3_desc:'它會<b>自動開一個瀏覽器視窗</b>，你在裡面登入你的課程平台、打開那門課，跟它說「好了」。接著它自動跑完：',
  step3_flow:'<code class="k">偵察平台 → 下載音訊 → 轉逐字稿 → 整理筆記 → 產出漂亮 HTML</code>，完成後雙擊 HTML 就是你的筆記。',
  priv_head:'隱私：我們只收數字',
- priv_body:'<p style="margin-top:0"><b>預設會回傳一筆「匿名使用計數」</b>，幫我們判斷有多少人在用。只收：一組本機隨機碼（無法對應到你）、事件（安裝／完成筆記）、這次幾份筆記、平台類型、版本、時間。</p><p style="margin:0"><b>絕對不收：</b>你的筆記內容、課程名稱、網址、任何個資或檔案。程式碼開源可自查。關閉：設 <code class="k">COURSE2NOTES_TELEMETRY=off</code>。</p>',
+ priv_body:'<p style="margin-top:0"><b>預設會回傳一筆「匿名使用計數」</b>，幫我們判斷有多少人在用。只收：一組本機隨機碼（無法對應到你）、事件（安裝／完成筆記）、這次幾份筆記、平台類型、版本、時間。</p><p style="margin:0"><b>絕對不收：</b>你的筆記內容、課程名稱、網址、任何個資或檔案。程式碼開源可自查。關閉：設 <code class="k">COURSE2NOTES_TELEMETRY=off</code>。</p><p style="margin:12px 0 0">🎙️ <b>關於轉錄：</b>有 NVIDIA 顯卡時，音檔在本機轉錄、不離開你的電腦；沒有顯卡而改用 OpenAI API 模式時，你的音檔會上傳給 OpenAI 轉錄（適用 OpenAI 的 API 資料政策），但作者端一樣收不到任何東西。</p>',
  how_summary:'運作原理（想深入了解再看）',
  how_body:'<p>它不是一套「固定爬蟲」，而是讓你的 Claude Code <b>臨場看懂每個平台、自己想辦法抓</b>——所以能適應很多站。整條流程：</p><div class="flow"><span>偵察平台</span><span class="ar">→</span><span>抓單元清單</span><span class="ar">→</span><span>下載音訊</span><span class="ar">→</span><span>whisper 轉逐字稿</span><span class="ar">→</span><span>AI 整理筆記</span><span class="ar">→</span><span>產出漂亮 HTML</span></div>',
  platforms_summary:'支援哪些平台？',
@@ -262,7 +263,7 @@ var DICT={
  step3_desc:'It <b>opens a browser window for you</b>; log in to your course platform, open the course, and tell it “done”. Then it runs the whole pipeline:',
  step3_flow:'<code class="k">detect the platform → download audio → transcribe → write the notes → generate a clean HTML</code>. Double-click the HTML and there are your notes.',
  priv_head:'Privacy: we only collect numbers',
- priv_body:'<p style="margin-top:0"><b>By default it sends one anonymous usage ping</b> so we can gauge how many people use it. It only includes: a random local ID (can’t be traced to you), the event (install / notes done), how many notes this run, the platform type, version, and timestamp.</p><p style="margin:0"><b>Never collected:</b> your notes, course names, URLs, or any personal data or files. The code is open-source — check for yourself. Turn it off: set <code class="k">COURSE2NOTES_TELEMETRY=off</code>.</p>',
+ priv_body:'<p style="margin-top:0"><b>By default it sends one anonymous usage ping</b> so we can gauge how many people use it. It only includes: a random local ID (can’t be traced to you), the event (install / notes done), how many notes this run, the platform type, version, and timestamp.</p><p style="margin:0"><b>Never collected:</b> your notes, course names, URLs, or any personal data or files. The code is open-source — check for yourself. Turn it off: set <code class="k">COURSE2NOTES_TELEMETRY=off</code>.</p><p style="margin:12px 0 0">🎙️ <b>About transcription:</b> with an NVIDIA GPU, audio is transcribed locally and never leaves your computer; with no GPU, the OpenAI API mode sends your audio to OpenAI to transcribe (under OpenAI’s API data policy) — the author still receives nothing.</p>',
  how_summary:'How it works (for the curious)',
  how_body:'<p>It isn’t a fixed scraper. It lets your Claude Code <b>read each platform on the fly and figure out how to grab it</b> — which is why it adapts to many sites. The full pipeline:</p><div class="flow"><span>detect platform</span><span class="ar">→</span><span>list lessons</span><span class="ar">→</span><span>download audio</span><span class="ar">→</span><span>transcribe (whisper)</span><span class="ar">→</span><span>AI writes notes</span><span class="ar">→</span><span>clean HTML</span></div>',
  platforms_summary:'Which platforms work?',

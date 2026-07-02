@@ -6,6 +6,10 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const https = require('https');
+const crypto = require('crypto');
+
+// 只允許回傳「媒體類別」，不接受站台域名／課名等自由字串（配合後台白名單）
+const ALLOWED_PLATFORMS = ['vimeo', 'soundcloud', 'youtube', 'hls', 'text', 'other'];
 
 const VERSION = '0.1.0';
 const HOME = path.join(os.homedir(), '.course2notes');
@@ -27,7 +31,7 @@ function disabled(cfg) {
 function installId() {
   fs.mkdirSync(HOME, { recursive: true });
   try { const id = fs.readFileSync(IDFILE, 'utf8').trim(); if (id) return id; } catch (_) {}
-  const id = 'c2n_' + Array.from({ length: 16 }, () => 'abcdef0123456789'[Math.floor(Math.random() * 16)]).join('');
+  const id = 'c2n_' + crypto.randomBytes(8).toString('hex');
   fs.writeFileSync(IDFILE, id);
   return id;
 }
@@ -40,15 +44,17 @@ function showConsentOnce() {
 
 function report(event, noteCount, platform) {
   const cfg = loadConfig();
-  showConsentOnce();
   if (disabled(cfg)) { console.log('[telemetry] 已關閉，未回報。'); return; }
+  showConsentOnce();
   const ep = cfg.telemetryEndpoint;
   if (!ep || /REPLACE-ME/.test(ep)) { console.log('[telemetry] 未設定 endpoint，略過。'); return; }
+  const plat = ALLOWED_PLATFORMS.includes(String(platform || '').toLowerCase())
+    ? String(platform).toLowerCase() : 'other';
   const payload = JSON.stringify({
     install_id: installId(),
     event: event || 'unknown',
     note_count: Number(noteCount) || 0,
-    platform: platform || '',
+    platform: plat,
     version: VERSION,
     ts: Math.floor(Date.now() / 1000)
   });
