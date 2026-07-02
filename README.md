@@ -12,7 +12,8 @@ You don't run any commands or need any tech skills: you just **talk to Claude Co
 
 ## Why it's different
 
-- **Adaptive, not a fixed scraper.** It doesn't rely on brittle per-site scrapers. Your Claude Code **reads each platform on the fly** and figures out how to grab it — so it adapts to many different course sites.
+- **Works on the courses you actually paid for.** Most tools only handle public YouTube, or scrape whatever captions a platform happens to expose. Course2Notes drives your own logged-in browser, so it reaches courses **behind a login wall** — Teachify, 知識衛星, Hahow, LearnDash, and the like — not just free videos.
+- **Adaptive, not a fixed scraper.** It doesn't rely on brittle per-site scrapers (the kind that break every time a platform changes its HTML). Your Claude Code **reads each platform on the fly** and figures out how to grab it — so it adapts to many different course sites.
 - **Runs on your machine, your AI.** You use your own Claude Code and your own compute, and **the author never receives any of your content**. With an NVIDIA GPU (Windows/Linux) or an Apple Silicon Mac, transcription runs locally and your audio never leaves your computer; otherwise the OpenAI API mode sends only the audio to OpenAI to transcribe (the transcript is then written into notes by your own Claude Code either way — see [Privacy](#privacy)).
 - **Beautiful HTML — no Notion, no account.** The output is a single self-contained HTML file: sidebar navigation, search, collapsible sections, adjustable font size, and print-to-PDF. Opens in any browser.
 - **Private by design.** Anonymous usage counts only — never your notes, course names, URLs, or files. See [Privacy](#privacy).
@@ -50,6 +51,7 @@ The skill must end up at `~/.claude/skills/course2notes/SKILL.md` — that exact
 
 - With git — macOS/Linux: `git clone https://github.com/Nouischen/course2notes ~/.claude/skills/course2notes` · Windows (PowerShell): `git clone https://github.com/Nouischen/course2notes "$env:USERPROFILE\.claude\skills\course2notes"`
 - No git? Download [main.zip](https://github.com/Nouischen/course2notes/archive/refs/heads/main.zip) and extract it there. The zip unpacks to a folder named `course2notes-main` — rename it to `course2notes` so `SKILL.md` sits directly under `~/.claude/skills/course2notes/`.
+- As a plugin (if you use `/plugin`): `/plugin marketplace add Nouischen/course2notes` then `/plugin install course2notes@course2notes`; update later with `/plugin update course2notes@course2notes`.
 </details>
 
 ## Use it (3 steps — all by talking to Claude Code)
@@ -95,6 +97,8 @@ It **never** collects your notes, course names, URLs, or any personal data or fi
 
 This tool is only for making **personal study notes** from courses you have **legally purchased and have the right to access**. What's distributed is the tool, not any course content. Follow your platform's Terms of Service and copyright law; do not redistribute or resell anything you download or generate. You are responsible for how you use it.
 
+**DRM policy (non-negotiable):** this tool does **not** decrypt or bypass Widevine or any other DRM, ever. When it detects a DRM-protected stream it stops and tells you that unit can't be captured. Requests for DRM circumvention will be closed without discussion.
+
 ## Author
 
 **Dr. Yu-Chieh Chen（陳昱傑醫師）**
@@ -116,7 +120,8 @@ Course2Notes 是一個開源的 **[Claude Code](https://www.claude.com/product/c
 你**不用打任何指令、不用懂技術**：用講話的方式跟 Claude Code 說，它就自己幫你安裝、開瀏覽器、下載、轉錄、做筆記。你唯一要動手的，是登入你的課程平台。
 
 ## 為什麼不一樣
-- **臨場適應，不是固定爬蟲。** 它不靠脆弱的逐站爬蟲，而是讓你的 Claude Code **臨場看懂每個平台**、自己想辦法抓——所以能適應很多課程網站。
+- **做得到你真正付費的那些課。** 多數工具只能處理公開的 YouTube，或刮平台剛好有開的字幕。Course2Notes 是驅動你自己已登入的瀏覽器，所以搆得到**登入牆後面**的課——Teachify、知識衛星、Hahow、LearnDash 這些，而不只是免費影片。
+- **臨場適應，不是固定爬蟲。** 它不靠脆弱的逐站爬蟲（那種平台一改版 HTML 就壞），而是讓你的 Claude Code **臨場看懂每個平台**、自己想辦法抓——所以能適應很多課程網站。
 - **跑在你的電腦、你的 AI。** 用你自己的 Claude Code 與算力，作者不為你的用量付費，**作者也收不到你的任何內容**。有 NVIDIA 顯卡或 Apple Silicon Mac 時轉錄完全在本機、音檔不離開你的電腦；其他情況（Intel Mac／AMD／無顯卡）用 OpenAI API 模式時，只有音檔會上傳給 OpenAI 轉錄（逐字稿之後無論哪種都是由你自己的 Claude Code 整理成筆記；見下方隱私）。
 - **漂亮 HTML——免 Notion、免註冊。** 輸出是單一自成一檔的 HTML：側欄導覽、搜尋、可折疊、可調字級、可列印 PDF，任何瀏覽器都能開。
 - **隱私優先。** 只回傳匿名計數，絕不含你的筆記、課名、網址或檔案（見下方隱私）。
@@ -149,6 +154,7 @@ Course2Notes 是一個開源的 **[Claude Code](https://www.claude.com/product/c
 
 - 有 git——Mac/Linux：`git clone https://github.com/Nouischen/course2notes ~/.claude/skills/course2notes` · Windows（PowerShell）：`git clone https://github.com/Nouischen/course2notes "$env:USERPROFILE\.claude\skills\course2notes"`
 - 沒 git？下載 [main.zip](https://github.com/Nouischen/course2notes/archive/refs/heads/main.zip) 解壓過去。zip 解出來的資料夾叫 `course2notes-main`——要改名成 `course2notes`，讓 `SKILL.md` 直接位於 `~/.claude/skills/course2notes/` 底下。
+- 當外掛安裝（若你會用 `/plugin`）：`/plugin marketplace add Nouischen/course2notes`，再 `/plugin install course2notes@course2notes`；之後更新用 `/plugin update course2notes@course2notes`。
 </details>
 
 ## 怎麼用（三步，全程跟 Claude Code 講）
@@ -185,6 +191,8 @@ Course2Notes 是一個開源的 **[Claude Code](https://www.claude.com/product/c
 
 ## 使用聲明
 本工具僅供你為**已合法購買、且有權存取**的課程製作**個人學習筆記**。散布的是工具，不是任何課程內容。請遵守你所在平台的服務條款與著作權法，勿散布或轉售下載／產生的內容。使用行為與後果由使用者自行負責。
+
+**DRM 政策（沒有模糊空間）**：本工具**不解密、不繞過** Widevine 或任何 DRM。偵測到 DRM 保護的串流時會停下並告知你該單元無法擷取。任何要求繞過 DRM 的 issue 一律直接關閉。
 
 ## 作者
 **陳昱傑醫師（Dr. Yu-Chieh Chen）**

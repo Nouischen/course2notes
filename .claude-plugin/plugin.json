@@ -1,0 +1,14 @@
+{
+  "name": "course2notes",
+  "displayName": "Course2Notes",
+  "version": "1.0.0",
+  "description": "Turn online courses you've bought into clean, self-contained HTML study notes — recon the platform, download audio, transcribe locally (or via OpenAI), and write self-contained notes. Runs on your own Claude Code; the author never sees your content.",
+  "author": {
+    "name": "Dr. Yu-Chieh Chen",
+    "url": "https://github.com/Nouischen"
+  },
+  "homepage": "https://course2notes.pages.dev",
+  "repository": "https://github.com/Nouischen/course2notes",
+  "license": "MIT",
+  "keywords": ["course", "notes", "transcription", "whisper", "html", "education", "study"]
+}
