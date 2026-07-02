@@ -1,22 +1,41 @@
-# 2.2 Contrast, alignment, white space
-> Course: Slide Design, Illustrated (sample)
+# One idea per slide
 
-## Key points
-- Good-looking slides rest on three basics: **contrast** (rank what matters), **alignment** (create order), **white space** (let it breathe).
-- You don't need to be a designer — getting these three right already lifts the quality a lot.
-- **White space isn't wasted space; it's what makes the point stand out.**
+> [!NOTE] Slide Design, Illustrated (sample) · Unit 2
+> [!KEY] In one sentence
+> A slide should carry **exactly one message** — the moment it tries to say three things, it says nothing.
+> [!KEY] You'll learn
+> - Why one message per slide beats a dense slide
+> - The memory limit that makes crowded slides fail
+> - A three-step method to strip a slide to its point
+> - Why splitting slides is almost always the right call
 
 ## Notes
 
-**How to use the three basics**
-- **Contrast**: the key point should be "big, bold, colored"; secondary info "small, thin, gray." Widen the gap — don't make everything the same.
-- **Alignment**: line elements up along the same invisible line. Left to left, center to center, and the page instantly looks clean.
-- **White space**: keep margins generous and space between elements. A crammed layout looks cheap and tiring.
+### Why one idea wins
+Your audience can either read the slide or listen to you — not both at full attention. A slide packed with text forces that choice, and usually they read it badly while tuning you out. The slide is there to support your talk, not to be the script.
 
-**Common mistakes**
-- All text the same size → the audience doesn't know where to look.
-- Everything centered but different widths → it looks crooked.
-- Content pushed to the edges → no room to breathe.
+There's a hard limit underneath this. Short-term memory holds only three to four chunks at once. Put five bullets on screen and the audience remembers none of them. Density also reads as anxiety rather than authority: a wall of text makes people glaze over instead of trusting you.
 
-## Takeaways
-- Take one slide and do just one thing: bump the key line up two sizes and shrink the rest to gray. See the difference.
+| Dimension | Crammed slide | Focused slide |
+|---|---|---|
+| Messages | Several competing at once | One clear point |
+| Audience does | Reads, tunes you out | Listens, follows you |
+| Remembered later | Almost nothing | The one point |
+| Feels | Anxious, cheap | Confident, clear |
+
+### The method
+1. For each slide, write in one line what the audience should remember.
+2. Delete everything unrelated to that line.
+3. Make that line big and place it where the eye lands first.
+
+> [!QUOTE] Slides are cheap, attention isn't
+> If a slide needs to say three things, split it into three slides. You have unlimited slides; your audience has limited attention.
+
+> [!WARN] Don't confuse dense with thorough
+> A crowded slide feels rigorous, but thoroughness belongs in your talk and your handout — not crammed onto one screen where it drowns the point.
+
+## Action items
+- [ ] Open your last deck and find every slide with three or more points.
+- [ ] Split one of those slides into one message per slide.
+- [ ] For three slides, write the single "remember this" line and cut the rest.
+- [ ] Rehearse the split section aloud to confirm the flow still holds.

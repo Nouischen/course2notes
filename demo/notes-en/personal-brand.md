@@ -1,39 +1,48 @@
 # Personal Branding 101
-> Sample talk · the first step to being seen for your expertise
 
-## In one sentence
-A personal brand isn't "packaging yourself" — it's making **the right people, at the right moment, think of you for the right reason** — built on consistent, genuine, compounding expression of your expertise.
-
-## TL;DR
-- Personal brand = **your expertise × your recognizability × other people's trust** — all three matter.
-- You don't need to be an influencer. The goal isn't "lots of people know you," it's "the right people trust you."
-- Content should **compound**: every post and share raises the credibility of the next one.
-- Don't chase hype or force a persona. **Lasting beats loud.**
+> [!NOTE] Personal Branding (sample) · Standalone talk
+> [!KEY] In one sentence
+> A personal brand isn't packaging yourself — it's making **the right people think of you for the right reason at the right moment**, built on consistent, genuine, compounding expression of your expertise.
+> [!KEY] You'll learn
+> - The three ingredients every personal brand needs
+> - Why "the right people" beats "lots of people"
+> - How trust is shown rather than claimed
+> - How small, steady content compounds over time
 
 ## Notes
 
-### 1. First, decide: for whom, solving what
-- The starting point isn't "I want to be famous" but "who do I want thinking of me, and for what?"
-- Narrow the audience and topic: rather than "the person who knows everything," be "the first person people think of in one area."
+### What a personal brand actually is
+A personal brand is the product of three things multiplied together: your expertise, your recognizability, and other people's trust in you. Multiplied — not added — because if any one is zero, the whole thing collapses. Deep expertise no one recognizes goes unseen; recognition without trust reads as hype; trust without real expertise doesn't survive contact.
 
-### 2. Recognizability: be memorable
-- A consistent topic, tone, and look — even a signature phrase — build memory hooks.
-- Consistency beats flashiness: show up the same every time, and trust accumulates.
+You don't need to be an influencer. The goal is not that lots of people know your name; it's that the right people think of you first when they have a problem you can solve.
 
-### 3. Trust: show, don't claim
-> How others see you is more convincing than how you describe yourself.
+| Dimension | Influencer mindset | Personal-brand mindset |
+|---|---|---|
+| Goal | Maximum reach | The right people's trust |
+| Measured by | Followers, views | Referrals, reputation |
+| Content | Chases what's hot | Deepens one area |
+| Time horizon | This week's spike | Compounds for years |
 
-- Real cases, results, and testimonials beat any self-description.
-- Collect them as you go: what you did, who you helped, and what they said.
+### Decide who and what first
+> [!TIP] Start narrow
+> Rather than being "the person who knows everything," aim to be "the first person people think of in one specific area." A narrow, clear position is far easier to remember and to recommend.
 
-### 4. A compounding content rhythm
-- Rather than one big post now and then, publish small ones steadily.
-- Start with the questions people ask you most — each question is one piece of content.
+The real starting question isn't "how do I get famous" but "who do I want thinking of me, and for what?" Answer that and every later choice — topic, tone, platform — gets easier.
 
-## Takeaways
-- [ ] In one line, write: who do you want thinking of you, and for what.
-- [ ] List the 5 questions people ask you most — those are your first 5 topics.
-- [ ] Start a running list of your results and testimonials you can cite anytime.
+### Trust is shown, not claimed
+> [!QUOTE] The core of trust
+> How others see you is far more convincing than how you describe yourself.
 
-## Worth remembering
-> A personal brand isn't one viral moment — it's **long-term, genuine, compounding** trust.
+Real cases, results, and testimonials outweigh any self-description. Collect them as you go: what you did, who you helped, and what they said about it. A running record of proof becomes the most persuasive thing you own.
+
+### A compounding content rhythm
+Instead of one big post now and then, publish small pieces steadily. Each post and share should raise the credibility of the next, so your body of work compounds rather than resets. The easiest starting fuel is the questions people already ask you most — each question is one piece of content.
+
+> [!WARN] Lasting beats loud
+> Don't chase hype or force a persona you can't sustain. A borrowed voice cracks under pressure, and a single viral moment fades. Consistency is what accumulates into a brand.
+
+## Action items
+- [ ] In one line, write who you want thinking of you, and for what.
+- [ ] List the five questions people ask you most — those are your first five topics.
+- [ ] Start a running list of results and testimonials you can cite anytime.
+- [ ] Publish one small piece this week drawn from that question list.
