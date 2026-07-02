@@ -38,10 +38,19 @@ You don't run any commands or need any tech skills: you just **talk to Claude Co
 **2. Install this skill** — in Claude Code, just say:
 
 ```
-Install the skill from github.com/Nouischen/course2notes — I'll use it to turn online courses into notes
+Install the skill from github.com/Nouischen/course2notes into ~/.claude/skills/course2notes — I'll use it to turn online courses into notes
 ```
 
 Then **restart Claude Code once** so the skill loads.
+
+<details>
+<summary>What Claude actually does (or do it yourself)</summary>
+
+The skill must end up at `~/.claude/skills/course2notes/SKILL.md` — that exact location is how Claude Code discovers it.
+
+- With git — macOS/Linux: `git clone https://github.com/Nouischen/course2notes ~/.claude/skills/course2notes` · Windows (PowerShell): `git clone https://github.com/Nouischen/course2notes "$env:USERPROFILE\.claude\skills\course2notes"`
+- No git? Download [main.zip](https://github.com/Nouischen/course2notes/archive/refs/heads/main.zip) and extract it there. The zip unpacks to a folder named `course2notes-main` — rename it to `course2notes` so `SKILL.md` sits directly under `~/.claude/skills/course2notes/`.
+</details>
 
 ## Use it (3 steps — all by talking to Claude Code)
 
@@ -50,6 +59,8 @@ Then **restart Claude Code once** so the skill loads.
 3. **Log in once** — it opens a browser window; you log in to your course platform and open the course, then tell it "done". It runs the rest automatically: **detect platform → download audio → transcribe → write notes → generate a clean HTML.** Double-click the HTML and there are your notes.
 
 > Notes come out in the language you write in. Want a specific one? Just add e.g. *"notes in English"*.
+
+> Along the way Claude Code shows permission prompts (installing packages, opening the browser, running scripts) — approving them is normal and expected.
 
 ## Supported platforms
 
@@ -116,9 +127,18 @@ Course2Notes 是一個開源的 **[Claude Code](https://www.claude.com/product/c
 
 **2. 安裝本技能**——在 Claude Code 裡直接說：
 ```
-幫我安裝 github.com/Nouischen/course2notes 這個技能，之後我要用它把線上課程做成筆記
+幫我把 github.com/Nouischen/course2notes 這個技能裝到 ~/.claude/skills/course2notes，之後我要用它把線上課程做成筆記
 ```
 然後**重開 Claude Code 一次**讓技能生效。
+
+<details>
+<summary>Claude 實際會做什麼（想自己動手也行）</summary>
+
+技能必須落在 `~/.claude/skills/course2notes/SKILL.md` 這個位置，Claude Code 才找得到它。
+
+- 有 git——Mac/Linux：`git clone https://github.com/Nouischen/course2notes ~/.claude/skills/course2notes` · Windows（PowerShell）：`git clone https://github.com/Nouischen/course2notes "$env:USERPROFILE\.claude\skills\course2notes"`
+- 沒 git？下載 [main.zip](https://github.com/Nouischen/course2notes/archive/refs/heads/main.zip) 解壓過去。zip 解出來的資料夾叫 `course2notes-main`——要改名成 `course2notes`，讓 `SKILL.md` 直接位於 `~/.claude/skills/course2notes/` 底下。
+</details>
 
 ## 怎麼用（三步，全程跟 Claude Code 講）
 1. **安裝**（一次）——上面那句。
@@ -126,6 +146,8 @@ Course2Notes 是一個開源的 **[Claude Code](https://www.claude.com/product/c
 3. **登入一次**——它會開一個瀏覽器視窗；你登入課程平台、打開那門課，跟它說「好了」。剩下它自動跑完：**偵察平台 → 下載音訊 → 轉逐字稿 → 整理筆記 → 產出漂亮 HTML**，雙擊 HTML 就是你的筆記。
 
 > 筆記預設用你發問的語言。想指定就句尾加一句，例如「筆記用英文」。
+
+> 過程中 Claude Code 會跳出權限確認（裝套件、開瀏覽器、跑腳本）——按「允許」即可，這是正常流程。
 
 ## 支援哪些平台
 | 類型 | 支援 |

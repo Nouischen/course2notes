@@ -146,12 +146,12 @@ details .body td{padding:11px 14px;border-top:1px solid var(--line);color:var(--
 
 <section id="start"><div class="wrap">
   <h2 class="sechead" data-i18n="start_head">開始使用：全程在 Claude Code 裡對話</h2>
-  <p class="sesub" data-i18n="start_sub"><b>你不用自己打任何指令、不用懂技術。</b>用平常講話的方式跟 Claude Code 說，它就自己幫你安裝、開瀏覽器、下載、轉錄、做筆記。你唯一要動手的，是<b>在它開的視窗登入你的課程平台</b>（為了安全，只能你本人登）。</p>
+  <p class="sesub" data-i18n="start_sub"><b>你不用自己打任何指令、不用懂技術。</b>用平常講話的方式跟 Claude Code 說，它就自己幫你安裝、開瀏覽器、下載、轉錄、做筆記。你唯一要動手的，是<b>在它開的視窗登入你的課程平台</b>（為了安全，只能你本人登）。過程中 Claude Code 會跳出權限確認（裝套件、開瀏覽器）——按「允許」即可，這是正常流程。</p>
   <div class="steps">
     <div class="step">
       <div class="top"><div class="num">1</div><h3 data-i18n="step1_title">叫它安裝（一次就好）</h3><span class="tag cc" data-i18n="tag_cc">🤖 對 Claude Code 說</span></div>
       <p data-i18n="step1_desc">在 Claude Code 裡打這句，它會自己下載安裝：</p>
-      <pre><button class="copy" onclick="cp(this)" data-i18n="copy">複製</button><span class="cmd" data-i18n="cmd_install">幫我安裝 github.com/Nouischen/course2notes 這個技能，之後我要用它把線上課程做成筆記</span></pre>
+      <pre><button class="copy" onclick="cp(this)" data-i18n="copy">複製</button><span class="cmd" data-i18n="cmd_install">幫我把 github.com/Nouischen/course2notes 這個技能裝到 ~/.claude/skills/course2notes，之後我要用它把線上課程做成筆記</span></pre>
       <p style="font-size:15px" data-i18n="step1_note">裝好後<b>重開 Claude Code 一次</b>讓技能生效，就一勞永逸。</p>
     </div>
     <div class="step">
@@ -219,10 +219,10 @@ var DICT={
  hero_micro:'桌機用 · 開源免費 · 輸出單一 HTML（免 Notion、免註冊、可列印 PDF）',
  prereq:'<div class="pq-title">🤖 本工具是 <b>Claude Code</b>（Anthropic 的 AI 工具）的一個技能。先在<b>你自己的電腦</b>裝好 Claude Code —— 以下二選一：</div><div class="pq-opts"><div class="pq-opt"><div class="pq-h"><span class="pq-badge">A</span> 桌面版 App <span class="pq-rec">推薦・免終端機</span></div><div class="pq-d">圖形介面、最好上手。開啟時記得選「<b>Local 本機模式</b>」。</div><a class="pq-btn" href="https://code.claude.com/docs/en/desktop" target="_blank">下載桌面版 App ↗</a></div><div class="pq-opt"><div class="pq-h"><span class="pq-badge">B</span> 終端機安裝（CLI）</div><div class="pq-d">熟終端機的人，貼對應系統那行：</div><div class="pq-cmd"><span class="pq-os">Windows（PowerShell）</span><pre><button class="copy" onclick="cp(this)">複製</button><span class="cmd">irm https://claude.ai/install.ps1 | iex</span></pre></div><div class="pq-cmd"><span class="pq-os">Mac / Linux</span><pre><button class="copy" onclick="cp(this)">複製</button><span class="cmd">curl -fsSL https://claude.ai/install.sh | bash</span></pre></div></div></div><div class="pq-note">⚠️ 網頁版（claude.ai/code，跑在雲端）碰不到你的電腦，不能用。裝好後，下面三步就能開始。</div>',
  start_head:'開始使用：全程在 Claude Code 裡對話',
- start_sub:'<b>你不用自己打任何指令、不用懂技術。</b>用平常講話的方式跟 Claude Code 說，它就自己幫你安裝、開瀏覽器、下載、轉錄、做筆記。你唯一要動手的，是<b>在它開的視窗登入你的課程平台</b>（為了安全，只能你本人登）。',
+ start_sub:'<b>你不用自己打任何指令、不用懂技術。</b>用平常講話的方式跟 Claude Code 說，它就自己幫你安裝、開瀏覽器、下載、轉錄、做筆記。你唯一要動手的，是<b>在它開的視窗登入你的課程平台</b>（為了安全，只能你本人登）。過程中 Claude Code 會跳出權限確認（裝套件、開瀏覽器）——按「允許」即可，這是正常流程。',
  step1_title:'叫它安裝（一次就好）',tag_cc:'🤖 對 Claude Code 說',
  step1_desc:'在 Claude Code 裡打這句，它會自己下載安裝：',
- cmd_install:'幫我安裝 github.com/Nouischen/course2notes 這個技能，之後我要用它把線上課程做成筆記',
+ cmd_install:'幫我把 github.com/Nouischen/course2notes 這個技能裝到 ~/.claude/skills/course2notes，之後我要用它把線上課程做成筆記',
  step1_note:'裝好後<b>重開 Claude Code 一次</b>讓技能生效，就一勞永逸。',
  step2_title:'叫它做筆記',step2_desc:'把網址換成你的課程網址，打這句：',
  cmd_make:'用 course2notes 把 https://你的課程網址 做成筆記',
@@ -251,10 +251,10 @@ var DICT={
  hero_micro:'Desktop · Free & open-source · One self-contained HTML (no Notion, no signup, print to PDF)',
  prereq:'<div class="pq-title">🤖 This tool is a skill for <b>Claude Code</b> (an AI tool by Anthropic). First install Claude Code on <b>your own computer</b> — pick one:</div><div class="pq-opts"><div class="pq-opt"><div class="pq-h"><span class="pq-badge">A</span> Desktop app <span class="pq-rec">Recommended · no terminal</span></div><div class="pq-d">A graphical app — easiest to start. When you open it, choose <b>Local mode</b>.</div><a class="pq-btn" href="https://code.claude.com/docs/en/desktop" target="_blank">Download the desktop app ↗</a></div><div class="pq-opt"><div class="pq-h"><span class="pq-badge">B</span> Install the CLI (terminal)</div><div class="pq-d">Comfortable with a terminal? Paste the line for your OS:</div><div class="pq-cmd"><span class="pq-os">Windows (PowerShell)</span><pre><button class="copy" onclick="cp(this)">Copy</button><span class="cmd">irm https://claude.ai/install.ps1 | iex</span></pre></div><div class="pq-cmd"><span class="pq-os">Mac / Linux</span><pre><button class="copy" onclick="cp(this)">Copy</button><span class="cmd">curl -fsSL https://claude.ai/install.sh | bash</span></pre></div></div></div><div class="pq-note">⚠️ The web version (claude.ai/code, running in the cloud) cannot reach your computer, so it will not work. Once installed, the three steps below are all you need.</div>',
  start_head:'Getting started: it all happens by chatting with Claude Code',
- start_sub:'<b>No commands to run, no tech skills needed.</b> You just talk to Claude Code in plain language — it installs itself, opens the browser, downloads, transcribes, and writes the notes. The only thing you do by hand is <b>log in to your course platform</b> in the window it opens (for security, only you can do that).',
+ start_sub:'<b>No commands to run, no tech skills needed.</b> You just talk to Claude Code in plain language — it installs itself, opens the browser, downloads, transcribes, and writes the notes. The only thing you do by hand is <b>log in to your course platform</b> in the window it opens (for security, only you can do that). Along the way Claude Code shows permission prompts (installing packages, opening the browser) — approving them is normal.',
  step1_title:'Tell it to install (just once)',tag_cc:'🤖 Say to Claude Code',
  step1_desc:'Type this in Claude Code and it downloads & installs itself:',
- cmd_install:'Install the skill from github.com/Nouischen/course2notes — I’ll use it to turn online courses into notes',
+ cmd_install:'Install the skill from github.com/Nouischen/course2notes into ~/.claude/skills/course2notes — I’ll use it to turn online courses into notes',
  step1_note:'After it installs, <b>restart Claude Code once</b> so the skill loads — then you’re set for good.',
  step2_title:'Tell it to make notes',step2_desc:'Replace the URL with your course, then type:',
  cmd_make:'Use course2notes to turn https://your-course-url into notes',

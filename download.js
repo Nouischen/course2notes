@@ -12,14 +12,23 @@ const items = JSON.parse(fs.readFileSync(MAN, 'utf8')).items.filter(x => x.avail
 console.log(`${items.length} 項待下載`);
 
 const DL_TIMEOUT = 20 * 60 * 1000; // 每項最多 20 分鐘，避免卡死的串流拖垮整條
-function ytdlp(args) { return spawnSync('python', ['-m', 'yt_dlp', ...args], { encoding: 'utf8', maxBuffer: 1 << 28, timeout: DL_TIMEOUT }); }
 
-// 前置檢查：python / yt-dlp 真的可用嗎（否則每項都 fail、看不出根因）
-const probe = ytdlp(['--version']);
-if (probe.error || probe.status !== 0) {
-  console.error('[需要] 找不到可用的 yt-dlp。請先安裝：pip install -U yt-dlp，並確認 python 在 PATH。');
+// 找可用的 Python 直譯器：Windows 常見 python/py，Mac/Linux 常只有 python3（寫死 'python' 會讓 Mac 全滅）
+const PY_CANDIDATES = process.platform === 'win32' ? ['python', 'py', 'python3'] : ['python3', 'python'];
+let PY = null, sawPython = false;
+for (const c of PY_CANDIDATES) {
+  const r = spawnSync(c, ['-m', 'yt_dlp', '--version'], { encoding: 'utf8', timeout: 30000 });
+  if (r.error) continue;
+  sawPython = true;
+  if (r.status === 0) { PY = c; break; }
+}
+if (!PY) {
+  console.error(sawPython
+    ? '[需要] 有 Python 但缺 yt-dlp 模組。請安裝：pip install -U yt-dlp（Mac/Linux 用 pip3 install -U yt-dlp）。'
+    : `[需要] 找不到 Python（試過 ${PY_CANDIDATES.join(' / ')}）。請先安裝 Python 並確認在 PATH。`);
   process.exit(2);
 }
+function ytdlp(args) { return spawnSync(PY, ['-m', 'yt_dlp', ...args], { encoding: 'utf8', maxBuffer: 1 << 28, timeout: DL_TIMEOUT }); }
 
 // yt-dlp 用 %(ext)s 讓它自己決定副檔名（webm/m4a/opus…），這裡照 idx 前綴找實際檔
 function findAudio(idx) {
