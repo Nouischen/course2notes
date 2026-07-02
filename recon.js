@@ -1,7 +1,7 @@
 // 偵察起手式：連 CDP、載入課程/單元頁，dump 連結路徑樣式 + 偵測媒體來源。
 // 給 agent 用來「看懂一個新平台」再決定列舉策略。用法：node recon.js <url>
 module.paths.push(require('path').join(require('os').homedir(), 'AppData/Roaming/npm/node_modules'));
-try { require.resolve('playwright'); } catch (_) { module.paths.push('/usr/local/lib/node_modules', '/usr/lib/node_modules'); }
+try { require.resolve('playwright-core'); } catch (_) { module.paths.push('/usr/local/lib/node_modules', '/usr/lib/node_modules'); }
 const { chromium } = require('playwright-core');
 const { classify } = require('./sniff.js');
 

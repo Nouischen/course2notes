@@ -21,10 +21,10 @@ You don't run any commands or need any tech skills: you just **talk to Claude Co
 
 - **Claude Code** — the **desktop app (Local mode)** or the **CLI**. *(The web version, claude.ai/code, runs in the cloud and can't reach your computer, so it won't work.)*
 - **Node.js**, **Python**, **ffmpeg**, and **Google Chrome** installed on your system.
-- **Transcription**: an **NVIDIA GPU** (free, local Whisper — the skill also installs the CUDA cuDNN/cuBLAS runtime it needs) — or, with no GPU, an **`OPENAI_API_KEY`** (~US$0.006/min).
+- **Transcription**: an **NVIDIA GPU** (free, local Whisper — the skill also installs the CUDA cuDNN/cuBLAS runtime it needs) — or, with no GPU, an **`OPENAI_API_KEY`** (create one at [platform.openai.com/api-keys](https://platform.openai.com/api-keys), billing required; ~US$0.006/min). Mac users and no-GPU Windows users take this path.
 - Desktop only. You must own the course and be able to log in to it.
 
-> The skill installs its own libraries automatically the first time it runs — `playwright-core` (via `npm install`) plus `yt-dlp` and the Whisper/OpenAI transcription packages (via `pip`). You don't install those by hand. Prefer to do it yourself? Inside the skill folder run `npm install`, then `pip install -r requirements.txt` and **either** `pip install -r requirements-gpu.txt` (NVIDIA GPU on Windows/Linux) **or** `pip install -r requirements-api.txt` (no GPU / macOS).
+> The skill installs its own libraries automatically the first time it runs — `playwright-core` (via `npm install`) plus `yt-dlp` and the Whisper/OpenAI transcription packages (via `pip`). You don't install those by hand. Prefer to do it yourself? Inside the skill folder run `npm install`, then `pip install -r requirements.txt` and **either** `pip install -r requirements-gpu.txt` (NVIDIA GPU on Windows/Linux) **or** `pip install -r requirements-api.txt` (no GPU / macOS). If `pip` says `externally-managed-environment` (Homebrew or Debian/Ubuntu Python), add `--break-system-packages`.
 
 ## Install
 
@@ -113,10 +113,10 @@ Course2Notes 是一個開源的 **[Claude Code](https://www.claude.com/product/c
 ## 你需要
 - **Claude Code**——**桌面版 App（Local 本機模式）** 或 **CLI 終端機版**。*（網頁版 claude.ai/code 跑在雲端、碰不到你的電腦，不能用。）*
 - 系統先裝好 **Node.js**、**Python**、**ffmpeg**、**Google Chrome**。
-- **轉錄**：有 **NVIDIA 顯卡**（免費、本機 Whisper——技能會一併裝好所需的 CUDA cuDNN/cuBLAS 執行期）；沒顯卡則需 **`OPENAI_API_KEY`**（約 US$0.006/分）
+- **轉錄**：有 **NVIDIA 顯卡**（免費、本機 Whisper——技能會一併裝好所需的 CUDA cuDNN/cuBLAS 執行期）；沒顯卡則需 **`OPENAI_API_KEY`**（到 [platform.openai.com/api-keys](https://platform.openai.com/api-keys) 申請、需綁付款；約 US$0.006/分）。Mac 與無顯卡的 Windows 都走這條。
 - 桌機用。你必須擁有該課程並能登入。
 
-> 技能會在**第一次執行時自動安裝自己的函式庫**——`playwright-core`（`npm install`）以及 `yt-dlp` 和 Whisper／OpenAI 轉錄套件（`pip`），這些你不用自己裝。想自己裝也行：在技能資料夾跑 `npm install`，再 `pip install -r requirements.txt`，然後**二選一**：`pip install -r requirements-gpu.txt`（NVIDIA 顯卡，Windows/Linux）或 `pip install -r requirements-api.txt`（無顯卡／macOS）。
+> 技能會在**第一次執行時自動安裝自己的函式庫**——`playwright-core`（`npm install`）以及 `yt-dlp` 和 Whisper／OpenAI 轉錄套件（`pip`），這些你不用自己裝。想自己裝也行：在技能資料夾跑 `npm install`，再 `pip install -r requirements.txt`，然後**二選一**：`pip install -r requirements-gpu.txt`（NVIDIA 顯卡，Windows/Linux）或 `pip install -r requirements-api.txt`（無顯卡／macOS）。若 `pip` 報 `externally-managed-environment`（Homebrew 或 Debian/Ubuntu 的 Python），加 `--break-system-packages`。
 
 ## 安裝
 **1. 取得 Claude Code**（二選一）：

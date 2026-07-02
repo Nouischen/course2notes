@@ -1,10 +1,4 @@
 {
-  "cdpEndpoint": "http://localhost:9222",
-  "language": "zh-Hant",
-  "transcribe": "auto",
-  "apiProvider": "openai",
-  "brandColor": "#0091AC",
-  "siteTitle": "我的課程筆記",
   "telemetry": true,
   "telemetryEndpoint": "https://course2notes-analytics.nouischen.workers.dev/event"
 }

@@ -210,6 +210,7 @@ var DICT={
 'zh-Hant':{
  title:'Course2Notes｜買了看不完的課，一鍵變成讀得完的筆記',
  copy:'複製',
+ sample_tooltip:'打開完整範例',
  nav_platforms:'支援平台',nav_how:'運作原理',nav_start:'開始使用',
  eyebrow:'給「課買太多、看太少」的你',
  byline:'✍️ 作者：<b>陳昱傑醫師</b>',
@@ -242,6 +243,7 @@ var DICT={
 'en':{
  title:'Course2Notes — turn courses you never finish into notes you’ll actually read',
  copy:'Copy',
+ sample_tooltip:'Open the full sample',
  nav_platforms:'Platforms',nav_how:'How it works',nav_start:'Get started',
  eyebrow:'For everyone who buys courses faster than they finish them',
  byline:'✍️ by <b>Dr. Yu-Chieh Chen</b>',
@@ -279,13 +281,18 @@ function applyLang(l){
   document.querySelectorAll('[data-i18n]').forEach(function(el){var k=el.getAttribute('data-i18n');if(d[k]!=null)el.innerHTML=d[k];});
   document.querySelectorAll('.langbtn').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-lang')===CUR);});
   var en=CUR==='en';
-  document.querySelectorAll('.samplelink').forEach(function(a){a.href=en?'./sample-notes-en.html':'./sample-notes.html';});
+  document.querySelectorAll('.samplelink').forEach(function(a){a.href=en?'./sample-notes-en.html':'./sample-notes.html';if(a.getAttribute('title')!==null)a.title=d.sample_tooltip||a.title;});
   var img=document.querySelector('.frame img');if(img)img.src=en?'./preview-en.png':'./preview.png';
   try{localStorage.setItem('c2n_lang',CUR);}catch(e){}
 }
 function setLang(l){applyLang(l);}
-function cp(btn){var s=btn.parentElement.querySelector('.cmd');if(!s)return;navigator.clipboard.writeText(s.textContent);btn.textContent=(CUR==='en'?'Copied ✓':'已複製 ✓');setTimeout(function(){btn.textContent=(DICT[CUR]||{}).copy||'複製';},1400);}
+function cp(btn){var s=btn.parentElement.querySelector('.cmd');if(!s)return;var txt=s.textContent;function done(){btn.textContent=(CUR==='en'?'Copied ✓':'已複製 ✓');setTimeout(function(){btn.textContent=(DICT[CUR]||{}).copy||'複製';},1400);}
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,fallback);}else{fallback();}}catch(e){fallback();}
+  function fallback(){try{var t=document.createElement('textarea');t.value=txt;t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);done();}catch(_){/* 最壞情況：讓使用者自行選取複製 */}}}
 (function(){var saved=null;try{saved=localStorage.getItem('c2n_lang');}catch(e){}var nl=(navigator.language||'').toLowerCase();applyLang(saved||(nl.indexOf('zh')===0?'zh-Hant':'en'));})();
+// 點「支援平台／運作原理」錨點時，自動展開目標 <details>（否則只捲到一行摺疊標題）
+function openHashDetails(){var h=location.hash;if(!h||h.length<2)return;var el;try{el=document.querySelector(h);}catch(e){return;}if(el&&el.tagName==='DETAILS')el.open=true;}
+addEventListener('hashchange',openHashDetails);openHashDetails();
 </script>
 </body>
 </html>
