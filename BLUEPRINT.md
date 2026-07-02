@@ -21,7 +21,7 @@
        1 偵察 Recon   → 認出平台結構＋影片/音訊掛哪
        2 抓清單 Harvest → 列舉所有單元＋媒體來源（產 manifest）
        3 下載 Download  → yt-dlp 抓 audio-only（Vimeo referer／SoundCloud token／HLS／YouTube）
-       4 轉錄 Transcribe → 本機 faster-whisper（免費，需GPU）｜或 Whisper/Deepgram API（付費，免GPU）
+       4 轉錄 Transcribe → 本機 faster-whisper（免費，需GPU）｜或 OpenAI Whisper API（付費，免GPU，音檔上傳 OpenAI）
        5 做筆記 Notes   → 子代理 fan-out，逐單元結構化筆記（修簡繁/術語，抓框架）
        6 產出 Render    → 一份漂亮 self-contained HTML（目錄＋分節＋可折疊＋可印）
        7 回報 Telemetry → POST 匿名事件
@@ -40,7 +40,7 @@
 | M2 | **偵察 Recon** `recon.js` | CDP 連已登入 Chrome、載入課程頁、判斷結構（課→章→單元）與媒體 host | 改寫 `doctorally-tools/recon*.js` | 小 |
 | M3 | **抓清單 Harvest** `harvest.js` | 列舉單元＋攔 `player.vimeo/soundcloud/youtube` 抓媒體ID，產 manifest，標下架 | 改寫 `doctorally-tools/harvest.js`（已多來源） | 小-中 |
 | M4 | **下載 Download** `download.js` | yt-dlp 抓 audio-only，多 host（Vimeo referer／SC token／HLS／YT） | **幾乎直接沿用** `doctorally-tools/download.js` | 極小 |
-| M5 | **轉錄 Transcribe** `transcribe.py` | faster-whisper large-v3（本機）＋**新增 API 選項**（Whisper/Deepgram）給無 GPU 者 | 沿用 `doctorally-tools/transcribe.py`＋加 API 分支 | 小 |
+| M5 | **轉錄 Transcribe** `transcribe.py` | faster-whisper large-v3（本機）＋**API 選項**（OpenAI Whisper，音檔上傳 OpenAI）給無 GPU 者 | 沿用 `doctorally-tools/transcribe.py`＋加 API 分支 | 小 |
 | M6 | **做筆記 Notes**（prompt 模板） | 逐單元筆記規格（修簡繁＋依脈絡修 ASR＋抓框架＋可執行要點） | 昨天已驗證好用的筆記 agent 指令，模板化 | 小 |
 | M7 | **HTML 產生器** `render.js` | 讀 notes/ → 一份漂亮 self-contained HTML（內嵌 CSS、封面、目錄、分節、折疊、列印CSS） | **全新**（取代 Notion 建置） | 中（此案關鍵新件） |
 | M8 | **回報端 Telemetry** `telemetry.js` | 首跑生成匿名 install_id＋同意提示；每次交件 POST 事件；可關 | 全新（很小） | 極小 |
