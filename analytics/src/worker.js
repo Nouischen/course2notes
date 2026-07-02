@@ -4,13 +4,26 @@
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
     if (request.method === 'OPTIONS') return new Response(null, { headers: cors() });
-    if (request.method === 'POST' && url.pathname === '/event') return handleEvent(request, env);
-    if (request.method === 'GET' && url.pathname === '/admin') return handleAdmin(request, env);
+    if (request.method === 'POST' && url.pathname === '/event') {
+      if (await limited(env.EVENT_LIMITER, ip)) return json({ ok: false, e: 'rate limited' }, 429);
+      return handleEvent(request, env);
+    }
+    if (request.method === 'GET' && url.pathname === '/admin') {
+      if (await limited(env.ADMIN_LIMITER, ip)) return new Response('Too many requests', { status: 429, headers: { 'Cache-Control': 'no-store' } });
+      return handleAdmin(request, env);
+    }
     return new Response('Not found', { status: 404 });
   }
 };
 
+// 依來源 IP 限流（Workers Rate Limiting 綁定）；綁定不存在時不擋，確保無設定也能運作
+async function limited(limiter, key) {
+  if (!limiter) return false;
+  try { const { success } = await limiter.limit({ key }); return !success; }
+  catch (_) { return false; }
+}
 function cors() {
   return { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST,OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type' };
 }

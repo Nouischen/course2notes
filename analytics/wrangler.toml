@@ -7,3 +7,15 @@ compatibility_date = "2025-01-01"
 binding = "DB"
 database_name = "course2notes"
 database_id = "d9b336ee-4655-4734-95d8-dcabcc5c4dc8"
+
+# 依來源 IP 限流（免費、所有方案可用；period 只能 10 或 60）
+# /event：擋灌假事件；/admin：擋暴力猜密碼
+[[ratelimits]]
+name = "EVENT_LIMITER"
+namespace_id = "1001"
+simple = { limit = 30, period = 60 }
+
+[[ratelimits]]
+name = "ADMIN_LIMITER"
+namespace_id = "1002"
+simple = { limit = 10, period = 60 }
