@@ -69,6 +69,12 @@ nav .sp{margin-left:auto}
 section{padding:58px 0}
 .sechead{margin:0 0 6px;font-size:30px;font-weight:900}
 .sesub{color:var(--muted);font-size:17px;margin:0 0 34px}
+.feats{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px}
+.feat{display:flex;gap:13px;align-items:flex-start;background:var(--card,#fff);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.feat .fi{font-size:22px;line-height:1.2;flex:none}
+.feat b{display:block;margin-bottom:2px}
+.feat div{font-size:14.5px;color:var(--muted);line-height:1.6}
+@media(max-width:720px){.feats{grid-template-columns:1fr}}
 /* steps */
 .steps{display:flex;flex-direction:column;gap:18px}
 .step{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:26px 30px;box-shadow:0 4px 14px rgba(8,52,59,.04)}
@@ -178,6 +184,11 @@ details .body td{padding:11px 14px;border-top:1px solid var(--line);color:var(--
   </div>
 </div></section>
 
+<section id="features"><div class="wrap">
+  <h2 class="sechead" data-i18n="feat_head">每份筆記裡有什麼</h2>
+  <div class="feats" data-i18n="feats"></div>
+</div></section>
+
 <section id="privacy"><div class="wrap">
   <h2 class="sechead" data-i18n="priv_head">隱私：我們只收數字</h2>
   <div class="priv" data-i18n="priv_body">
@@ -242,6 +253,8 @@ var DICT={
  step3_title:'登入一次，剩下它全包',tag_login:'🖱️ 你只要登入',
  step3_desc:'它會<b>自動開一個瀏覽器視窗</b>，你在裡面登入你的課程平台、打開那門課，跟它說「好了」。<b>（你是在平台官方的登入頁輸入密碼，跟平常一樣；工具碰不到你的帳密。<a href="#trust">為什麼安全 ↓</a>）</b>接著它自動跑完：',
  step3_flow:'<code class="k">偵察平台 → 下載音訊 → 轉逐字稿 → 整理筆記 → 產出漂亮 HTML</code>，完成後雙擊 HTML 就是你的筆記。',
+ feat_head:'每份筆記裡有什麼',
+ feats:'<div class="feat"><span class="fi">🗺️</span><div><b>本課地圖</b>一眼看完整門課、點單元直接跳到那一篇。</div></div><div class="feat"><span class="fi">🎯</span><div><b>彩色重點框</b>重點、金句、注意、圖示重建，一目了然。</div></div><div class="feat"><span class="fi">🖼️</span><div><b>投影片截圖</b>關鍵圖表直接嵌進筆記、可點擊放大（有投影片的課）。</div></div><div class="feat"><span class="fi">📝</span><div><b>隨堂測驗＋單字卡</b>考自己、加深記憶，就在筆記裡，選答即時對錯。</div></div><div class="feat"><span class="fi">☑️</span><div><b>可勾選待辦</b>可執行要點打勾，重開還記得你的進度。</div></div><div class="feat"><span class="fi">🔍</span><div><b>好讀好找</b>側欄導覽、即時搜尋、可調字級、可列印成 PDF。</div></div><div class="feat"><span class="fi">📄</span><div><b>自成一檔 HTML</b>不綁 Notion、零帳號、離線可讀，永久保存。</div></div><div class="feat"><span class="fi">🔁</span><div><b>複習模式</b>對筆記資料夾重開 Claude Code，就是你本機的 NotebookLM。</div></div>',
  priv_head:'隱私：我們只收數字',
  priv_body:'<p style="margin-top:0"><b>預設會回傳一筆「匿名使用計數」</b>，幫我們判斷有多少人在用。只收：一組本機隨機碼（無法對應到你）、事件（安裝／完成筆記）、這次幾份筆記、平台類型、版本、時間。</p><p style="margin:0"><b>絕對不收：</b>你的筆記內容、課程名稱、網址、任何個資或檔案。程式碼開源可自查。關閉：設 <code class="k">COURSE2NOTES_TELEMETRY=off</code>。</p><p style="margin:12px 0 0">🎙️ <b>關於轉錄：</b>有 NVIDIA 顯卡或 Apple Silicon Mac 時，音檔在本機轉錄、不離開你的電腦；其他情況（Intel Mac／AMD／無顯卡）用 OpenAI API 模式時，你的音檔會上傳給 OpenAI 轉錄（適用 OpenAI 的 API 資料政策），但作者端一樣收不到任何東西。</p>',
  trust:'<summary>🔒 會不會偷我的帳號密碼？植入木馬？（很合理的疑慮，點開看）</summary><div class="oa-body">簡單講：<b>你不用把帳密交給這個工具，也不用「相信我」——因為程式全攤在陽光下，你自己讀得到。</b><br><br>· <b>密碼只有你、只在平台官方頁面輸入。</b>工具做的是幫你開一個你看得到的 Chrome 視窗、連到課程網址，你就像平常一樣在<b>平台自己的登入頁</b>登入。它不會跳自己的表單、碰不到你的鍵盤輸入，也不會問你要密碼。<br>· <b>用的是獨立的瀏覽器設定檔</b>（另開一個 <code class="k">--user-data-dir</code>），不動你日常的 Chrome；登入狀態留在這個獨立設定檔，做完可以直接刪掉。<br>· 它連上瀏覽器只做一件事：<b>看頁面、找到影片／音訊的網址、把它下載下來</b>——就是自動化一個你看得到的瀏覽器，不是偷偷在背景撈東西。<br>· <b>100% 開源、沒有任何編譯過或藏起來的東西。</b>每支腳本都很短、可讀，包括負責回報的 <code class="k">telemetry.js</code>（只送匿名計數、可關）。你甚至可以在跑之前，直接叫你自己的 Claude Code「幫我把這個技能的程式從頭審一遍，看有沒有偷傳我的資料」。<br>· 全程跑在<b>你自己的電腦、你自己的 Claude Code</b>；作者沒有任何伺服器會收到你的內容或登入資訊。<br><br>一句話：<b>你不用信任我，你只要信任你讀得到的程式碼。</b></div>',
@@ -276,6 +289,8 @@ var DICT={
  step3_title:'Log in once — it handles the rest',tag_login:'🖱️ You just log in',
  step3_desc:'It <b>opens a browser window for you</b>; log in to your course platform, open the course, and tell it “done”. <b>(You type your password on the platform’s own login page, exactly as usual; the tool never touches your credentials. <a href="#trust">Why it’s safe ↓</a>)</b> Then it runs the whole pipeline:',
  step3_flow:'<code class="k">detect the platform → download audio → transcribe → write the notes → generate a clean HTML</code>. Double-click the HTML and there are your notes.',
+ feat_head:'What every set of notes gives you',
+ feats:'<div class="feat"><span class="fi">🗺️</span><div><b>Course map</b>see the whole course at a glance; click a unit to jump to it.</div></div><div class="feat"><span class="fi">🎯</span><div><b>Colored callouts</b>key points, quotes, warnings, rebuilt figures — all at a glance.</div></div><div class="feat"><span class="fi">🖼️</span><div><b>Slide screenshots</b>key charts embedded right in the notes, click to enlarge (for slide courses).</div></div><div class="feat"><span class="fi">📝</span><div><b>Quiz + flashcards</b>test yourself and remember more, right inside the notes, graded instantly.</div></div><div class="feat"><span class="fi">☑️</span><div><b>Checkable to-dos</b>tick off action items; it remembers your progress across reopens.</div></div><div class="feat"><span class="fi">🔍</span><div><b>Easy to read &amp; search</b>sidebar nav, live search, adjustable font size, print to PDF.</div></div><div class="feat"><span class="fi">📄</span><div><b>One self-contained HTML</b>no Notion, no account, offline-readable, yours forever.</div></div><div class="feat"><span class="fi">🔁</span><div><b>Review mode</b>reopen Claude Code in the notes folder — your own local NotebookLM.</div></div>',
  priv_head:'Privacy: we only collect numbers',
  priv_body:'<p style="margin-top:0"><b>By default it sends one anonymous usage ping</b> so we can gauge how many people use it. It only includes: a random local ID (can’t be traced to you), the event (install / notes done), how many notes this run, the platform type, version, and timestamp.</p><p style="margin:0"><b>Never collected:</b> your notes, course names, URLs, or any personal data or files. The code is open-source — check for yourself. Turn it off: set <code class="k">COURSE2NOTES_TELEMETRY=off</code>.</p><p style="margin:12px 0 0">🎙️ <b>About transcription:</b> with an NVIDIA GPU or an Apple Silicon Mac, audio is transcribed locally and never leaves your computer; otherwise (Intel Mac, AMD/Intel GPU, or no GPU) the OpenAI API mode sends your audio to OpenAI to transcribe (under OpenAI’s API data policy) — the author still receives nothing.</p>',
  trust:'<summary>🔒 Will it steal my password or plant malware? (a fair question — open me)</summary><div class="oa-body">Short version: <b>you never hand your password to this tool, and you don’t have to “trust me” — the code is all in the open for you to read.</b><br><br>· <b>Your password is only ever typed by you, on the platform’s own login page.</b> The tool opens a real Chrome window you can watch, pointed at your course URL; you log in exactly as you always do, <b>on the platform’s real site</b>. It never shows its own form, never touches your keystrokes, and never asks you for a password.<br>· It uses a <b>separate browser profile</b> (its own <code class="k">--user-data-dir</code>), so it doesn’t touch your everyday Chrome; the login stays in that isolated profile and you can delete it when you’re done.<br>· All it does with the browser is <b>read the page, find the video/audio URL, and download it</b> — automating a browser you can see, not quietly harvesting anything.<br>· <b>100% open source, nothing compiled or hidden.</b> Every script is short and readable, including <code class="k">telemetry.js</code> (anonymous counts only, and you can turn it off). You can even ask your own Claude Code to audit the whole skill for anything sketchy before you run it.<br>· It all runs on <b>your own computer and your own Claude Code</b>; the author has no server that ever receives your content or your login.<br><br>In one line: <b>you don’t have to trust me — only the code you can read.</b></div>',

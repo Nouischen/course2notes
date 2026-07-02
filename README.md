@@ -15,7 +15,7 @@ You don't run any commands or need any tech skills: you just **talk to Claude Co
 - **Works on the courses you actually paid for.** Most tools only handle public YouTube, or scrape whatever captions a platform happens to expose. Course2Notes drives your own logged-in browser, so it reaches courses **behind a login wall** — Teachify, 知識衛星, Hahow, LearnDash, and the like — not just free videos.
 - **Adaptive, not a fixed scraper.** It doesn't rely on brittle per-site scrapers (the kind that break every time a platform changes its HTML). Your Claude Code **reads each platform on the fly** and figures out how to grab it — so it adapts to many different course sites.
 - **Runs on your machine, your AI.** You use your own Claude Code and your own compute, and **the author never receives any of your content**. With an NVIDIA GPU (Windows/Linux) or an Apple Silicon Mac, transcription runs locally and your audio never leaves your computer; otherwise the OpenAI API mode sends only the audio to OpenAI to transcribe (the transcript is then written into notes by your own Claude Code either way — see [Privacy](#privacy)).
-- **Beautiful HTML — no Notion, no account.** The output is a single self-contained HTML file: sidebar navigation, search, collapsible sections, adjustable font size, and print-to-PDF. Opens in any browser.
+- **Beautiful HTML — no Notion, no account.** The output is a single self-contained HTML file with a lot packed in: an auto **course map** (every unit + a one-line summary, click to jump), colored **callouts** (key points / quotes / warnings / rebuilt figures), embedded **slide screenshots** with click-to-enlarge (for slide courses), an interactive **quiz + flashcards** to test yourself, checkable **to-dos** that remember your progress, plus sidebar nav, live search, adjustable font size, and print-to-PDF. Opens in any browser, offline, yours forever.
 - **Private by design.** Anonymous usage counts only — never your notes, course names, URLs, or files. See [Privacy](#privacy).
 
 ## What you need
@@ -127,7 +127,7 @@ Course2Notes 是一個開源的 **[Claude Code](https://www.claude.com/product/c
 - **做得到你真正付費的那些課。** 多數工具只能處理公開的 YouTube，或刮平台剛好有開的字幕。Course2Notes 是驅動你自己已登入的瀏覽器，所以搆得到**登入牆後面**的課——Teachify、知識衛星、Hahow、LearnDash 這些，而不只是免費影片。
 - **臨場適應，不是固定爬蟲。** 它不靠脆弱的逐站爬蟲（那種平台一改版 HTML 就壞），而是讓你的 Claude Code **臨場看懂每個平台**、自己想辦法抓——所以能適應很多課程網站。
 - **跑在你的電腦、你的 AI。** 用你自己的 Claude Code 與算力，作者不為你的用量付費，**作者也收不到你的任何內容**。有 NVIDIA 顯卡或 Apple Silicon Mac 時轉錄完全在本機、音檔不離開你的電腦；其他情況（Intel Mac／AMD／無顯卡）用 OpenAI API 模式時，只有音檔會上傳給 OpenAI 轉錄（逐字稿之後無論哪種都是由你自己的 Claude Code 整理成筆記；見下方隱私）。
-- **漂亮 HTML——免 Notion、免註冊。** 輸出是單一自成一檔的 HTML：側欄導覽、搜尋、可折疊、可調字級、可列印 PDF，任何瀏覽器都能開。
+- **漂亮 HTML——免 Notion、免註冊。** 輸出是單一自成一檔的 HTML，內容很豐富：自動**本課地圖**（每個單元＋一句話，點了直接跳）、彩色**重點框**（重點／金句／注意／圖示重建）、嵌入的**投影片截圖**可點擊放大（有投影片的課）、互動**測驗＋單字卡**考自己、可勾選且**記住進度的待辦**，再加上側欄導覽、即時搜尋、可調字級、可列印 PDF。任何瀏覽器都能開、可離線、永久保存。
 - **隱私優先。** 只回傳匿名計數，絕不含你的筆記、課名、網址或檔案（見下方隱私）。
 
 ## 你需要
