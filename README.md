@@ -56,7 +56,7 @@ The skill must end up at `~/.claude/skills/course2notes/SKILL.md` — that exact
 
 1. **Install** (once) — the line above.
 2. **Make notes** — say: `Use course2notes to turn https://your-course-url into notes`
-3. **Log in once** — it opens a browser window; you log in to your course platform and open the course, then tell it "done". It runs the rest automatically: **detect platform → download audio → transcribe → write notes → generate a clean HTML.** Double-click the HTML and there are your notes.
+3. **Log in once** — it opens a browser window; you log in to your course platform and open the course, then tell it "done". (You type your password on the platform's own login page, exactly as usual — the tool never sees your password; see [Is it safe?](#is-it-safe-about-the-login-window).) It runs the rest automatically: **detect platform → download audio → transcribe → write notes → generate a clean HTML.** Double-click the HTML and there are your notes.
 
 > Notes come out in the language you write in. Want a specific one? Just add e.g. *"notes in English"*.
 
@@ -71,6 +71,17 @@ It isn't a fixed scraper, so it adapts — but it can't beat hard DRM.
 | Platforms using Vimeo / SoundCloud / YouTube / HLS (LearnDash-, Teachify-style sites, and more) | ✅ Yes |
 | Text / article-based courses | ✅ Yes |
 | Hard-DRM encrypted streams (some large platforms) | ✘ No |
+
+## Is it safe? (about the login window)
+
+Fair question — you're about to log in to a platform inside a tool you just downloaded. The short version: **you never hand your password to this tool, and you don't have to take my word for it, because the code is open and short enough to read.**
+
+- **Your password is only ever typed by you, on the platform's own login page.** The tool opens a real Chrome window — its own **separate profile**, not your everyday Chrome — pointed at your course URL; you log in exactly as you always do, on the platform's real site. It never shows its own login form, never reads your keystrokes, and never asks you for a password.
+- **All it does with the browser** is read the page to find the video/audio URL and download it. It automates a browser you can watch; it is not a background credential harvester.
+- **100% open source, nothing compiled or obfuscated.** Every script (`recon.js`, `sniff.js`, `download.js`, `transcribe.py`, `render.js`, and the anonymous `telemetry.js`) is short and readable. Before you run it, you can even ask your own Claude Code to audit the whole skill for anything that exfiltrates your data.
+- It runs on **your own computer and your own Claude Code**; the author has no server that ever receives your content or your login. The login session lives in that separate browser profile, which you can delete when you're done.
+
+In one line: **you don't have to trust me — only the code you can read.**
 
 ## Privacy
 
@@ -143,7 +154,7 @@ Course2Notes 是一個開源的 **[Claude Code](https://www.claude.com/product/c
 ## 怎麼用（三步，全程跟 Claude Code 講）
 1. **安裝**（一次）——上面那句。
 2. **做筆記**——說：`用 course2notes 把 https://你的課程網址 做成筆記`
-3. **登入一次**——它會開一個瀏覽器視窗；你登入課程平台、打開那門課，跟它說「好了」。剩下它自動跑完：**偵察平台 → 下載音訊 → 轉逐字稿 → 整理筆記 → 產出漂亮 HTML**，雙擊 HTML 就是你的筆記。
+3. **登入一次**——它會開一個瀏覽器視窗；你登入課程平台、打開那門課，跟它說「好了」。（你是在平台官方的登入頁輸入密碼，跟平常一樣，工具碰不到你的帳密；見下方「這樣安全嗎？」）剩下它自動跑完：**偵察平台 → 下載音訊 → 轉逐字稿 → 整理筆記 → 產出漂亮 HTML**，雙擊 HTML 就是你的筆記。
 
 > 筆記預設用你發問的語言。想指定就句尾加一句，例如「筆記用英文」。
 
@@ -155,6 +166,17 @@ Course2Notes 是一個開源的 **[Claude Code](https://www.claude.com/product/c
 | 影片掛 Vimeo / SoundCloud / YouTube / HLS 的平台（知識衛星、Teachify 類、LearnDash 類…） | ✅ 可 |
 | 純文字／文章型課程 | ✅ 可 |
 | 硬 DRM 加密串流（部分大型平台） | ✘ 不可 |
+
+## 這樣安全嗎？（關於那個登入視窗）
+
+很合理的疑慮——你剛下載一個工具，它就要你在裡面登入平台。簡單講：**你不用把帳密交給這個工具，也不用「相信我」，因為程式全是開源、而且短到你讀得完。**
+
+- **密碼只有你、只在平台官方頁面輸入。** 工具開的是一個你看得到的 Chrome 視窗（用**獨立的設定檔**，不動你日常的 Chrome），連到你的課程網址；你就像平常一樣在平台自己的登入頁登入。它不會跳自己的登入表單、不會讀你的鍵盤輸入，也不會問你要密碼。
+- **它連上瀏覽器只做一件事**：看頁面、找到影片／音訊網址、把它下載下來。它自動化的是一個你看得到的瀏覽器，不是在背景偷撈帳密。
+- **100% 開源、沒有任何編譯過或混淆的東西。** 每支腳本（`recon.js`、`sniff.js`、`download.js`、`transcribe.py`、`render.js`，以及只送匿名計數的 `telemetry.js`）都很短、可讀。跑之前，你甚至可以直接叫你自己的 Claude Code「幫我把這個技能從頭審一遍，看有沒有偷傳我的資料」。
+- 全程跑在**你自己的電腦、你自己的 Claude Code**；作者沒有任何伺服器會收到你的內容或登入資訊。登入狀態留在那個獨立的瀏覽器設定檔，做完可以直接刪掉。
+
+一句話：**你不用信任我，你只要信任你讀得到的程式碼。**
 
 ## 隱私
 預設會回傳**一筆匿名使用計數**：只有一組本機隨機碼（無法對應到你）、事件（安裝／完成筆記）、這次幾份、平台類型、版本、時間。**絕不**收你的筆記內容、課名、網址或任何個資／檔案。程式碼開源，可自查 `telemetry.js`。關閉：設 `COURSE2NOTES_TELEMETRY=off`。
