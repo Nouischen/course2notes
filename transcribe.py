@@ -10,10 +10,13 @@ try:
 except Exception:
     pass
 
+if len(sys.argv) < 3:
+    print("用法: python transcribe.py <audio_dir> <transcript_dir> [--api]", flush=True); sys.exit(2)
 AUD, TR = sys.argv[1], sys.argv[2]
 USE_API = "--api" in sys.argv[3:]
 os.makedirs(TR, exist_ok=True)
 LANG = os.environ.get("COURSE2NOTES_LANG", "zh")
+SEP = "" if LANG.lower().startswith(("zh", "ja")) else " "  # CJK 不加空格；其餘語言段落間用空白
 
 exts = ("*.m4a", "*.mp4", "*.webm", "*.aac", "*.mp3", "*.wav")
 files = sorted({f for e in exts for f in glob.glob(os.path.join(AUD, e))})
@@ -45,23 +48,59 @@ if USE_API or not has_gpu():
         from openai import OpenAI
     except Exception:
         print("[需要] 請先 pip install openai", flush=True); sys.exit(2)
+    import subprocess, tempfile, shutil
+    MAX_API_BYTES = 24 * 1024 * 1024  # whisper-1 上限 25MB，留安全邊界
+
+    def _ff(args):
+        try:
+            return subprocess.run(["ffmpeg", "-nostdin", "-y", *args], capture_output=True)
+        except FileNotFoundError:
+            return None
+
+    def api_one(client, path_in):
+        with open(path_in, "rb") as fh:
+            return client.audio.transcriptions.create(model="whisper-1", file=fh, language=LANG).text
+
+    def api_transcribe(client, audio):
+        # 先壓成 16k 單聲道低位元率（whisper 只需這樣），順便大幅縮小體積 → 多數課程一次就送得出去
+        tmpd = tempfile.mkdtemp(prefix="c2n_")
+        try:
+            comp = os.path.join(tmpd, "a.m4a")
+            r = _ff(["-i", audio, "-ac", "1", "-ar", "16000", "-b:a", "32k", comp])
+            src = comp if (r is not None and r.returncode == 0 and os.path.exists(comp)) else audio
+            if os.path.getsize(src) <= MAX_API_BYTES:
+                return api_one(client, src)
+            # 仍超過上限（超長課程）→ 用 ffmpeg 切成約 10 分鐘一段，分批送再拼接
+            seg = os.path.join(tmpd, "seg_%03d.m4a")
+            _ff(["-i", src, "-f", "segment", "-segment_time", "600", "-c", "copy", seg])
+            parts = sorted(glob.glob(os.path.join(tmpd, "seg_*.m4a"))) or [src]
+            return SEP.join(api_one(client, p) for p in parts)
+        finally:
+            shutil.rmtree(tmpd, ignore_errors=True)
+
     client = OpenAI()
-    print("[model] OpenAI Whisper API", flush=True)
+    print("[model] OpenAI Whisper API（注意：音檔會上傳到 OpenAI 進行轉錄）", flush=True)
+    fails = []
     for audio, base in jobs:
         name = os.path.basename(base)
         print(f"[job] {os.path.basename(audio)} -> {name} (API)", flush=True)
         try:
-            with open(audio, "rb") as fh:
-                tr = client.audio.transcriptions.create(model="whisper-1", file=fh, language=LANG)
-            open(base + ".fulltext.txt", "w", encoding="utf-8").write(tr.text)
+            text = api_transcribe(client, audio)
+            open(base + ".fulltext.txt", "w", encoding="utf-8").write(text)
             print(f"[done] {name}", flush=True)
         except Exception as e:
-            print(f"[ERR] {name}: {e}", flush=True)
+            fails.append(name); print(f"[ERR] {name}: {e}", flush=True)
+    if fails:
+        print(f"[WARN] {len(fails)} 個單元轉錄失敗（未產生逐字稿）：{', '.join(fails)}", flush=True)
     print("[ALLDONE]", flush=True); sys.exit(0)
 
 # ---- 本機 faster-whisper 路徑 ----
 # 若使用 whisper-work venv 的 nvidia dll，可在此加入 os.add_dll_directory(...)
-from faster_whisper import WhisperModel
+try:
+    from faster_whisper import WhisperModel
+except Exception:
+    print("[需要] 偵測到 GPU 但未安裝 faster-whisper。請 pip install faster-whisper，或改用 --api。", flush=True)
+    sys.exit(2)
 
 PRIMER = os.environ.get("COURSE2NOTES_PRIMER",
     "以下是一場線上課程或講座的錄音，內容為專業知識講解。")
@@ -73,8 +112,13 @@ try:
     model = WhisperModel("large-v3", device="cuda", compute_type="int8_float16")
     print("[model] large-v3 CUDA int8_float16", flush=True)
 except Exception as e:
-    print(f"[model] CUDA 失敗({e})，改 CPU（會慢）", flush=True)
-    model = WhisperModel("large-v3", device="cpu", compute_type="int8")
+    if os.environ.get("COURSE2NOTES_ALLOW_CPU"):
+        print(f"[model] CUDA 失敗({e})，改用 CPU（large-v3 在 CPU 上非常慢）", flush=True)
+        model = WhisperModel("large-v3", device="cpu", compute_type="int8")
+    else:
+        print(f"[需要] CUDA 初始化失敗({e})。large-v3 在 CPU 上會非常慢，建議改用 --api；"
+              "若真的要用 CPU，設環境變數 COURSE2NOTES_ALLOW_CPU=1 再重跑。", flush=True)
+        sys.exit(2)
 
 for audio, base in jobs:
     name = os.path.basename(base)
@@ -93,7 +137,7 @@ for audio, base in jobs:
             if pct>=last+10: last=pct; print(f"  {name} ...{pct}%", flush=True)
         tf.close()
         json.dump(rows, open(base+".json","w",encoding="utf-8"), ensure_ascii=False, indent=1)
-        open(base+".fulltext.txt","w",encoding="utf-8").write("".join(r["text"] for r in rows))
+        open(base+".fulltext.txt","w",encoding="utf-8").write(SEP.join(r["text"] for r in rows))
         print(f"[done] {name}: {len(rows)} segments", flush=True)
     except Exception as e:
         print(f"[ERR] {name}: {e}", flush=True)

@@ -11,23 +11,47 @@ fs.mkdirSync(AUD, { recursive: true });
 const items = JSON.parse(fs.readFileSync(MAN, 'utf8')).items.filter(x => x.available && x.downloadUrl);
 console.log(`${items.length} 項待下載`);
 
-function ytdlp(args) { return spawnSync('python', ['-m', 'yt_dlp', ...args], { encoding: 'utf8', maxBuffer: 1 << 28 }); }
+const DL_TIMEOUT = 20 * 60 * 1000; // 每項最多 20 分鐘，避免卡死的串流拖垮整條
+function ytdlp(args) { return spawnSync('python', ['-m', 'yt_dlp', ...args], { encoding: 'utf8', maxBuffer: 1 << 28, timeout: DL_TIMEOUT }); }
+
+// 前置檢查：python / yt-dlp 真的可用嗎（否則每項都 fail、看不出根因）
+const probe = ytdlp(['--version']);
+if (probe.error || probe.status !== 0) {
+  console.error('[需要] 找不到可用的 yt-dlp。請先安裝：pip install -U yt-dlp，並確認 python 在 PATH。');
+  process.exit(2);
+}
+
+// yt-dlp 用 %(ext)s 讓它自己決定副檔名（webm/m4a/opus…），這裡照 idx 前綴找實際檔
+function findAudio(idx) {
+  try {
+    return fs.readdirSync(AUD)
+      .filter(f => f.startsWith(idx + '.') && !f.endsWith('.json'))
+      .map(f => path.join(AUD, f))
+      .find(f => { try { return fs.statSync(f).size > 20000; } catch (_) { return false; } }) || '';
+  } catch (_) { return ''; }
+}
+
 const out = [];
 items.forEach((it, i) => {
   const idx = String(i + 1).padStart(3, '0');
-  const dst = path.join(AUD, idx + '.mp4');
-  const rec = { idx, title: it.title, host: it.host, url: it.url, audio: idx + '.mp4', status: '' };
-  if (fs.existsSync(dst) && fs.statSync(dst).size > 20000) { rec.status = 'skip'; out.push(rec); console.log(`[${idx}] skip ${(it.title || '').slice(0, 34)}`); return; }
-  const args = ['-f', 'bestaudio/best', '--no-playlist', '--no-part'];
-  if (it.host === 'vimeo' && it.referer) args.push('--referer', it.referer);
-  args.push('-o', dst, it.downloadUrl);
+  const existing = findAudio(idx);
+  const rec = { idx, title: it.title, host: it.host, url: it.url, audio: existing ? path.basename(existing) : '', status: '' };
+  if (existing) { rec.status = 'skip'; out.push(rec); console.log(`[${idx}] skip ${(it.title || '').slice(0, 34)}`); return; }
+  // referer 對 vimeo / vimeo-external(HLS) / Mux / Teachify 等 domain-private 串流都可能必要 → 有就帶
+  const args = ['-f', 'bestaudio/best', '--no-playlist', '--no-part', '--socket-timeout', '30', '--retries', '3', '--fragment-retries', '10'];
+  if (it.referer) args.push('--referer', it.referer);
+  args.push('-o', path.join(AUD, idx + '.%(ext)s'), it.downloadUrl);
   const r = ytdlp(args);
-  const ok = fs.existsSync(dst) && fs.statSync(dst).size > 20000;
-  rec.status = ok ? 'ok' : ('fail rc=' + (r ? r.status : '?'));
+  const got = findAudio(idx);
+  const ok = !!got;
+  rec.audio = ok ? path.basename(got) : '';
+  rec.status = ok ? 'ok' : (r && r.error ? ('fail(' + (r.error.code === 'ETIMEDOUT' ? 'timeout' : r.error.code) + ')') : ('fail rc=' + (r ? r.status : '?')));
   if (!ok && r) rec.err = (r.stderr || '').slice(-200);
   out.push(rec);
   fs.writeFileSync(path.join(AUD, 'manifest.json'), JSON.stringify(out, null, 1), 'utf8');
-  console.log(`[${idx}] ${(it.host || '').padEnd(10)} ${rec.status.padEnd(10)} ${(it.title || '').slice(0, 32)}`);
+  console.log(`[${idx}] ${(it.host || '').padEnd(10)} ${rec.status.padEnd(12)} ${(it.title || '').slice(0, 32)}`);
 });
 const ok = out.filter(x => x.status === 'ok' || x.status === 'skip').length;
+const failed = out.filter(x => x.status !== 'ok' && x.status !== 'skip');
 console.log(`\nDONE: ${ok}/${out.length} → ${AUD}`);
+if (failed.length) { console.log(`⚠️ ${failed.length} 項失敗：`); failed.forEach(f => console.log(`   [${f.idx}] ${f.status}  ${(f.title || '').slice(0, 40)}`)); }
