@@ -64,6 +64,10 @@ The skill must end up at `~/.claude/skills/course2notes/SKILL.md` — that exact
 
 > Along the way Claude Code shows permission prompts (installing packages, opening the browser, running scripts) — approving them is normal and expected.
 
+## Review mode (a free bonus)
+
+The notes **and the raw transcripts** stay on your computer. Later, when you want to go deeper or quiz yourself, just **reopen Claude Code in that course's folder and ask** — the transcripts are ready-made source material, so it works like a **NotebookLM that runs on your own machine and never uploads anything**. For example: *"make 5 quiz questions from unit 1"* or *"condense chapter 3 into one page."* Nothing extra to set up.
+
 ## Supported platforms
 
 It isn't a fixed scraper, so it adapts — but it can't beat hard DRM.
@@ -165,6 +169,10 @@ Course2Notes 是一個開源的 **[Claude Code](https://www.claude.com/product/c
 > 筆記預設用你發問的語言。想指定就句尾加一句，例如「筆記用英文」。
 
 > 過程中 Claude Code 會跳出權限確認（裝套件、開瀏覽器、跑腳本）——按「允許」即可，這是正常流程。
+
+## 複習模式（免費附贈）
+
+筆記**和逐字稿**都留在你的電腦。日後想深入某個點、或考自己，只要**在那門課的資料夾重開 Claude Code 問它**——逐字稿就是現成語料，等於一個**跑在你自己電腦、內容完全不外流的 NotebookLM**。例如：「用第 1 單元的逐字稿出 5 題考我」「把第 3 章濃縮成一頁」。不用另外裝或設定任何東西。
 
 ## 支援哪些平台
 | 類型 | 支援 |
