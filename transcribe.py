@@ -1,8 +1,8 @@
-# 轉逐字稿。自動偵測 GPU：有 → 本機 faster-whisper large-v3（免費）；無 → 提示改用 --api（需 OPENAI_API_KEY）。
+# 轉逐字稿。自動選後端：NVIDIA GPU→本機 faster-whisper；Apple Silicon Mac→本機 mlx-whisper；都沒有→OpenAI API（需金鑰）。
 # 用法（Mac/Linux 用 python3）：
 #   本機/自動： python transcribe.py <audio_dir> <transcript_dir>
 #   強制 API ： python transcribe.py <audio_dir> <transcript_dir> --api
-import os, sys, json, glob, re
+import os, sys, json, glob, re, platform
 
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -22,6 +22,21 @@ def sep_for(lang, text=""):
     if lang:
         return "" if lang.lower().startswith(("zh", "ja", "ko", "yue")) else " "
     return "" if _CJK.search(text or "") else " "
+
+def ts(s):
+    h=int(s//3600); m=int((s%3600)//60); s=int(s%60); return f"{h:02d}:{m:02d}:{s:02d}"
+
+def write_local_outputs(base, rows, detected_lang):
+    # 本機後端（faster-whisper／mlx-whisper）共用：寫 timestamped / json / fulltext 三個檔
+    with open(base + ".timestamped.txt", "w", encoding="utf-8") as tf:
+        for r in rows:
+            tf.write(f"[{ts(r['start'])}] {r['text']}\n")
+    json.dump(rows, open(base + ".json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    texts = [r["text"] for r in rows]
+    open(base + ".fulltext.txt", "w", encoding="utf-8").write(sep_for(detected_lang, "".join(texts)).join(texts))
+
+def is_apple_silicon():
+    return sys.platform == "darwin" and platform.machine().lower() in ("arm64", "aarch64")
 
 exts = ("*.m4a", "*.mp4", "*.webm", "*.aac", "*.mp3", "*.wav")
 files = sorted({f for e in exts for f in glob.glob(os.path.join(AUD, e))})
@@ -43,13 +58,22 @@ def has_gpu():
         pass
     return False
 
-# ---- API 路徑（無 GPU 或 --api）----
-if USE_API or not has_gpu():
-    if not USE_API:
-        print("[model] 未偵測到 GPU。", flush=True)
+# ---- 選後端：--api 強制 API；否則 Apple Silicon→MLX、NVIDIA→CUDA、其餘→API ----
+if USE_API:
+    backend = "api"
+elif is_apple_silicon():
+    backend = "mlx"
+elif has_gpu():
+    backend = "cuda"
+else:
+    backend = "api"
+    print("[model] 未偵測到可用的本機 GPU（無 NVIDIA CUDA，也非 Apple Silicon）。", flush=True)
+
+# ---- API 路徑 ----
+if backend == "api":
     if not os.environ.get("OPENAI_API_KEY"):
-        print("[需要] 沒有 GPU 就要用 API 轉錄：請設定環境變數 OPENAI_API_KEY 後重跑（約 US$0.006/分鐘），"
-              "或改在有 NVIDIA GPU 的電腦上跑。", flush=True)
+        print("[需要] 這台沒有可用的本機 GPU，要用 API 轉錄：請設定環境變數 OPENAI_API_KEY 後重跑（約 US$0.006/分鐘），"
+              "或改在有 NVIDIA 顯卡／Apple Silicon Mac 的電腦上跑（那兩種都能免費本機轉錄）。", flush=True)
         sys.exit(2)
     try:
         from openai import OpenAI
@@ -104,7 +128,38 @@ if USE_API or not has_gpu():
         print("[ALLDONE]", flush=True); sys.exit(1)
     print("[ALLDONE]", flush=True); sys.exit(0)
 
-# ---- 本機 faster-whisper 路徑 ----
+# ---- Apple Silicon 本機路徑（mlx-whisper，吃 Mac GPU/神經引擎，免費）----
+if backend == "mlx":
+    try:
+        import mlx_whisper
+    except Exception:
+        print("[需要] 偵測到 Apple Silicon Mac，但未安裝 mlx-whisper（吃 Mac GPU、免費本機轉錄）。"
+              "請 pip3 install -U mlx-whisper，或改用 --api。", flush=True)
+        sys.exit(2)
+    MLX_REPO = os.environ.get("COURSE2NOTES_MLX_MODEL", "mlx-community/whisper-large-v3-mlx")
+    print(f"[model] MLX {MLX_REPO}（Apple Silicon 本機）", flush=True)
+    fails = []
+    for audio, base in jobs:
+        name = os.path.basename(base)
+        print(f"[job] {os.path.basename(audio)} -> {name} (MLX)", flush=True)
+        try:
+            kw = {"language": LANG} if LANG else {}  # 沒指定就自動偵測
+            r = mlx_whisper.transcribe(audio, path_or_hf_repo=MLX_REPO,
+                    condition_on_previous_text=False, **kw)
+            rows = [{"start": float(s.get("start") or 0.0), "end": float(s.get("end") or 0.0),
+                     "text": (s.get("text") or "").strip()} for s in r.get("segments", [])]
+            if not rows and (r.get("text") or "").strip():
+                rows = [{"start": 0.0, "end": 0.0, "text": r["text"].strip()}]
+            write_local_outputs(base, rows, r.get("language") or LANG)
+            print(f"[done] {name}: {len(rows)} segments", flush=True)
+        except Exception as e:
+            fails.append(name); print(f"[ERR] {name}: {e}", flush=True)
+    if fails:
+        print(f"[WARN] {len(fails)} 個單元轉錄失敗（未產生逐字稿）：{', '.join(fails)}", flush=True)
+        print("[ALLDONE]", flush=True); sys.exit(1)
+    print("[ALLDONE]", flush=True); sys.exit(0)
+
+# ---- 本機 faster-whisper 路徑（NVIDIA CUDA）----
 # 若使用 whisper-work venv 的 nvidia dll，可在此加入 os.add_dll_directory(...)
 try:
     from faster_whisper import WhisperModel
@@ -115,9 +170,6 @@ except Exception:
 
 PRIMER = os.environ.get("COURSE2NOTES_PRIMER",
     "以下是一場線上課程或講座的錄音，內容為專業知識講解。")
-
-def ts(s):
-    h=int(s//3600); m=int((s%3600)//60); s=int(s%60); return f"{h:02d}:{m:02d}:{s:02d}"
 
 try:
     model = WhisperModel("large-v3", device="cuda", compute_type="int8_float16")
@@ -142,17 +194,11 @@ for audio, base in jobs:
             repetition_penalty=1.1, no_repeat_ngram_size=3, initial_prompt=PRIMER,
             temperature=[0.0,0.2,0.4], compression_ratio_threshold=2.4, no_speech_threshold=0.6)
         total = info.duration or 1; rows=[]; last=-5
-        tf = open(base + ".timestamped.txt", "w", encoding="utf-8")
         for seg in segments:
-            t = seg.text.strip(); rows.append({"start":seg.start,"end":seg.end,"text":t})
-            tf.write(f"[{ts(seg.start)}] {t}\n"); tf.flush()
+            rows.append({"start":seg.start,"end":seg.end,"text":seg.text.strip()})
             pct=int(seg.end/total*100)
             if pct>=last+10: last=pct; print(f"  {name} ...{pct}%", flush=True)
-        tf.close()
-        json.dump(rows, open(base+".json","w",encoding="utf-8"), ensure_ascii=False, indent=1)
-        texts = [r["text"] for r in rows]
-        sep = sep_for(getattr(info, "language", None) or LANG, "".join(texts))
-        open(base+".fulltext.txt","w",encoding="utf-8").write(sep.join(texts))
+        write_local_outputs(base, rows, getattr(info, "language", None) or LANG)
         print(f"[done] {name}: {len(rows)} segments", flush=True)
     except Exception as e:
         fails.append(name); print(f"[ERR] {name}: {e}", flush=True)
