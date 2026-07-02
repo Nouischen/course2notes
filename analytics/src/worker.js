@@ -6,7 +6,7 @@ export default {
     const url = new URL(request.url);
     if (request.method === 'OPTIONS') return new Response(null, { headers: cors() });
     if (request.method === 'POST' && url.pathname === '/event') return handleEvent(request, env);
-    if (request.method === 'GET' && (url.pathname === '/admin' || url.pathname === '/')) return handleAdmin(request, env);
+    if (request.method === 'GET' && url.pathname === '/admin') return handleAdmin(request, env);
     return new Response('Not found', { status: 404 });
   }
 };
@@ -35,16 +35,32 @@ async function handleEvent(request, env) {
 }
 
 function unauthorized() {
-  return new Response('Auth required', { status: 401, headers: { 'WWW-Authenticate': 'Basic realm="course2notes admin"' } });
+  return new Response('Auth required', { status: 401, headers: { 'WWW-Authenticate': 'Basic realm="course2notes admin"', 'Cache-Control': 'no-store' } });
+}
+// 常數時間字串比對：不因不匹配位置提早結束，避免用回應時間爆破密碼
+function timingSafeEqualStr(a, b) {
+  a = String(a); b = String(b);
+  let diff = a.length ^ b.length;
+  const len = Math.max(a.length, b.length);
+  for (let i = 0; i < len; i++) diff |= (a.charCodeAt(i) || 0) ^ (b.charCodeAt(i) || 0);
+  return diff === 0;
 }
 async function handleAdmin(request, env) {
   const user = env.ADMIN_USER || 'admin';
   const key = env.ADMIN_KEY;
   const auth = request.headers.get('Authorization') || '';
-  if (!key) return new Response('後台未設定 ADMIN_KEY，請 wrangler secret put ADMIN_KEY', { status: 500 });
+  if (!key) return new Response('後台未設定 ADMIN_KEY，請 wrangler secret put ADMIN_KEY', { status: 500, headers: { 'Cache-Control': 'no-store' } });
   if (!auth.startsWith('Basic ')) return unauthorized();
   let ok = false;
-  try { const [u, p] = atob(auth.slice(6)).split(':'); ok = (u === user && p === key); } catch (_) {}
+  try {
+    const idx = auth.slice(6).length ? atob(auth.slice(6)) : '';
+    const sep = idx.indexOf(':');
+    const u = sep >= 0 ? idx.slice(0, sep) : idx;
+    const p = sep >= 0 ? idx.slice(sep + 1) : '';
+    const okU = timingSafeEqualStr(u, user);
+    const okP = timingSafeEqualStr(p, key);
+    ok = okU && okP;
+  } catch (_) {}
   if (!ok) return unauthorized();
 
   const q = (sql) => env.DB.prepare(sql).all().then(r => r.results || []);
@@ -56,15 +72,15 @@ async function handleAdmin(request, env) {
   const perUser = await q(`SELECT install_id,
       COALESCE(SUM(CASE WHEN event='notes_done' THEN note_count END),0) notes,
       COUNT(CASE WHEN event='notes_done' THEN 1 END) runs,
-      MAX(ts) last FROM events GROUP BY install_id ORDER BY notes DESC LIMIT 100`);
+      MAX(received_at) last FROM events GROUP BY install_id ORDER BY notes DESC LIMIT 100`);
   const plats = await q(`SELECT COALESCE(NULLIF(platform,''),'(未標)') platform,
       COUNT(*) hits, COALESCE(SUM(note_count),0) notes FROM events WHERE event='notes_done' GROUP BY 1 ORDER BY notes DESC`);
-  const daily = await q(`SELECT date(ts,'unixepoch') d,
+  const daily = await q(`SELECT date(received_at,'unixepoch') d,
       COUNT(DISTINCT install_id) users,
       COALESCE(SUM(CASE WHEN event='notes_done' THEN note_count END),0) notes
     FROM events GROUP BY d ORDER BY d DESC LIMIT 30`);
 
-  return new Response(renderDash({ totals, perUser, plats, daily }), { headers: { 'Content-Type': 'text/html;charset=utf-8' } });
+  return new Response(renderDash({ totals, perUser, plats, daily }), { headers: { 'Content-Type': 'text/html;charset=utf-8', 'Cache-Control': 'no-store' } });
 }
 
 function esc(s) { return String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])); }
