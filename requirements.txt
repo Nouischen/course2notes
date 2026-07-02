@@ -1,14 +1,9 @@
-# Course2Notes — Python 相依套件
-# 由技能在對話中自動安裝；手動安裝可用：pip install -r requirements.txt
-
-# 一律需要：下載音訊（download.js 以 `python -m yt_dlp` 呼叫）
+# Course2Notes — 基礎 Python 相依（一律需要）
+# 手動安裝：pip install -r requirements.txt（Mac/Linux 用 pip3）
+# 下載音訊（download.js 以 python -m yt_dlp 呼叫）
 yt-dlp
 
-# 轉錄二選一（技能會依有無 GPU 自動裝其中一個）：
-#   有 NVIDIA GPU → 本機 faster-whisper large-v3（免費、音檔不離開電腦）
-faster-whisper
-#   GPU 還需 CUDA 執行期（光有顯卡驅動不夠，否則會 Unable to load libcudnn）：
-nvidia-cudnn-cu12
-nvidia-cublas-cu12
-#   無 GPU → OpenAI Whisper API（付費、音檔會上傳 OpenAI，需 OPENAI_API_KEY）
-openai
+# 轉錄相依「二選一」，另外裝（技能會依有無 GPU 自動選）：
+#   有 NVIDIA GPU（Windows/Linux）：pip install -r requirements-gpu.txt
+#   無 GPU / macOS（走 --api）：    pip install -r requirements-api.txt
+# 注意：GPU 檔含 nvidia-* wheel，在 macOS 上裝不起來，所以「不要」把它併進本檔。

@@ -2,7 +2,7 @@
 # 用法（Mac/Linux 用 python3）：
 #   本機/自動： python transcribe.py <audio_dir> <transcript_dir>
 #   強制 API ： python transcribe.py <audio_dir> <transcript_dir> --api
-import os, sys, json, glob
+import os, sys, json, glob, re
 
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -15,16 +15,23 @@ if len(sys.argv) < 3:
 AUD, TR = sys.argv[1], sys.argv[2]
 USE_API = "--api" in sys.argv[3:]
 os.makedirs(TR, exist_ok=True)
-LANG = os.environ.get("COURSE2NOTES_LANG", "zh")
-SEP = "" if LANG.lower().startswith(("zh", "ja")) else " "  # CJK 不加空格；其餘語言段落間用空白
+LANG = os.environ.get("COURSE2NOTES_LANG") or None  # 預設 None＝Whisper 自動偵測語言；設了才強制該語言
+_CJK = re.compile(r"[぀-ヿ㐀-鿿豈-﫿가-힯]")
+def sep_for(lang, text=""):
+    # CJK / 日 / 韓 段落間不加空白；其餘語言用空白。lang 未知（自動偵測）時，用文字內容推斷。
+    if lang:
+        return "" if lang.lower().startswith(("zh", "ja", "ko", "yue")) else " "
+    return "" if _CJK.search(text or "") else " "
 
 exts = ("*.m4a", "*.mp4", "*.webm", "*.aac", "*.mp3", "*.wav")
 files = sorted({f for e in exts for f in glob.glob(os.path.join(AUD, e))})
 jobs = [(f, os.path.join(TR, os.path.splitext(os.path.basename(f))[0])) for f in files
         if not (os.path.exists(os.path.join(TR, os.path.splitext(os.path.basename(f))[0] + ".fulltext.txt")))]
 print(f"[plan] 待轉錄 {len(jobs)} / 共 {len(files)}", flush=True)
+if not files:
+    print("[ERR] 音訊資料夾沒有任何音檔可轉錄（下載步驟可能失敗了，請先檢查 download 結果）。", flush=True); sys.exit(3)
 if not jobs:
-    print("[ALLDONE] 無待處理"); sys.exit(0)
+    print("[ALLDONE] 無待處理（全部已完成）"); sys.exit(0)
 
 def has_gpu():
     try:
@@ -59,7 +66,8 @@ if USE_API or not has_gpu():
 
     def api_one(client, path_in):
         with open(path_in, "rb") as fh:
-            return client.audio.transcriptions.create(model="whisper-1", file=fh, language=LANG).text
+            kw = {"language": LANG} if LANG else {}  # 沒指定語言就讓 Whisper 自動偵測
+            return client.audio.transcriptions.create(model="whisper-1", file=fh, **kw).text
 
     def api_transcribe(client, audio):
         # 先壓成 16k 單聲道低位元率（whisper 只需這樣），順便大幅縮小體積 → 多數課程一次就送得出去
@@ -74,7 +82,8 @@ if USE_API or not has_gpu():
             seg = os.path.join(tmpd, "seg_%03d.m4a")
             _ff(["-i", src, "-f", "segment", "-segment_time", "600", "-c", "copy", seg])
             parts = sorted(glob.glob(os.path.join(tmpd, "seg_*.m4a"))) or [src]
-            return SEP.join(api_one(client, p) for p in parts)
+            texts = [api_one(client, p) for p in parts]
+            return sep_for(LANG, "".join(texts)).join(texts)
         finally:
             shutil.rmtree(tmpd, ignore_errors=True)
 
@@ -92,6 +101,7 @@ if USE_API or not has_gpu():
             fails.append(name); print(f"[ERR] {name}: {e}", flush=True)
     if fails:
         print(f"[WARN] {len(fails)} 個單元轉錄失敗（未產生逐字稿）：{', '.join(fails)}", flush=True)
+        print("[ALLDONE]", flush=True); sys.exit(1)
     print("[ALLDONE]", flush=True); sys.exit(0)
 
 # ---- 本機 faster-whisper 路徑 ----
@@ -122,6 +132,7 @@ except Exception as e:
               "large-v3 在 CPU 上會非常慢，也可改用 --api；若真的要用 CPU，設 COURSE2NOTES_ALLOW_CPU=1 再重跑。", flush=True)
         sys.exit(2)
 
+fails = []
 for audio, base in jobs:
     name = os.path.basename(base)
     print(f"[job] {os.path.basename(audio)} -> {name}", flush=True)
@@ -139,8 +150,13 @@ for audio, base in jobs:
             if pct>=last+10: last=pct; print(f"  {name} ...{pct}%", flush=True)
         tf.close()
         json.dump(rows, open(base+".json","w",encoding="utf-8"), ensure_ascii=False, indent=1)
-        open(base+".fulltext.txt","w",encoding="utf-8").write(SEP.join(r["text"] for r in rows))
+        texts = [r["text"] for r in rows]
+        sep = sep_for(getattr(info, "language", None) or LANG, "".join(texts))
+        open(base+".fulltext.txt","w",encoding="utf-8").write(sep.join(texts))
         print(f"[done] {name}: {len(rows)} segments", flush=True)
     except Exception as e:
-        print(f"[ERR] {name}: {e}", flush=True)
-print("[ALLDONE]", flush=True)
+        fails.append(name); print(f"[ERR] {name}: {e}", flush=True)
+if fails:
+    print(f"[WARN] {len(fails)} 個單元轉錄失敗（未產生逐字稿）：{', '.join(fails)}", flush=True)
+    print("[ALLDONE]", flush=True); sys.exit(1)
+print("[ALLDONE]", flush=True); sys.exit(0)

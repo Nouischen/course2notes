@@ -30,6 +30,8 @@ function cors() {
 function json(o, s = 200) { return new Response(JSON.stringify(o), { status: s, headers: { 'Content-Type': 'application/json', ...cors() } }); }
 
 async function handleEvent(request, env) {
+  // 事件酬載很小（幾百 bytes），先擋掉超大 body 再解析，避免有人灌巨量 JSON 耗資源
+  if (parseInt(request.headers.get('Content-Length') || '0', 10) > 2048) return json({ ok: false, e: 'too large' }, 413);
   let b;
   try { b = await request.json(); } catch { return json({ ok: false, e: 'bad json' }, 400); }
   const install_id = String(b.install_id || '');

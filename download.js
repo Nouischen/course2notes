@@ -30,6 +30,26 @@ if (!PY) {
 }
 function ytdlp(args) { return spawnSync(PY, ['-m', 'yt_dlp', ...args], { encoding: 'utf8', maxBuffer: 1 << 28, timeout: DL_TIMEOUT }); }
 
+// 擋掉指向本機/內網的 URL：惡意課程頁可能在請求裡塞 loopback/私網 m3u8，讓 yt-dlp 去打使用者內網服務。
+// 這是防禦性檢查（純主機名比對，不做 DNS 解析）；正常課程的 CDN 都是公網網域，不受影響。
+function isBlockedHost(u) {
+  let h;
+  try { h = new URL(u).hostname.toLowerCase(); } catch (_) { return false; }
+  if (h === 'localhost' || h.endsWith('.localhost') || h.endsWith('.local')) return true;
+  const ip = h.replace(/^\[|\]$/g, '');           // 去掉 IPv6 方括號
+  if (ip === '::1' || ip === '::' || ip.startsWith('fe80:') || ip.startsWith('fc') || ip.startsWith('fd')) return true;
+  const m = ip.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
+  if (m) {
+    const a = +m[1], b = +m[2];
+    if (a === 127 || a === 10 || a === 0) return true;
+    if (a === 192 && b === 168) return true;
+    if (a === 169 && b === 254) return true;       // link-local
+    if (a === 172 && b >= 16 && b <= 31) return true;
+    if (a >= 224) return true;                      // multicast/reserved
+  }
+  return false;
+}
+
 // yt-dlp 用 %(ext)s 讓它自己決定副檔名（webm/m4a/opus…），這裡照 idx 前綴找實際檔
 function findAudio(idx) {
   try {
@@ -46,6 +66,13 @@ items.forEach((it, i) => {
   const existing = findAudio(idx);
   const rec = { idx, title: it.title, host: it.host, url: it.url, audio: existing ? path.basename(existing) : '', status: '' };
   if (existing) { rec.status = 'skip'; out.push(rec); console.log(`[${idx}] skip ${(it.title || '').slice(0, 34)}`); return; }
+  if (isBlockedHost(it.downloadUrl)) {
+    rec.status = 'blocked(internal host)';
+    out.push(rec);
+    fs.writeFileSync(path.join(AUD, 'manifest.json'), JSON.stringify(out, null, 1), 'utf8');
+    console.log(`[${idx}] ${(it.host || '').padEnd(10)} blocked(internal)  ${(it.title || '').slice(0, 32)}`);
+    return;
+  }
   // referer 對 vimeo / vimeo-external(HLS) / Mux / Teachify 等 domain-private 串流都可能必要 → 有就帶
   const args = ['-f', 'bestaudio/best', '--no-playlist', '--no-part', '--socket-timeout', '30', '--retries', '3', '--fragment-retries', '10'];
   if (it.referer) args.push('--referer', it.referer);
@@ -71,4 +98,7 @@ items.forEach((it, i) => {
 const ok = out.filter(x => x.status === 'ok' || x.status === 'skip').length;
 const failed = out.filter(x => x.status !== 'ok' && x.status !== 'skip');
 console.log(`\nDONE: ${ok}/${out.length} → ${AUD}`);
-if (failed.length) { console.log(`⚠️ ${failed.length} 項失敗：`); failed.forEach(f => console.log(`   [${f.idx}] ${f.status}  ${(f.title || '').slice(0, 40)}`)); }
+if (failed.length) {
+  console.log(`⚠️ ${failed.length} 項失敗：`); failed.forEach(f => console.log(`   [${f.idx}] ${f.status}  ${(f.title || '').slice(0, 40)}`));
+  process.exit(1);  // 非零離開碼：讓上層 agent 知道有單元沒下載到，別直接往下 render 出殘缺筆記
+}
