@@ -48,11 +48,19 @@ def is_apple_silicon():
     except Exception:
         return False
 
-exts = ("*.m4a", "*.mp4", "*.webm", "*.aac", "*.mp3", "*.wav")
+exts = ("*.m4a", "*.mp4", "*.webm", "*.aac", "*.mp3", "*.wav", "*.opus", "*.ogg", "*.mka", "*.flac")
 files = sorted({f for e in exts for f in glob.glob(os.path.join(AUD, e))})
 jobs = [(f, os.path.join(TR, os.path.splitext(os.path.basename(f))[0])) for f in files
         if not (os.path.exists(os.path.join(TR, os.path.splitext(os.path.basename(f))[0] + ".fulltext.txt")))]
 print(f"[plan] 待轉錄 {len(jobs)} / 共 {len(files)}", flush=True)
+# 對照 download 的 manifest：下載成功的單元數若多於這裡找到的音檔數，代表有課被漏掉（如未支援副檔名）
+try:
+    _man = json.load(open(os.path.join(AUD, "manifest.json"), encoding="utf-8"))
+    _ok = sum(1 for x in _man if isinstance(x, dict) and x.get("status") in ("ok", "skip"))
+    if _ok > len(files):
+        print(f"[WARN] download 標記成功 {_ok} 個單元，但這裡只找到 {len(files)} 個可轉錄音檔——可能有課被漏掉（副檔名不支援？），請檢查 {AUD}。", flush=True)
+except Exception:
+    pass
 if not files:
     print("[ERR] 音訊資料夾沒有任何音檔可轉錄（下載步驟可能失敗了，請先檢查 download 結果）。", flush=True); sys.exit(3)
 if not jobs:
@@ -133,6 +141,12 @@ if backend == "api":
             print(f"[done] {name}", flush=True)
         except Exception as e:
             fails.append(name); print(f"[ERR] {name}: {e}", flush=True)
+            _m = str(e).lower()
+            if any(k in _m for k in ("invalid_api_key", "incorrect api key", "authentication", " 401",
+                                     "insufficient_quota", "exceeded your current quota", " 429")):
+                print("[需要] 看起來是 OpenAI 金鑰無效或額度用完——先到 platform.openai.com 檢查金鑰與 Billing，"
+                      "修好再重跑（已完成的單元會自動跳過）。先停下，免得整批都撞同一個錯。", flush=True)
+                sys.exit(2)
     if fails:
         print(f"[WARN] {len(fails)} 個單元轉錄失敗（未產生逐字稿）：{', '.join(fails)}", flush=True)
         print("[ALLDONE]", flush=True); sys.exit(1)
@@ -148,7 +162,7 @@ if backend == "mlx":
         import mlx_whisper
     except Exception:
         print("[需要] 偵測到 Apple Silicon Mac，但未安裝 mlx-whisper（吃 Mac GPU、免費本機轉錄）。"
-              "請 pip3 install -U mlx-whisper，或改用 --api。", flush=True)
+              "請 pip3 install -r requirements-mac.txt（若報 externally-managed-environment 就加 --break-system-packages），或改用 --api。", flush=True)
         sys.exit(2)
     MLX_REPO = os.environ.get("COURSE2NOTES_MLX_MODEL", "mlx-community/whisper-large-v3-mlx")
     print(f"[model] MLX {MLX_REPO}（Apple Silicon 本機）", flush=True)
@@ -174,7 +188,21 @@ if backend == "mlx":
     print("[ALLDONE]", flush=True); sys.exit(0)
 
 # ---- 本機 faster-whisper 路徑（NVIDIA CUDA）----
-# 若使用 whisper-work venv 的 nvidia dll，可在此加入 os.add_dll_directory(...)
+# Windows：pip 裝的 nvidia-cudnn/cublas wheel 會把 DLL 放在 site-packages\nvidia\*\bin，
+# 但那不在 DLL 搜尋路徑，CTranslate2 會報 "Unable to load cudnn/cublas"。這裡主動把它們加進來，
+# 否則照文件裝完 requirements-gpu.txt 的旗艦本機路徑也會載入失敗。
+if sys.platform == "win32":
+    try:
+        import site
+        for sp in list(site.getsitepackages() or []) + [site.getusersitepackages()]:
+            for p in glob.glob(os.path.join(sp, "nvidia", "*", "bin")):
+                try:
+                    os.add_dll_directory(p)
+                    os.environ["PATH"] = p + os.pathsep + os.environ.get("PATH", "")
+                except Exception:
+                    pass
+    except Exception:
+        pass
 try:
     from faster_whisper import WhisperModel
 except Exception as _e:
@@ -186,6 +214,7 @@ except Exception as _e:
 PRIMER = os.environ.get("COURSE2NOTES_PRIMER",
     "以下是一場線上課程或講座的錄音，內容為專業知識講解。")
 
+print("[model] 載入 large-v3（第一次會下載模型、約 1–3 GB，網路慢請耐心等，不是當掉）…", flush=True)
 try:
     model = WhisperModel("large-v3", device="cuda", compute_type="int8_float16")
     print("[model] large-v3 CUDA int8_float16", flush=True)
@@ -194,9 +223,10 @@ except Exception as e:
         print(f"[model] CUDA 失敗({e})，改用 CPU（large-v3 在 CPU 上非常慢）", flush=True)
         model = WhisperModel("large-v3", device="cpu", compute_type="int8")
     else:
-        print(f"[需要] CUDA 初始化失敗({e})。若是 'Unable to load libcudnn/libcublas' 這類，"
-              "多半缺 CUDA 執行期：pip install -U nvidia-cudnn-cu12 nvidia-cublas-cu12 後重跑。"
-              "large-v3 在 CPU 上會非常慢，也可改用 --api；若真的要用 CPU，設 COURSE2NOTES_ALLOW_CPU=1 再重跑。", flush=True)
+        print(f"[需要] CUDA 初始化失敗({e})。若是 'Unable to load cudnn/cublas' 這類："
+              "腳本已自動把 pip 的 nvidia DLL 目錄加進搜尋路徑，若還是失敗，多半是沒裝 requirements-gpu.txt"
+              "（含 nvidia-cudnn-cu12 nvidia-cublas-cu12），或裝到了跟這支腳本不同的 Python。"
+              "large-v3 在 CPU 上會非常慢，也可改用 --api；真的要用 CPU 設 COURSE2NOTES_ALLOW_CPU=1 再重跑。", flush=True)
         sys.exit(2)
 
 fails = []

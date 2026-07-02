@@ -11,7 +11,7 @@ fs.mkdirSync(AUD, { recursive: true });
 const items = JSON.parse(fs.readFileSync(MAN, 'utf8')).items.filter(x => x.available && x.downloadUrl);
 console.log(`${items.length} 項待下載`);
 
-const DL_TIMEOUT = 20 * 60 * 1000; // 每項最多 20 分鐘，避免卡死的串流拖垮整條
+const DL_TIMEOUT = (parseInt(process.env.COURSE2NOTES_DL_TIMEOUT_MIN, 10) || 20) * 60 * 1000; // 每項預設 20 分鐘上限；很長的課／慢網路可用 COURSE2NOTES_DL_TIMEOUT_MIN 調大
 
 // 找可用的 Python 直譯器：Windows 常見 python/py，Mac/Linux 常只有 python3（寫死 'python' 會讓 Mac 全滅）
 const PY_CANDIDATES = process.platform === 'win32' ? ['python', 'py', 'python3'] : ['python3', 'python'];
