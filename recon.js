@@ -2,7 +2,7 @@
 // 給 agent 用來「看懂一個新平台」再決定列舉策略。用法：node recon.js <url>
 module.paths.push(require('path').join(require('os').homedir(), 'AppData/Roaming/npm/node_modules'));
 try { require.resolve('playwright'); } catch (_) { module.paths.push('/usr/local/lib/node_modules', '/usr/lib/node_modules'); }
-const { chromium } = require('playwright');
+const { chromium } = require('playwright-core');
 const { classify } = require('./sniff.js');
 
 const URL_ = process.argv[2];

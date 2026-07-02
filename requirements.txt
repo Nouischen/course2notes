@@ -1,0 +1,11 @@
+# Course2Notes — Python 相依套件
+# 由技能在對話中自動安裝；手動安裝可用：pip install -r requirements.txt
+
+# 一律需要：下載音訊（download.js 以 `python -m yt_dlp` 呼叫）
+yt-dlp
+
+# 轉錄二選一（技能會依有無 GPU 自動裝其中一個）：
+#   有 NVIDIA GPU → 本機 faster-whisper large-v3（免費、音檔不離開電腦）
+faster-whisper
+#   無 GPU → OpenAI Whisper API（付費、音檔會上傳 OpenAI，需 OPENAI_API_KEY）
+openai

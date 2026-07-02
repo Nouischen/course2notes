@@ -41,7 +41,7 @@ function pickBest(hits) {
 module.exports = { classify, pickBest };
 
 if (require.main === module) {
-  const { chromium } = require('playwright');
+  const { chromium } = require('playwright-core');
   const URLS = process.argv[2], OUT = process.argv[3];
   const ORIGIN = process.argv[4] || '';
   const CDP = process.argv[5] || 'http://localhost:9222';
