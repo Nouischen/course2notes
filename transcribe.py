@@ -36,7 +36,17 @@ def write_local_outputs(base, rows, detected_lang):
     open(base + ".fulltext.txt", "w", encoding="utf-8").write(sep_for(detected_lang, "".join(texts)).join(texts))
 
 def is_apple_silicon():
-    return sys.platform == "darwin" and platform.machine().lower() in ("arm64", "aarch64")
+    # 判斷「硬體」是不是 Apple Silicon——連 Rosetta 下跑 x86_64 Python 的情況也要認出來
+    if sys.platform != "darwin":
+        return False
+    if platform.machine().lower() in ("arm64", "aarch64"):
+        return True
+    try:
+        import subprocess
+        return subprocess.run(["sysctl", "-n", "hw.optional.arm64"],
+                              capture_output=True, text=True).stdout.strip() == "1"
+    except Exception:
+        return False
 
 exts = ("*.m4a", "*.mp4", "*.webm", "*.aac", "*.mp3", "*.wav")
 files = sorted({f for e in exts for f in glob.glob(os.path.join(AUD, e))})
@@ -130,6 +140,10 @@ if backend == "api":
 
 # ---- Apple Silicon 本機路徑（mlx-whisper，吃 Mac GPU/神經引擎，免費）----
 if backend == "mlx":
+    if platform.machine().lower() not in ("arm64", "aarch64"):
+        print("[需要] 這是 Apple Silicon Mac，但你現在用的是 x86_64（Rosetta）的 Python，mlx-whisper 需要原生 arm64 的 Python。"
+              "請改用 arm64 版 Python（例如 brew 裝的 python3）再跑，或改用 --api。", flush=True)
+        sys.exit(2)
     try:
         import mlx_whisper
     except Exception:
@@ -163,9 +177,10 @@ if backend == "mlx":
 # 若使用 whisper-work venv 的 nvidia dll，可在此加入 os.add_dll_directory(...)
 try:
     from faster_whisper import WhisperModel
-except Exception:
-    print("[需要] 偵測到 GPU 但未安裝 faster-whisper。請 pip install -U faster-whisper "
-          "nvidia-cudnn-cu12 nvidia-cublas-cu12（Mac/Linux 用 pip3），或改用 --api。", flush=True)
+except Exception as _e:
+    print(f"[需要] 偵測到 NVIDIA 顯卡但無法載入 faster-whisper（{_e}）。"
+          "請 pip install -U faster-whisper nvidia-cudnn-cu12 nvidia-cublas-cu12（Mac/Linux 用 pip3）。"
+          "若裝不起來，多半是你的 Python 版本太新、還沒有對應的 wheel——換用 pinned 的 Python 3.12／3.13 再裝，或改用 --api。", flush=True)
     sys.exit(2)
 
 PRIMER = os.environ.get("COURSE2NOTES_PRIMER",

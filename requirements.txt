@@ -3,7 +3,8 @@
 # 下載音訊（download.js 以 python -m yt_dlp 呼叫）
 yt-dlp
 
-# 轉錄相依「二選一」，另外裝（技能會依有無 GPU 自動選）：
-#   有 NVIDIA GPU（Windows/Linux）：pip install -r requirements-gpu.txt
-#   無 GPU / macOS（走 --api）：    pip install -r requirements-api.txt
-# 注意：GPU 檔含 nvidia-* wheel，在 macOS 上裝不起來，所以「不要」把它併進本檔。
+# 轉錄相依「三選一」，另外裝（技能會依機器自動選對後端）：
+#   NVIDIA 顯卡（Windows/Linux）：pip install -r requirements-gpu.txt   （免費本機）
+#   Apple Silicon Mac（M 系列）： pip install -r requirements-mac.txt   （免費本機）
+#   Intel Mac／AMD／無顯卡：      pip install -r requirements-api.txt   （走付費 OpenAI API）
+# 注意：GPU 檔含 nvidia-* wheel、Mac 檔含 mlx（只在 Apple Silicon），別把它們併進本檔或裝到不對的平台。

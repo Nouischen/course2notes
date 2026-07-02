@@ -94,6 +94,10 @@ details summary::-webkit-details-marker{display:none}
 details summary::before{content:"▸";color:var(--accent);transition:transform .2s}
 details[open] summary::before{transform:rotate(90deg)}
 details .body{padding:2px 0 22px;color:var(--muted)}
+details.oa{padding:2px 20px;margin:12px 0 0;border-style:dashed}
+details.oa summary{font-size:15px;padding:13px 0}
+details.oa .oa-body{padding:2px 0 16px;color:var(--muted);font-size:14.5px;line-height:1.8}
+details.oa .oa-body a{word-break:break-all}
 details .body table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:15.5px;margin-top:8px}
 details .body th{background:var(--soft);text-align:left;padding:11px 14px}
 details .body td{padding:11px 14px;border-top:1px solid var(--line);color:var(--ink)}
@@ -144,6 +148,13 @@ details .body td{padding:11px 14px;border-top:1px solid var(--line);color:var(--
   </div>
 </div>
 
+<div class="wrap">
+  <div class="prereq" data-i18n="needs">
+    <div class="pq-title">🧰 開始前，你的電腦還需要這些</div>
+  </div>
+  <details class="oa" data-i18n="oa_guide"><summary>👉 沒有支援的顯卡？教你拿 OpenAI API 金鑰</summary></details>
+</div>
+
 <section id="start"><div class="wrap">
   <h2 class="sechead" data-i18n="start_head">開始使用：全程在 Claude Code 裡對話</h2>
   <p class="sesub" data-i18n="start_sub"><b>你不用自己打任何指令、不用懂技術。</b>用平常講話的方式跟 Claude Code 說，它就自己幫你安裝、開瀏覽器、下載、轉錄、做筆記。你唯一要動手的，是<b>在它開的視窗登入你的課程平台</b>（為了安全，只能你本人登）。過程中 Claude Code 會跳出權限確認（裝套件、開瀏覽器）——按「允許」即可，這是正常流程。</p>
@@ -173,7 +184,7 @@ details .body td{padding:11px 14px;border-top:1px solid var(--line);color:var(--
   <div class="priv" data-i18n="priv_body">
     <p style="margin-top:0"><b>預設會回傳一筆「匿名使用計數」</b>，幫我們判斷有多少人在用。只收：一組本機隨機碼（無法對應到你）、事件（安裝／完成筆記）、這次幾份筆記、平台類型、版本、時間。</p>
     <p style="margin:0"><b>絕對不收：</b>你的筆記內容、課程名稱、網址、任何個資或檔案。程式碼開源可自查。關閉：設 <code class="k">COURSE2NOTES_TELEMETRY=off</code>。</p>
-    <p style="margin:12px 0 0">🎙️ <b>關於轉錄：</b>有 NVIDIA 顯卡時，音檔在本機轉錄、不離開你的電腦；沒有顯卡而改用 OpenAI API 模式時，你的音檔會上傳給 OpenAI 轉錄（適用 OpenAI 的 API 資料政策），但作者端一樣收不到任何東西。</p>
+    <p style="margin:12px 0 0">🎙️ <b>關於轉錄：</b>有 NVIDIA 顯卡或 Apple Silicon Mac 時，音檔在本機轉錄、不離開你的電腦；其他情況（Intel Mac／AMD／無顯卡）用 OpenAI API 模式時，你的音檔會上傳給 OpenAI 轉錄（適用 OpenAI 的 API 資料政策），但作者端一樣收不到任何東西。</p>
   </div>
 </div></section>
 
@@ -219,6 +230,8 @@ var DICT={
  hero_cta1:'🚀 三步驟開始',hero_cta2:'👀 看筆記成品',
  hero_micro:'桌機用 · 開源免費 · 輸出單一 HTML（免 Notion、免註冊、可列印 PDF）',
  prereq:'<div class="pq-title">🤖 本工具是 <b>Claude Code</b>（Anthropic 的 AI 工具）的一個技能。先在<b>你自己的電腦</b>裝好 Claude Code —— 以下二選一：</div><div class="pq-opts"><div class="pq-opt"><div class="pq-h"><span class="pq-badge">A</span> 桌面版 App <span class="pq-rec">推薦・免終端機</span></div><div class="pq-d">圖形介面、最好上手。開啟時記得選「<b>Local 本機模式</b>」。</div><a class="pq-btn" href="https://code.claude.com/docs/en/desktop" target="_blank">下載桌面版 App ↗</a></div><div class="pq-opt"><div class="pq-h"><span class="pq-badge">B</span> 終端機安裝（CLI）</div><div class="pq-d">熟終端機的人，貼對應系統那行：</div><div class="pq-cmd"><span class="pq-os">Windows（PowerShell）</span><pre><button class="copy" onclick="cp(this)">複製</button><span class="cmd">irm https://claude.ai/install.ps1 | iex</span></pre></div><div class="pq-cmd"><span class="pq-os">Mac / Linux</span><pre><button class="copy" onclick="cp(this)">複製</button><span class="cmd">curl -fsSL https://claude.ai/install.sh | bash</span></pre></div></div></div><div class="pq-note">⚠️ 網頁版（claude.ai/code，跑在雲端）碰不到你的電腦，不能用。裝好後，下面三步就能開始。</div>',
+ needs:'<div class="pq-title">🧰 開始前，你的電腦還需要這些（函式庫技能會幫你裝，但這幾樣系統程式要先有）</div><div class="pq-opts"><div class="pq-opt"><div class="pq-h">🖥️ 系統程式</div><div class="pq-d"><b>Node.js、Python、ffmpeg、Google Chrome</b>。缺的話不用自己弄，安裝時直接請 Claude Code 幫你裝（Windows 用 winget、Mac 用 Homebrew）。</div></div><div class="pq-opt"><div class="pq-h">🎙️ 轉錄（看你的機器）</div><div class="pq-d">有 <b>NVIDIA 顯卡</b>（Windows/Linux）或 <b>Apple Silicon Mac</b>（M 系列）→ <b>完全免費、在本機</b>轉錄，音檔不離開你的電腦。<br>其他情況（<b>Intel Mac、AMD/Intel 顯卡、沒有顯卡</b>）→ 需要一把 <b>OpenAI API 金鑰</b>（付費，約 US$0.006／分鐘，音檔會上傳 OpenAI）。</div></div></div><div class="pq-note">💻 桌機用；而且你必須<b>擁有、並能登入</b>你要做筆記的那門課。</div>',
+ oa_guide:'<summary>👉 沒有支援的顯卡？教你拿 OpenAI API 金鑰</summary><div class="oa-body">1. 到 <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com/api-keys</a> 登入／註冊，按「Create new secret key」建一把（需先在 Billing 綁卡、儲值一點額度）。<br>2. 把那串 <code class="k">sk-…</code> 交給 Claude Code，跟它說「幫我設定 OPENAI_API_KEY」，它會在這次執行帶進去。<br>3. 費用參考：Whisper 每分鐘約 US$0.006，一小時的課大約 US$0.36，做完就不再收。<br>有 NVIDIA 顯卡或 Apple Silicon Mac 的人用不到這段，可略過。</div>',
  start_head:'開始使用：全程在 Claude Code 裡對話',
  start_sub:'<b>你不用自己打任何指令、不用懂技術。</b>用平常講話的方式跟 Claude Code 說，它就自己幫你安裝、開瀏覽器、下載、轉錄、做筆記。你唯一要動手的，是<b>在它開的視窗登入你的課程平台</b>（為了安全，只能你本人登）。過程中 Claude Code 會跳出權限確認（裝套件、開瀏覽器）——按「允許」即可，這是正常流程。',
  step1_title:'叫它安裝（一次就好）',tag_cc:'🤖 對 Claude Code 說',
@@ -232,7 +245,7 @@ var DICT={
  step3_desc:'它會<b>自動開一個瀏覽器視窗</b>，你在裡面登入你的課程平台、打開那門課，跟它說「好了」。接著它自動跑完：',
  step3_flow:'<code class="k">偵察平台 → 下載音訊 → 轉逐字稿 → 整理筆記 → 產出漂亮 HTML</code>，完成後雙擊 HTML 就是你的筆記。',
  priv_head:'隱私：我們只收數字',
- priv_body:'<p style="margin-top:0"><b>預設會回傳一筆「匿名使用計數」</b>，幫我們判斷有多少人在用。只收：一組本機隨機碼（無法對應到你）、事件（安裝／完成筆記）、這次幾份筆記、平台類型、版本、時間。</p><p style="margin:0"><b>絕對不收：</b>你的筆記內容、課程名稱、網址、任何個資或檔案。程式碼開源可自查。關閉：設 <code class="k">COURSE2NOTES_TELEMETRY=off</code>。</p><p style="margin:12px 0 0">🎙️ <b>關於轉錄：</b>有 NVIDIA 顯卡時，音檔在本機轉錄、不離開你的電腦；沒有顯卡而改用 OpenAI API 模式時，你的音檔會上傳給 OpenAI 轉錄（適用 OpenAI 的 API 資料政策），但作者端一樣收不到任何東西。</p>',
+ priv_body:'<p style="margin-top:0"><b>預設會回傳一筆「匿名使用計數」</b>，幫我們判斷有多少人在用。只收：一組本機隨機碼（無法對應到你）、事件（安裝／完成筆記）、這次幾份筆記、平台類型、版本、時間。</p><p style="margin:0"><b>絕對不收：</b>你的筆記內容、課程名稱、網址、任何個資或檔案。程式碼開源可自查。關閉：設 <code class="k">COURSE2NOTES_TELEMETRY=off</code>。</p><p style="margin:12px 0 0">🎙️ <b>關於轉錄：</b>有 NVIDIA 顯卡或 Apple Silicon Mac 時，音檔在本機轉錄、不離開你的電腦；其他情況（Intel Mac／AMD／無顯卡）用 OpenAI API 模式時，你的音檔會上傳給 OpenAI 轉錄（適用 OpenAI 的 API 資料政策），但作者端一樣收不到任何東西。</p>',
  how_summary:'運作原理（想深入了解再看）',
  how_body:'<p>它不是一套「固定爬蟲」，而是讓你的 Claude Code <b>臨場看懂每個平台、自己想辦法抓</b>——所以能適應很多站。整條流程：</p><div class="flow"><span>偵察平台</span><span class="ar">→</span><span>抓單元清單</span><span class="ar">→</span><span>下載音訊</span><span class="ar">→</span><span>whisper 轉逐字稿</span><span class="ar">→</span><span>AI 整理筆記</span><span class="ar">→</span><span>產出漂亮 HTML</span></div>',
  platforms_summary:'支援哪些平台？',
@@ -252,6 +265,8 @@ var DICT={
  hero_cta1:'🚀 Get started in 3 steps',hero_cta2:'👀 See a sample',
  hero_micro:'Desktop · Free & open-source · One self-contained HTML (no Notion, no signup, print to PDF)',
  prereq:'<div class="pq-title">🤖 This tool is a skill for <b>Claude Code</b> (an AI tool by Anthropic). First install Claude Code on <b>your own computer</b> — pick one:</div><div class="pq-opts"><div class="pq-opt"><div class="pq-h"><span class="pq-badge">A</span> Desktop app <span class="pq-rec">Recommended · no terminal</span></div><div class="pq-d">A graphical app — easiest to start. When you open it, choose <b>Local mode</b>.</div><a class="pq-btn" href="https://code.claude.com/docs/en/desktop" target="_blank">Download the desktop app ↗</a></div><div class="pq-opt"><div class="pq-h"><span class="pq-badge">B</span> Install the CLI (terminal)</div><div class="pq-d">Comfortable with a terminal? Paste the line for your OS:</div><div class="pq-cmd"><span class="pq-os">Windows (PowerShell)</span><pre><button class="copy" onclick="cp(this)">Copy</button><span class="cmd">irm https://claude.ai/install.ps1 | iex</span></pre></div><div class="pq-cmd"><span class="pq-os">Mac / Linux</span><pre><button class="copy" onclick="cp(this)">Copy</button><span class="cmd">curl -fsSL https://claude.ai/install.sh | bash</span></pre></div></div></div><div class="pq-note">⚠️ The web version (claude.ai/code, running in the cloud) cannot reach your computer, so it will not work. Once installed, the three steps below are all you need.</div>',
+ needs:'<div class="pq-title">🧰 Before you start, your computer also needs these (the skill installs the libraries, but these system apps must already be there)</div><div class="pq-opts"><div class="pq-opt"><div class="pq-h">🖥️ System apps</div><div class="pq-d"><b>Node.js, Python, ffmpeg, Google Chrome.</b> Missing any? Just ask Claude Code to install them during setup (winget on Windows, Homebrew on Mac).</div></div><div class="pq-opt"><div class="pq-h">🎙️ Transcription (depends on your machine)</div><div class="pq-d">An <b>NVIDIA GPU</b> (Windows/Linux) or an <b>Apple Silicon Mac</b> (M-series) → <b>free, fully local</b> transcription; audio never leaves your computer.<br>Anything else (<b>Intel Mac, AMD/Intel GPU, or no GPU</b>) → you need an <b>OpenAI API key</b> (paid, ~US$0.006/min; audio is uploaded to OpenAI).</div></div></div><div class="pq-note">💻 Desktop only, and you must <b>own and be able to log in to</b> the course you want to turn into notes.</div>',
+ oa_guide:'<summary>👉 No supported GPU? How to get an OpenAI API key</summary><div class="oa-body">1. Go to <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com/api-keys</a>, sign in, and click “Create new secret key” (add a card and some credit under Billing first).<br>2. Hand the <code class="k">sk-…</code> key to Claude Code and say “set my OPENAI_API_KEY”; it passes it in for the run.<br>3. Rough cost: Whisper is ~US$0.006/min, so a one-hour course is about US$0.36, charged once.<br>Have an NVIDIA GPU or an Apple Silicon Mac? You don’t need this — skip it.</div>',
  start_head:'Getting started: it all happens by chatting with Claude Code',
  start_sub:'<b>No commands to run, no tech skills needed.</b> You just talk to Claude Code in plain language — it installs itself, opens the browser, downloads, transcribes, and writes the notes. The only thing you do by hand is <b>log in to your course platform</b> in the window it opens (for security, only you can do that). Along the way Claude Code shows permission prompts (installing packages, opening the browser) — approving them is normal.',
  step1_title:'Tell it to install (just once)',tag_cc:'🤖 Say to Claude Code',
@@ -265,7 +280,7 @@ var DICT={
  step3_desc:'It <b>opens a browser window for you</b>; log in to your course platform, open the course, and tell it “done”. Then it runs the whole pipeline:',
  step3_flow:'<code class="k">detect the platform → download audio → transcribe → write the notes → generate a clean HTML</code>. Double-click the HTML and there are your notes.',
  priv_head:'Privacy: we only collect numbers',
- priv_body:'<p style="margin-top:0"><b>By default it sends one anonymous usage ping</b> so we can gauge how many people use it. It only includes: a random local ID (can’t be traced to you), the event (install / notes done), how many notes this run, the platform type, version, and timestamp.</p><p style="margin:0"><b>Never collected:</b> your notes, course names, URLs, or any personal data or files. The code is open-source — check for yourself. Turn it off: set <code class="k">COURSE2NOTES_TELEMETRY=off</code>.</p><p style="margin:12px 0 0">🎙️ <b>About transcription:</b> with an NVIDIA GPU, audio is transcribed locally and never leaves your computer; with no GPU, the OpenAI API mode sends your audio to OpenAI to transcribe (under OpenAI’s API data policy) — the author still receives nothing.</p>',
+ priv_body:'<p style="margin-top:0"><b>By default it sends one anonymous usage ping</b> so we can gauge how many people use it. It only includes: a random local ID (can’t be traced to you), the event (install / notes done), how many notes this run, the platform type, version, and timestamp.</p><p style="margin:0"><b>Never collected:</b> your notes, course names, URLs, or any personal data or files. The code is open-source — check for yourself. Turn it off: set <code class="k">COURSE2NOTES_TELEMETRY=off</code>.</p><p style="margin:12px 0 0">🎙️ <b>About transcription:</b> with an NVIDIA GPU or an Apple Silicon Mac, audio is transcribed locally and never leaves your computer; otherwise (Intel Mac, AMD/Intel GPU, or no GPU) the OpenAI API mode sends your audio to OpenAI to transcribe (under OpenAI’s API data policy) — the author still receives nothing.</p>',
  how_summary:'How it works (for the curious)',
  how_body:'<p>It isn’t a fixed scraper. It lets your Claude Code <b>read each platform on the fly and figure out how to grab it</b> — which is why it adapts to many sites. The full pipeline:</p><div class="flow"><span>detect platform</span><span class="ar">→</span><span>list lessons</span><span class="ar">→</span><span>download audio</span><span class="ar">→</span><span>transcribe (whisper)</span><span class="ar">→</span><span>AI writes notes</span><span class="ar">→</span><span>clean HTML</span></div>',
  platforms_summary:'Which platforms work?',

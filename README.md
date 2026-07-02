@@ -13,7 +13,7 @@ You don't run any commands or need any tech skills: you just **talk to Claude Co
 ## Why it's different
 
 - **Adaptive, not a fixed scraper.** It doesn't rely on brittle per-site scrapers. Your Claude Code **reads each platform on the fly** and figures out how to grab it — so it adapts to many different course sites.
-- **Runs on your machine, your AI.** You use your own Claude Code and your own compute, and **the author never receives any of your content**. With an NVIDIA GPU, transcription runs locally and nothing leaves your computer; with no GPU, the OpenAI API mode sends only the audio to OpenAI to transcribe (see [Privacy](#privacy)).
+- **Runs on your machine, your AI.** You use your own Claude Code and your own compute, and **the author never receives any of your content**. With an NVIDIA GPU (Windows/Linux) or an Apple Silicon Mac, transcription runs locally and nothing leaves your computer; otherwise the OpenAI API mode sends only the audio to OpenAI to transcribe (see [Privacy](#privacy)).
 - **Beautiful HTML — no Notion, no account.** The output is a single self-contained HTML file: sidebar navigation, search, collapsible sections, adjustable font size, and print-to-PDF. Opens in any browser.
 - **Private by design.** Anonymous usage counts only — never your notes, course names, URLs, or files. See [Privacy](#privacy).
 
@@ -78,7 +78,7 @@ By default, Course2Notes sends **one anonymous usage ping** so we can gauge how 
 
 It **never** collects your notes, course names, URLs, or any personal data or files. The code is open — check `telemetry.js` yourself. Turn it off any time: set `COURSE2NOTES_TELEMETRY=off`.
 
-**About transcription:** with an NVIDIA GPU, your audio is transcribed locally and never leaves your computer. Without a GPU, the `--api` mode sends your audio to **OpenAI** for transcription — that is between you and OpenAI, governed by their API data policy; the author still receives nothing. Want everything to stay on your machine? Use a GPU.
+**About transcription:** with an NVIDIA GPU (Windows/Linux) or an Apple Silicon Mac, your audio is transcribed locally and never leaves your computer. Otherwise (Intel Mac, AMD/Intel GPU, or no GPU) the `--api` mode sends your audio to **OpenAI** for transcription — that is between you and OpenAI, governed by their API data policy; the author still receives nothing. Want everything to stay on your machine? Use an NVIDIA GPU or an Apple Silicon Mac.
 
 ## Disclaimer
 
@@ -100,13 +100,13 @@ MIT
 
 [English](#course2notes) · **中文**　|　授權：MIT · 作者：陳昱傑醫師
 
-Course2Notes 是一個開源的 **[Claude Code](https://www.claude.com/product/claude-code) 技能**。把課程網址交給它，它就把整門課變成一份乾淨、自成一檔的 **HTML** 筆記。全程跑在**你自己的電腦、你自己的 AI** 上——作者看不到你的內容。（有顯卡時轉錄在本機；沒顯卡而用 OpenAI API 模式時，只有音檔會上傳給 OpenAI——見下方隱私。）
+Course2Notes 是一個開源的 **[Claude Code](https://www.claude.com/product/claude-code) 技能**。把課程網址交給它，它就把整門課變成一份乾淨、自成一檔的 **HTML** 筆記。全程跑在**你自己的電腦、你自己的 AI** 上——作者看不到你的內容。（有 NVIDIA 顯卡或 Apple Silicon Mac 時轉錄在本機；其他情況用 OpenAI API 模式時，只有音檔會上傳給 OpenAI——見下方隱私。）
 
 你**不用打任何指令、不用懂技術**：用講話的方式跟 Claude Code 說，它就自己幫你安裝、開瀏覽器、下載、轉錄、做筆記。你唯一要動手的，是登入你的課程平台。
 
 ## 為什麼不一樣
 - **臨場適應，不是固定爬蟲。** 它不靠脆弱的逐站爬蟲，而是讓你的 Claude Code **臨場看懂每個平台**、自己想辦法抓——所以能適應很多課程網站。
-- **跑在你的電腦、你的 AI。** 用你自己的 Claude Code 與算力，作者不為你的用量付費，**作者也收不到你的任何內容**。有 NVIDIA 顯卡時轉錄完全在本機、內容不離開你的電腦；沒顯卡而用 OpenAI API 模式時，只有音檔會上傳給 OpenAI 轉錄（見下方隱私）。
+- **跑在你的電腦、你的 AI。** 用你自己的 Claude Code 與算力，作者不為你的用量付費，**作者也收不到你的任何內容**。有 NVIDIA 顯卡或 Apple Silicon Mac 時轉錄完全在本機、內容不離開你的電腦；其他情況（Intel Mac／AMD／無顯卡）用 OpenAI API 模式時，只有音檔會上傳給 OpenAI 轉錄（見下方隱私）。
 - **漂亮 HTML——免 Notion、免註冊。** 輸出是單一自成一檔的 HTML：側欄導覽、搜尋、可折疊、可調字級、可列印 PDF，任何瀏覽器都能開。
 - **隱私優先。** 只回傳匿名計數，絕不含你的筆記、課名、網址或檔案（見下方隱私）。
 
@@ -159,7 +159,7 @@ Course2Notes 是一個開源的 **[Claude Code](https://www.claude.com/product/c
 ## 隱私
 預設會回傳**一筆匿名使用計數**：只有一組本機隨機碼（無法對應到你）、事件（安裝／完成筆記）、這次幾份、平台類型、版本、時間。**絕不**收你的筆記內容、課名、網址或任何個資／檔案。程式碼開源，可自查 `telemetry.js`。關閉：設 `COURSE2NOTES_TELEMETRY=off`。
 
-**關於轉錄：** 有 NVIDIA 顯卡時，音檔在本機轉錄、完全不離開你的電腦；沒有顯卡而用 `--api` 模式時，你的音檔會上傳給 **OpenAI** 轉錄——這是你與 OpenAI 之間、適用 OpenAI 的 API 資料政策，作者端仍然收不到任何東西。想全程留在本機就用顯卡。
+**關於轉錄：** 有 NVIDIA 顯卡或 Apple Silicon Mac 時，音檔在本機轉錄、完全不離開你的電腦；其他情況（Intel Mac／AMD／無顯卡）用 `--api` 模式時，你的音檔會上傳給 **OpenAI** 轉錄——這是你與 OpenAI 之間、適用 OpenAI 的 API 資料政策，作者端仍然收不到任何東西。想全程留在本機就用 NVIDIA 顯卡或 Apple Silicon Mac。
 
 ## 使用聲明
 本工具僅供你為**已合法購買、且有權存取**的課程製作**個人學習筆記**。散布的是工具，不是任何課程內容。請遵守你所在平台的服務條款與著作權法，勿散布或轉售下載／產生的內容。使用行為與後果由使用者自行負責。
