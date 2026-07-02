@@ -7,5 +7,8 @@ yt-dlp
 # 轉錄二選一（技能會依有無 GPU 自動裝其中一個）：
 #   有 NVIDIA GPU → 本機 faster-whisper large-v3（免費、音檔不離開電腦）
 faster-whisper
+#   GPU 還需 CUDA 執行期（光有顯卡驅動不夠，否則會 Unable to load libcudnn）：
+nvidia-cudnn-cu12
+nvidia-cublas-cu12
 #   無 GPU → OpenAI Whisper API（付費、音檔會上傳 OpenAI，需 OPENAI_API_KEY）
 openai

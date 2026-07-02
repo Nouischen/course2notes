@@ -1,5 +1,5 @@
 # 轉逐字稿。自動偵測 GPU：有 → 本機 faster-whisper large-v3（免費）；無 → 提示改用 --api（需 OPENAI_API_KEY）。
-# 用法：
+# 用法（Mac/Linux 用 python3）：
 #   本機/自動： python transcribe.py <audio_dir> <transcript_dir>
 #   強制 API ： python transcribe.py <audio_dir> <transcript_dir> --api
 import os, sys, json, glob
@@ -11,7 +11,7 @@ except Exception:
     pass
 
 if len(sys.argv) < 3:
-    print("用法: python transcribe.py <audio_dir> <transcript_dir> [--api]", flush=True); sys.exit(2)
+    print("用法: python transcribe.py <audio_dir> <transcript_dir> [--api]（Mac/Linux 用 python3）", flush=True); sys.exit(2)
 AUD, TR = sys.argv[1], sys.argv[2]
 USE_API = "--api" in sys.argv[3:]
 os.makedirs(TR, exist_ok=True)
@@ -99,7 +99,8 @@ if USE_API or not has_gpu():
 try:
     from faster_whisper import WhisperModel
 except Exception:
-    print("[需要] 偵測到 GPU 但未安裝 faster-whisper。請 pip install faster-whisper，或改用 --api。", flush=True)
+    print("[需要] 偵測到 GPU 但未安裝 faster-whisper。請 pip install -U faster-whisper "
+          "nvidia-cudnn-cu12 nvidia-cublas-cu12（Mac/Linux 用 pip3），或改用 --api。", flush=True)
     sys.exit(2)
 
 PRIMER = os.environ.get("COURSE2NOTES_PRIMER",
@@ -116,8 +117,9 @@ except Exception as e:
         print(f"[model] CUDA 失敗({e})，改用 CPU（large-v3 在 CPU 上非常慢）", flush=True)
         model = WhisperModel("large-v3", device="cpu", compute_type="int8")
     else:
-        print(f"[需要] CUDA 初始化失敗({e})。large-v3 在 CPU 上會非常慢，建議改用 --api；"
-              "若真的要用 CPU，設環境變數 COURSE2NOTES_ALLOW_CPU=1 再重跑。", flush=True)
+        print(f"[需要] CUDA 初始化失敗({e})。若是 'Unable to load libcudnn/libcublas' 這類，"
+              "多半缺 CUDA 執行期：pip install -U nvidia-cudnn-cu12 nvidia-cublas-cu12 後重跑。"
+              "large-v3 在 CPU 上會非常慢，也可改用 --api；若真的要用 CPU，設 COURSE2NOTES_ALLOW_CPU=1 再重跑。", flush=True)
         sys.exit(2)
 
 for audio, base in jobs:

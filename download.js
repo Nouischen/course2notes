@@ -51,8 +51,16 @@ items.forEach((it, i) => {
   if (it.referer) args.push('--referer', it.referer);
   args.push('-o', path.join(AUD, idx + '.%(ext)s'), it.downloadUrl);
   const r = ytdlp(args);
-  const got = findAudio(idx);
-  const ok = !!got;
+  let got = findAudio(idx);
+  // 成功＝yt-dlp 真的乾淨結束(status 0) 且產出檔案。只看檔案大小會把「逾時/中斷/簽章過期」寫到一半的殘檔當成功，
+  // 下次執行又被 findAudio 當成已存在而 skip、永不重抓 → 靜默產出不完整逐字稿。
+  const ok = !!got && !!r && r.status === 0;
+  if (!ok) {
+    // 刪掉這個 idx 的所有殘檔（含未達門檻的小檔），確保下次執行會重新下載而非 skip
+    try { fs.readdirSync(AUD).filter(f => f.startsWith(idx + '.') && !f.endsWith('.json'))
+      .forEach(f => { try { fs.unlinkSync(path.join(AUD, f)); } catch (_) {} }); } catch (_) {}
+    got = '';
+  }
   rec.audio = ok ? path.basename(got) : '';
   rec.status = ok ? 'ok' : (r && r.error ? ('fail(' + (r.error.code === 'ETIMEDOUT' ? 'timeout' : r.error.code) + ')') : ('fail rc=' + (r ? r.status : '?')));
   if (!ok && r) rec.err = (r.stderr || '').slice(-200);

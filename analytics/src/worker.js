@@ -37,7 +37,11 @@ async function handleEvent(request, env) {
   const event = ['install', 'notes_done'].includes(b.event) ? b.event : null;
   if (!event) return json({ ok: false, e: 'bad event' }, 400);
   const note_count = Math.max(0, Math.min(100000, parseInt(b.note_count) || 0));
-  const platform = String(b.platform || '').slice(0, 32).replace(/[^a-z0-9_.-]/gi, '');
+  // 伺服器端也強制媒體類別白名單（別只信任 client）：非清單內一律壓成 'other'，
+  // 擋掉直接 POST 或改過的 client 把站台域名/課名塞進平台分布欄位。
+  const ALLOWED_PLATFORMS = ['vimeo', 'soundcloud', 'youtube', 'hls', 'text', 'other'];
+  const rawPlat = String(b.platform || '').toLowerCase().replace(/[^a-z0-9_.-]/g, '').slice(0, 32);
+  const platform = ALLOWED_PLATFORMS.includes(rawPlat) ? rawPlat : 'other';
   const version = String(b.version || '').slice(0, 16).replace(/[^0-9a-z.\-]/gi, '');
   const ts = Math.min(Math.floor(Date.now() / 1000) + 86400, Math.max(0, parseInt(b.ts) || Math.floor(Date.now() / 1000)));
   try {
