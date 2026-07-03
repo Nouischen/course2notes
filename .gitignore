@@ -14,3 +14,7 @@ __pycache__/
 # sample/ 是院長 doctorally 真實付費課程筆記 → 不進公開 repo
 # （site/sample-notes.html 已改為 demo/ 產出的合成假資料，可公開）
 /sample/
+
+# 本機後台入口（含通關碼，絕不上傳）
+後台入口_勿上傳.md
+**/後台入口_勿上傳.md

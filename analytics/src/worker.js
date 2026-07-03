@@ -67,19 +67,29 @@ function timingSafeEqualStr(a, b) {
 async function handleAdmin(request, env) {
   const user = env.ADMIN_USER || 'admin';
   const key = env.ADMIN_KEY;
-  const auth = request.headers.get('Authorization') || '';
   if (!key) return new Response('後台未設定 ADMIN_KEY，請 wrangler secret put ADMIN_KEY', { status: 500, headers: { 'Cache-Control': 'no-store' } });
-  if (!auth.startsWith('Basic ')) return unauthorized();
-  let ok = false;
-  try {
-    const idx = auth.slice(6).length ? atob(auth.slice(6)) : '';
-    const sep = idx.indexOf(':');
-    const u = sep >= 0 ? idx.slice(0, sep) : idx;
-    const p = sep >= 0 ? idx.slice(sep + 1) : '';
-    const okU = timingSafeEqualStr(u, user);
-    const okP = timingSafeEqualStr(p, key);
-    ok = okU && okP;
-  } catch (_) {}
+
+  // 三種進場方式：① 網址帶 ?k=<KEY>（一次性書籤連結，進來後種 cookie）② cookie（同瀏覽器之後免帶 k）③ 傳統 Basic Auth
+  const url = new URL(request.url);
+  const qKey = url.searchParams.get('k') || '';
+  const cookie = request.headers.get('Cookie') || '';
+  const cKey = (cookie.match(/(?:^|;\s*)c2n_admin=([^;]+)/) || [])[1] || '';
+  let ok = false, setCookie = false;
+  if (qKey && timingSafeEqualStr(qKey, key)) { ok = true; setCookie = true; }
+  else if (cKey && timingSafeEqualStr(decodeURIComponent(cKey), key)) { ok = true; }
+  else {
+    const auth = request.headers.get('Authorization') || '';
+    if (auth.startsWith('Basic ')) {
+      try {
+        const idx = auth.slice(6).length ? atob(auth.slice(6)) : '';
+        const sep = idx.indexOf(':');
+        const u = sep >= 0 ? idx.slice(0, sep) : idx;
+        const p = sep >= 0 ? idx.slice(sep + 1) : '';
+        ok = timingSafeEqualStr(u, user) && timingSafeEqualStr(p, key);
+      } catch (_) {}
+    }
+    if (!ok) return unauthorized();
+  }
   if (!ok) return unauthorized();
 
   const q = (sql) => env.DB.prepare(sql).all().then(r => r.results || []);
@@ -99,7 +109,10 @@ async function handleAdmin(request, env) {
       COALESCE(SUM(CASE WHEN event='notes_done' THEN note_count END),0) notes
     FROM events GROUP BY d ORDER BY d DESC LIMIT 30`);
 
-  return new Response(renderDash({ totals, perUser, plats, daily }), { headers: { 'Content-Type': 'text/html;charset=utf-8', 'Cache-Control': 'no-store' } });
+  const headers = { 'Content-Type': 'text/html;charset=utf-8', 'Cache-Control': 'no-store' };
+  // 憑 ?k= 連結首次進來 → 種一個 httpOnly cookie，之後同瀏覽器直接開 /admin 免帶 k（連結不會殘留在網址列/歷史）
+  if (setCookie) headers['Set-Cookie'] = `c2n_admin=${encodeURIComponent(key)}; Path=/admin; HttpOnly; Secure; SameSite=Lax; Max-Age=31536000`;
+  return new Response(renderDash({ totals, perUser, plats, daily }), { headers });
 }
 
 function esc(s) { return String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])); }
