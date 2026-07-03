@@ -58,7 +58,7 @@ The skill must end up at `~/.claude/skills/course2notes/SKILL.md` — that exact
 
 1. **Install** (once) — the line above.
 2. **Make notes** — say: `Use course2notes to turn https://your-course-url into notes`
-3. **Log in once** — it opens a browser window; you log in to your course platform and open the course, then tell it "done". (You type your password on the platform's own login page, exactly as usual — the tool never sees your password; see [Is it safe?](#is-it-safe-about-the-login-window).) It runs the rest automatically: **detect platform → download audio → transcribe → write notes → generate a clean HTML.** Double-click the HTML and there are your notes.
+3. **Log in once** — it opens a browser window; you log in to your course platform and open the course, then tell it "done". (You type your password on the platform's own login page, exactly as usual — the tool never sees your password; see [Is it safe?](#is-it-safe-about-the-login-window).) It runs the rest automatically: **detect platform → download audio → transcribe → write notes → generate a clean HTML.** When it's done it tells you where the file is (or just ask it to open it); double-click that file anytime to read your notes.
 
 > Notes come out in the language you write in. Want a specific one? Just add e.g. *"notes in English"*.
 
@@ -66,7 +66,7 @@ The skill must end up at `~/.claude/skills/course2notes/SKILL.md` — that exact
 
 ## Review mode (a free bonus)
 
-The notes **and the raw transcripts** stay on your computer. Later, when you want to go deeper or quiz yourself, just **reopen Claude Code in that course's folder and ask** — the transcripts are ready-made source material, so it works like a **NotebookLM that runs on your own machine and never uploads anything**. For example: *"make 5 quiz questions from unit 1"* or *"condense chapter 3 into one page."* Nothing extra to set up.
+The notes **and the raw transcripts** stay on your computer. Later, when you want to go deeper or quiz yourself, just **reopen Claude Code in that course's folder and ask** — the transcripts are ready-made source material, so it works like a private **AI tutor for this course** — running on your own machine, never uploading anything (similar to Google's NotebookLM, but fully local). For example: *"make 5 quiz questions from unit 1"* or *"condense chapter 3 into one page."* Nothing extra to set up.
 
 ## Supported platforms
 
@@ -78,13 +78,15 @@ It isn't a fixed scraper, so it adapts — but it can't beat hard DRM.
 | Text / article-based courses | ✅ Yes |
 | Hard-DRM encrypted streams (some large platforms) | ✘ No |
 
+Not sure which kind yours is? Just give it the course URL and let it try — if it hits DRM it stops and tells you which units it can't get; it never forces its way in or wastes your compute.
+
 ## Is it safe? (about the login window)
 
 Fair question — you're about to log in to a platform inside a tool you just downloaded. The short version: **you never hand your password to this tool, and you don't have to take my word for it, because the code is open and short enough to read.**
 
 - **Your password is only ever typed by you, on the platform's own login page.** The tool opens a real Chrome window — its own **separate profile**, not your everyday Chrome — pointed at your course URL; you log in exactly as you always do, on the platform's real site. It never shows its own login form, never reads your keystrokes, and never asks you for a password.
 - **All it does with the browser** is read the page to find the video/audio URL and download it. It automates a browser you can watch; it is not a background credential harvester.
-- **100% open source, nothing compiled or obfuscated.** Every script (`recon.js`, `sniff.js`, `download.js`, `transcribe.py`, `render.js`, and the anonymous `telemetry.js`) is short and readable. Before you run it, you can even ask your own Claude Code to audit the whole skill for anything that exfiltrates your data.
+- **100% open source, nothing compiled or obfuscated.** Every script (`recon.js`, `sniff.js`, `download.js`, `transcribe.py`, `slides.js`, `render.js`, and the anonymous `telemetry.js`) is short and readable. Before you run it, you can even ask your own Claude Code to audit the whole skill for anything that exfiltrates your data.
 - It runs on **your own computer and your own Claude Code**; the author has no server that ever receives your content or your login. The login session lives in that separate browser profile, which you can delete when you're done.
 
 In one line: **you don't have to trust me — only the code you can read.**
@@ -93,7 +95,7 @@ In one line: **you don't have to trust me — only the code you can read.**
 
 By default, Course2Notes sends **one anonymous usage ping** so we can gauge how many people use it. It includes **only**: a random local ID (not traceable to you), the event (install / notes done), how many notes this run, the platform type, version, and a timestamp.
 
-It **never** collects your notes, course names, URLs, or any personal data or files. The code is open — check `telemetry.js` yourself. Turn it off any time: set `COURSE2NOTES_TELEMETRY=off`.
+It **never** collects your notes, course names, URLs, or any personal data or files. The code is open — check `telemetry.js` yourself. Turn it off any time: just tell Claude Code "turn off Course2Notes' anonymous reporting" (it sets `COURSE2NOTES_TELEMETRY=off` for you).
 
 **About transcription:** with an NVIDIA GPU (Windows/Linux) or an Apple Silicon Mac, your audio is transcribed locally and never leaves your computer. Otherwise (Intel Mac, AMD/Intel GPU, or no GPU) the `--api` mode sends your audio to **OpenAI** for transcription — that is between you and OpenAI, governed by their API data policy; the author still receives nothing. Want everything to stay on your machine? Use an NVIDIA GPU or an Apple Silicon Mac.
 
@@ -164,7 +166,7 @@ Course2Notes 是一個開源的 **[Claude Code](https://www.claude.com/product/c
 ## 怎麼用（三步，全程跟 Claude Code 講）
 1. **安裝**（一次）——上面那句。
 2. **做筆記**——說：`用 course2notes 把 https://你的課程網址 做成筆記`
-3. **登入一次**——它會開一個瀏覽器視窗；你登入課程平台、打開那門課，跟它說「好了」。（你是在平台官方的登入頁輸入密碼，跟平常一樣，工具碰不到你的帳密；見下方「這樣安全嗎？」）剩下它自動跑完：**偵察平台 → 下載音訊 → 轉逐字稿 → 整理筆記 → 產出漂亮 HTML**，雙擊 HTML 就是你的筆記。
+3. **登入一次**——它會開一個瀏覽器視窗；你登入課程平台、打開那門課，跟它說「好了」。（你是在平台官方的登入頁輸入密碼，跟平常一樣，工具碰不到你的帳密；見下方「這樣安全嗎？」）剩下它自動跑完：**偵察平台 → 下載音訊 → 轉逐字稿 → 整理筆記 → 產出漂亮 HTML**。跑完它會告訴你筆記檔存在哪（也可以請它幫你打開）；之後雙擊那個檔，隨時能再看。
 
 > 筆記預設用你發問的語言。想指定就句尾加一句，例如「筆記用英文」。
 
@@ -172,7 +174,7 @@ Course2Notes 是一個開源的 **[Claude Code](https://www.claude.com/product/c
 
 ## 複習模式（免費附贈）
 
-筆記**和逐字稿**都留在你的電腦。日後想深入某個點、或考自己，只要**在那門課的資料夾重開 Claude Code 問它**——逐字稿就是現成語料，等於一個**跑在你自己電腦、內容完全不外流的 NotebookLM**。例如：「用第 1 單元的逐字稿出 5 題考我」「把第 3 章濃縮成一頁」。不用另外裝或設定任何東西。
+筆記**和逐字稿**都留在你的電腦。日後想深入某個點、或考自己，只要**在那門課的資料夾重開 Claude Code 問它**——逐字稿就是現成語料，等於一個**懂你這門課、隨問隨答的 AI 家教**——全程在你電腦上、內容不外流（類似 Google 的 NotebookLM，但完全在本機）。例如：「用第 1 單元的逐字稿出 5 題考我」「把第 3 章濃縮成一頁」。不用另外裝或設定任何東西。
 
 ## 支援哪些平台
 | 類型 | 支援 |
@@ -181,19 +183,21 @@ Course2Notes 是一個開源的 **[Claude Code](https://www.claude.com/product/c
 | 純文字／文章型課程 | ✅ 可 |
 | 硬 DRM 加密串流（部分大型平台） | ✘ 不可 |
 
+不知道你的平台是哪一種？直接把課程網址丟給它試——遇到 DRM 它會停下來告訴你哪些單元抓不到，不會硬闖、也不會白花你的算力。
+
 ## 這樣安全嗎？（關於那個登入視窗）
 
 很合理的疑慮——你剛下載一個工具，它就要你在裡面登入平台。簡單講：**你不用把帳密交給這個工具，也不用「相信我」，因為程式全是開源、而且短到你讀得完。**
 
 - **密碼只有你、只在平台官方頁面輸入。** 工具開的是一個你看得到的 Chrome 視窗（用**獨立的設定檔**，不動你日常的 Chrome），連到你的課程網址；你就像平常一樣在平台自己的登入頁登入。它不會跳自己的登入表單、不會讀你的鍵盤輸入，也不會問你要密碼。
 - **它連上瀏覽器只做一件事**：看頁面、找到影片／音訊網址、把它下載下來。它自動化的是一個你看得到的瀏覽器，不是在背景偷撈帳密。
-- **100% 開源、沒有任何編譯過或混淆的東西。** 每支腳本（`recon.js`、`sniff.js`、`download.js`、`transcribe.py`、`render.js`，以及只送匿名計數的 `telemetry.js`）都很短、可讀。跑之前，你甚至可以直接叫你自己的 Claude Code「幫我把這個技能從頭審一遍，看有沒有偷傳我的資料」。
+- **100% 開源、沒有任何編譯過或混淆的東西。** 每支腳本（`recon.js`、`sniff.js`、`download.js`、`transcribe.py`、`slides.js`、`render.js`，以及只送匿名計數的 `telemetry.js`）都很短、可讀。跑之前，你甚至可以直接叫你自己的 Claude Code「幫我把這個技能從頭審一遍，看有沒有偷傳我的資料」。
 - 全程跑在**你自己的電腦、你自己的 Claude Code**；作者沒有任何伺服器會收到你的內容或登入資訊。登入狀態留在那個獨立的瀏覽器設定檔，做完可以直接刪掉。
 
 一句話：**你不用信任我，你只要信任你讀得到的程式碼。**
 
 ## 隱私
-預設會回傳**一筆匿名使用計數**：只有一組本機隨機碼（無法對應到你）、事件（安裝／完成筆記）、這次幾份、平台類型、版本、時間。**絕不**收你的筆記內容、課名、網址或任何個資／檔案。程式碼開源，可自查 `telemetry.js`。關閉：設 `COURSE2NOTES_TELEMETRY=off`。
+預設會回傳**一筆匿名使用計數**：只有一組本機隨機碼（無法對應到你）、事件（安裝／完成筆記）、這次幾份、平台類型、版本、時間。**絕不**收你的筆記內容、課名、網址或任何個資／檔案。程式碼開源，可自查 `telemetry.js`。關閉：跟 Claude Code 說「幫我把 Course2Notes 的匿名回報關掉」就行（它會替你設 `COURSE2NOTES_TELEMETRY=off`）。
 
 **關於轉錄：** 有 NVIDIA 顯卡或 Apple Silicon Mac 時，音檔在本機轉錄、完全不離開你的電腦；其他情況（Intel Mac／AMD／無顯卡）用 `--api` 模式時，你的音檔會上傳給 **OpenAI** 轉錄——這是你與 OpenAI 之間、適用 OpenAI 的 API 資料政策，作者端仍然收不到任何東西。想全程留在本機就用 NVIDIA 顯卡或 Apple Silicon Mac。
 
