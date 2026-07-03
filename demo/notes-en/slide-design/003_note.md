@@ -1,8 +1,10 @@
 # Data visualization: pick the right chart
 
 > [!NOTE] Slide Design, Illustrated (sample) · Unit 3
+
 > [!KEY] In one sentence
 > A chart exists to **make one conclusion obvious in a second**, so you choose the chart type from the point you're making, not from the data you happen to have.
+
 > [!KEY] You'll learn
 > - How to match a chart type to your goal
 > - Three moves that make any chart hit harder

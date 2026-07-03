@@ -9,7 +9,7 @@
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"Segoe UI",Roboto,system-ui,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;line-height:1.9;font-size:var(--fs,16.5px);-webkit-font-smoothing:antialiased}
-.fontctl{display:flex;align-items:center;gap:6px;padding:4px 10px 12px;margin-bottom:8px;border-bottom:1px solid var(--line);font-size:12px;color:var(--muted)}
+.fontctl{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:4px 10px 12px;margin-bottom:8px;border-bottom:1px solid var(--line);font-size:12px;color:var(--muted)}
 .fontctl button{border:1px solid var(--line);background:#fff;border-radius:7px;padding:3px 10px;cursor:pointer;font-family:inherit;color:var(--ink);line-height:1}
 .fontctl button:hover{background:var(--soft);border-color:var(--accent);color:var(--accent)}
 .fontctl .printbtn{margin-left:auto;font-weight:700;white-space:nowrap;border-color:var(--accent);color:var(--accent2)}
@@ -104,6 +104,9 @@ blockquote{margin:14px 0;padding:12px 18px;background:#fbf7ef;border-left:4px so
 .wgh{font-weight:800;font-size:16px;padding:13px 0 4px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
 .wghint{font-size:12.5px;font-weight:500;color:var(--muted)}
 .qzscore{margin-left:auto;font-size:13.5px;font-weight:700;color:var(--accent2)}
+.qzretry{border:1px solid var(--line);background:#fff;border-radius:8px;padding:3px 10px;font:inherit;font-size:12.5px;color:var(--muted);cursor:pointer}
+.qzretry:hover{border-color:var(--accent);color:var(--accent)}
+@media print{.qzretry{display:none!important}}
 .qzq{margin:12px 0;padding-top:13px;border-top:1px solid var(--line)}
 .qzq:first-of-type{border-top:0}
 .qzqt{font-weight:600;margin-bottom:9px}
@@ -199,7 +202,7 @@ mark{background:#fde68a;padding:0 2px}
 <blockquote>你不是「沒有時間」，而是「還沒決定這件事夠不夠重要」。</blockquote>
 <h3>可執行要點</h3>
 <ul><li class="task"><label><input type="checkbox" class="tk">列一張「不做清單」：寫下三件你要停止、委外或婉拒的事</label></li><li class="task"><label><input type="checkbox" class="tk">把手機通知關到只剩真正緊急的來源</label></li><li class="task"><label><input type="checkbox" class="tk">每天開工前，先寫下「今天唯一必須推進的一件事」</label></li><li class="task"><label><input type="checkbox" class="tk">睡前回看：今天的忙，是假性生產力還是真實產出？</label></li></ul>
-<div class="quiz" id="qz0" data-total="3"><div class="wgh">📝 隨堂測驗<span class="wghint">（點選項作答）</span><span class="qzscore"></span></div><div class="qzq"><div class="qzqt">這一課認為「時間不夠」最主要的原因是什麼？</div><div class="qzopts"><button class="qzopt" data-c="1">注意力被切碎、又缺乏優先序</button><button class="qzopt" data-c="0">每天的時數天生就不夠用</button><button class="qzopt" data-c="0">工作量太大，無法避免</button><button class="qzopt" data-c="0">自己天生效率比別人差</button></div><div class="qzex">問題通常不在時數，而在注意力被打斷、以及沒有先決定優先序。</div></div><div class="qzq"><div class="qzqt">下列何者是「假性生產力」的典型樣子？</div><div class="qzopts"><button class="qzopt" data-c="1">整天回訊息、很忙，卻沒推進真正重要的事</button><button class="qzopt" data-c="0">專注做完當天最重要的一件任務</button><button class="qzopt" data-c="0">提前規劃隔天的行程</button><button class="qzopt" data-c="0">婉拒了一個不重要的會議</button></div><div class="qzex">假性生產力＝有在做事的感覺，但沒有實際累積。</div></div><div class="qzq"><div class="qzqt">這一課主張，管理時間的第一步是？</div><div class="qzopts"><button class="qzopt" data-c="1">先決定「不做什麼」，騰出空間</button><button class="qzopt" data-c="0">把行事曆排到最滿</button><button class="qzopt" data-c="0">買一套更好的生產力工具</button><button class="qzopt" data-c="0">逼自己每天早起兩小時</button></div><div class="qzex">時間是零和的，先刪掉不重要的，才有空間留給重要的事。</div></div></div></div>
+<div class="quiz" id="qz0" data-total="3"><div class="wgh">📝 隨堂測驗<span class="wghint">（點選項作答）</span><span class="qzscore"></span><button class="qzretry" style="display:none">↺ 重做</button></div><div class="qzq"><div class="qzqt">這一課認為「時間不夠」最主要的原因是什麼？</div><div class="qzopts"><button class="qzopt" data-c="1">注意力被切碎、又缺乏優先序</button><button class="qzopt" data-c="0">每天的時數天生就不夠用</button><button class="qzopt" data-c="0">工作量太大，無法避免</button><button class="qzopt" data-c="0">自己天生效率比別人差</button></div><div class="qzex">問題通常不在時數，而在注意力被打斷、以及沒有先決定優先序。</div></div><div class="qzq"><div class="qzqt">下列何者是「假性生產力」的典型樣子？</div><div class="qzopts"><button class="qzopt" data-c="1">整天回訊息、很忙，卻沒推進真正重要的事</button><button class="qzopt" data-c="0">專注做完當天最重要的一件任務</button><button class="qzopt" data-c="0">提前規劃隔天的行程</button><button class="qzopt" data-c="0">婉拒了一個不重要的會議</button></div><div class="qzex">假性生產力＝有在做事的感覺，但沒有實際累積。</div></div><div class="qzq"><div class="qzqt">這一課主張，管理時間的第一步是？</div><div class="qzopts"><button class="qzopt" data-c="1">先決定「不做什麼」，騰出空間</button><button class="qzopt" data-c="0">把行事曆排到最滿</button><button class="qzopt" data-c="0">買一套更好的生產力工具</button><button class="qzopt" data-c="0">逼自己每天早起兩小時</button></div><div class="qzex">時間是零和的，先刪掉不重要的，才有空間留給重要的事。</div></div></div></div>
       </article>
       <article class="note" id="c0-1">
         <h3 class="ntitle">1.2 艾森豪矩陣：把「緊急」和「重要」分開</h3>
@@ -349,20 +352,32 @@ document.querySelectorAll('.note').forEach(n=>io.observe(n));
 // back to top
 addEventListener('scroll',()=>{document.getElementById('totop').classList.toggle('show',scrollY>500)});
 // 隨堂測驗：作答即時對錯＋計分；單字卡：點擊翻面
-var QZTPL="答對 {a}/{t}";
-function _qzfmt(a,t){return QZTPL.replace('{a}',a).replace('{t}',t);}
+var QZTPL="答對 {a}/{t}",QZPROG="已答 {a}/{t}";
+function _qzf(tpl,a,t){return tpl.replace('{a}',a).replace('{t}',t);}
 document.querySelectorAll('.quiz').forEach(function(q){
-  var total=+q.getAttribute('data-total'),correct=0,sc=q.querySelector('.qzscore');
+  var total=+q.getAttribute('data-total'),sc=q.querySelector('.qzscore'),rb=q.querySelector('.qzretry');
+  function upd(){
+    var done=q.querySelectorAll('.qzq.done').length,wrong=q.querySelectorAll('.qzq .qzopt.wrong').length;
+    if(!done){sc.textContent='';if(rb)rb.style.display='none';return;}
+    // 沒答完先顯示進度，答完才給總分（避免中途分數被讀成最終成績）
+    sc.textContent=done<total?_qzf(QZPROG,done,total):_qzf(QZTPL,done-wrong,total);
+    if(rb)rb.style.display=done===total?'':'none';
+  }
   q.querySelectorAll('.qzq').forEach(function(qq){
     qq.querySelectorAll('.qzopt').forEach(function(op){
       op.addEventListener('click',function(){
         if(qq.classList.contains('done'))return;
         qq.classList.add('done');
-        if(op.getAttribute('data-c')==='1')correct++;else op.classList.add('wrong');
+        if(op.getAttribute('data-c')!=='1')op.classList.add('wrong');
         qq.querySelectorAll('.qzopt').forEach(function(o){if(o.getAttribute('data-c')==='1')o.classList.add('right');o.disabled=true;});
-        sc.textContent=_qzfmt(correct,total);
+        upd();
       });
     });
+  });
+  if(rb)rb.addEventListener('click',function(){
+    q.querySelectorAll('.qzq').forEach(function(qq){qq.classList.remove('done');
+      qq.querySelectorAll('.qzopt').forEach(function(o){o.classList.remove('right','wrong');o.disabled=false;});});
+    upd();
   });
 });
 document.querySelectorAll('.fc').forEach(function(c){c.addEventListener('click',function(){c.classList.toggle('flipped');});});
@@ -371,9 +386,10 @@ document.querySelectorAll('.fc').forEach(function(c){c.addEventListener('click',
 document.querySelectorAll('.nbody figure.fig img').forEach(function(img){img.addEventListener('click',function(){li.src=img.src;lb.classList.add('show')})});
 lb.addEventListener('click',function(){lb.classList.remove('show');li.src='';});
 document.addEventListener('keydown',function(e){if(e.key==='Escape'){lb.classList.remove('show');li.src='';}});})();
-// 待辦勾選狀態持久化（key＝標題＋筆記 id＋項次；localStorage 優先於 markdown 的 [x]）
+// 待辦勾選狀態持久化（key＝標題+輸出檔名鹽＋筆記 id＋項次，避免兩份同名筆記在同 origin 下互相污染；localStorage 優先於 markdown 的 [x]）
+var TKSALT="Course2Notes 範例筆記|sample-notes.html";
 document.querySelectorAll('.note').forEach(n=>{[...n.querySelectorAll('input.tk')].forEach((cb,idx)=>{
-  const k='c2n_tk:'+document.title+':'+n.id+':'+idx;const v=lsGet(k);if(v==='1')cb.checked=true;else if(v==='0')cb.checked=false;
+  const k='c2n_tk:'+TKSALT+':'+n.id+':'+idx;const v=lsGet(k);if(v==='1')cb.checked=true;else if(v==='0')cb.checked=false;
   cb.addEventListener('change',()=>lsSet(k,cb.checked?'1':'0'));});});
 // search: 隱藏不含關鍵字的 note
 function doSearch(q){q=q.trim().toLowerCase();let shown=0;

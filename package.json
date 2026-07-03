@@ -1,6 +1,6 @@
 {
   "name": "course2notes",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "description": "Turn online courses you own into clean, self-contained HTML study notes. A Claude Code skill.",
   "license": "MIT",

@@ -1,8 +1,10 @@
 # The three fundamentals of layout
 
 > [!NOTE] Slide Design, Illustrated (sample) · Unit 1
+
 > [!KEY] In one sentence
 > Great-looking slides rest on three basics anyone can master: **contrast to set hierarchy, alignment to create order, and white space to give the message room to breathe**.
+
 > [!KEY] You'll learn
 > - How contrast tells the eye what matters most
 > - How alignment makes a page feel instantly clean

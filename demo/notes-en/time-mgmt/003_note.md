@@ -1,8 +1,10 @@
 # The Pomodoro technique and deep work
 
 > [!NOTE] Time Management in Practice (sample) · Unit 3
+
 > [!KEY] In one sentence
 > High-value output comes from **deep, uninterrupted focus**, and the Pomodoro rhythm is the simplest reliable on-ramp to it.
+
 > [!KEY] You'll learn
 > - What deep work is and why it must be protected on purpose
 > - How to run a Pomodoro without breaking focus

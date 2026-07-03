@@ -1,8 +1,10 @@
 # Why you always feel short on time
 
 > [!NOTE] Time Management in Practice (sample) · Unit 1
+
 > [!KEY] In one sentence
 > Feeling short on time is rarely about the number of hours — it's about **scattered attention and the absence of clear priorities**.
+
 > [!KEY] You'll learn
 > - Why "no time" is usually a decision problem, not a clock problem
 > - The three hidden thieves that quietly drain an ordinary day

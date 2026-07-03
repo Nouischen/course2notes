@@ -1,8 +1,10 @@
 # Personal Branding 101
 
 > [!NOTE] Personal Branding (sample) · Standalone talk
+
 > [!KEY] In one sentence
 > A personal brand isn't packaging yourself — it's making **the right people think of you for the right reason at the right moment**, built on consistent, genuine, compounding expression of your expertise.
+
 > [!KEY] You'll learn
 > - The three ingredients every personal brand needs
 > - Why "the right people" beats "lots of people"

@@ -54,7 +54,7 @@ function isBlockedHost(u) {
 function findAudio(idx) {
   try {
     return fs.readdirSync(AUD)
-      .filter(f => f.startsWith(idx + '.') && !f.endsWith('.json'))
+      .filter(f => f.startsWith(idx + '.') && !f.endsWith('.json') && !f.endsWith('.part') && !f.endsWith('.ytdl'))
       .map(f => path.join(AUD, f))
       .find(f => { try { return fs.statSync(f).size > 20000; } catch (_) { return false; } }) || '';
   } catch (_) { return ''; }
@@ -74,7 +74,8 @@ items.forEach((it, i) => {
     return;
   }
   // referer 對 vimeo / vimeo-external(HLS) / Mux / Teachify 等 domain-private 串流都可能必要 → 有就帶
-  const args = ['-f', 'bestaudio/best', '--no-playlist', '--no-part', '--socket-timeout', '30', '--retries', '3', '--fragment-retries', '10'];
+  // 不用 --no-part：讓 yt-dlp 先寫 .part、完成才改名——被中斷的殘檔就不會頂著正式檔名被當成「已完成」
+  const args = ['-f', 'bestaudio/best', '--no-playlist', '--socket-timeout', '30', '--retries', '3', '--fragment-retries', '10'];
   if (it.referer) args.push('--referer', it.referer);
   args.push('-o', path.join(AUD, idx + '.%(ext)s'), it.downloadUrl);
   const r = ytdlp(args);

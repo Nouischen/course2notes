@@ -11,7 +11,7 @@ const crypto = require('crypto');
 // 只允許回傳「媒體類別」，不接受站台域名／課名等自由字串（配合後台白名單）
 const ALLOWED_PLATFORMS = ['vimeo', 'soundcloud', 'youtube', 'hls', 'text', 'other'];
 
-const VERSION = '0.1.0';
+const VERSION = '1.0.0';
 const HOME = path.join(os.homedir(), '.course2notes');
 const IDFILE = path.join(HOME, 'install_id');
 const CONSENT = path.join(HOME, 'consent_shown');

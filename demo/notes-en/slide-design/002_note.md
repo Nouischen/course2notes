@@ -1,8 +1,10 @@
 # One idea per slide
 
 > [!NOTE] Slide Design, Illustrated (sample) · Unit 2
+
 > [!KEY] In one sentence
 > A slide should carry **exactly one message** — the moment it tries to say three things, it says nothing.
+
 > [!KEY] You'll learn
 > - Why one message per slide beats a dense slide
 > - The memory limit that makes crowded slides fail

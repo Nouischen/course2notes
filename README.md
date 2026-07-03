@@ -47,7 +47,7 @@ Then **restart Claude Code once** so the skill loads.
 <details>
 <summary>What Claude actually does (or do it yourself)</summary>
 
-The skill must end up at `~/.claude/skills/course2notes/SKILL.md` — that exact location is how Claude Code discovers it.
+For the git/zip options below, the skill must end up at `~/.claude/skills/course2notes/SKILL.md` — that's where Claude Code discovers manually installed skills. (The `/plugin` option is the exception: it manages its own location under Claude Code's plugin cache — don't move those files, and update with `/plugin update` instead of `git pull`.)
 
 - With git — macOS/Linux: `git clone https://github.com/Nouischen/course2notes ~/.claude/skills/course2notes` · Windows (PowerShell): `git clone https://github.com/Nouischen/course2notes "$env:USERPROFILE\.claude\skills\course2notes"`
 - No git? Download [main.zip](https://github.com/Nouischen/course2notes/archive/refs/heads/main.zip) and extract it there. The zip unpacks to a folder named `course2notes-main` — rename it to `course2notes` so `SKILL.md` sits directly under `~/.claude/skills/course2notes/`.
@@ -156,7 +156,7 @@ Course2Notes 是一個開源的 **[Claude Code](https://www.claude.com/product/c
 <details>
 <summary>Claude 實際會做什麼（想自己動手也行）</summary>
 
-技能必須落在 `~/.claude/skills/course2notes/SKILL.md` 這個位置，Claude Code 才找得到它。
+用下面的 git／zip 方式裝，技能必須落在 `~/.claude/skills/course2notes/SKILL.md` 這個位置（手動安裝的技能 Claude Code 從這裡找）。（`/plugin` 方式是例外：它自己管理位置、裝在 Claude Code 的外掛快取裡——那些檔案別搬動，更新用 `/plugin update` 而不是 `git pull`。）
 
 - 有 git——Mac/Linux：`git clone https://github.com/Nouischen/course2notes ~/.claude/skills/course2notes` · Windows（PowerShell）：`git clone https://github.com/Nouischen/course2notes "$env:USERPROFILE\.claude\skills\course2notes"`
 - 沒 git？下載 [main.zip](https://github.com/Nouischen/course2notes/archive/refs/heads/main.zip) 解壓過去。zip 解出來的資料夾叫 `course2notes-main`——要改名成 `course2notes`，讓 `SKILL.md` 直接位於 `~/.claude/skills/course2notes/` 底下。

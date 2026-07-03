@@ -9,7 +9,7 @@ const { spawnSync } = require('child_process');
 
 const VIDEO = process.argv[2], OUT = process.argv[3];
 const THRESH = parseFloat(process.argv[4]) || parseFloat(process.env.COURSE2NOTES_SLIDE_THRESHOLD) || 0.4;
-const MAX = parseInt(process.argv[5], 10) || parseInt(process.env.COURSE2NOTES_SLIDE_MAX, 10) || 40;
+const MAX = Math.max(2, parseInt(process.argv[5], 10) || parseInt(process.env.COURSE2NOTES_SLIDE_MAX, 10) || 40); // 下限 2：等距抽樣要除以 MAX-1，=1 會 NaN 全刪
 if (!VIDEO || !OUT) { console.error('usage: node slides.js <video> <out_dir> [scene_threshold=0.4] [max=40]'); process.exit(1); }
 if (!fs.existsSync(VIDEO)) { console.error(`[ERR] 找不到影片：${VIDEO}`); process.exit(2); }
 fs.mkdirSync(OUT, { recursive: true });

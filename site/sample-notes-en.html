@@ -9,7 +9,7 @@
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"Segoe UI",Roboto,system-ui,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;line-height:1.9;font-size:var(--fs,16.5px);-webkit-font-smoothing:antialiased}
-.fontctl{display:flex;align-items:center;gap:6px;padding:4px 10px 12px;margin-bottom:8px;border-bottom:1px solid var(--line);font-size:12px;color:var(--muted)}
+.fontctl{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:4px 10px 12px;margin-bottom:8px;border-bottom:1px solid var(--line);font-size:12px;color:var(--muted)}
 .fontctl button{border:1px solid var(--line);background:#fff;border-radius:7px;padding:3px 10px;cursor:pointer;font-family:inherit;color:var(--ink);line-height:1}
 .fontctl button:hover{background:var(--soft);border-color:var(--accent);color:var(--accent)}
 .fontctl .printbtn{margin-left:auto;font-weight:700;white-space:nowrap;border-color:var(--accent);color:var(--accent2)}
@@ -104,6 +104,9 @@ blockquote{margin:14px 0;padding:12px 18px;background:#fbf7ef;border-left:4px so
 .wgh{font-weight:800;font-size:16px;padding:13px 0 4px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
 .wghint{font-size:12.5px;font-weight:500;color:var(--muted)}
 .qzscore{margin-left:auto;font-size:13.5px;font-weight:700;color:var(--accent2)}
+.qzretry{border:1px solid var(--line);background:#fff;border-radius:8px;padding:3px 10px;font:inherit;font-size:12.5px;color:var(--muted);cursor:pointer}
+.qzretry:hover{border-color:var(--accent);color:var(--accent)}
+@media print{.qzretry{display:none!important}}
 .qzq{margin:12px 0;padding-top:13px;border-top:1px solid var(--line)}
 .qzq:first-of-type{border-top:0}
 .qzqt{font-weight:600;margin-bottom:9px}
@@ -179,12 +182,13 @@ mark{background:#fde68a;padding:0 2px}
       
   <section class="course" id="course-c0">
     <div class="coursebar"><span class="cic">⏰</span><div><h2 class="ctitle">Time Management in Practice</h2><div class="csub">Sample course · 3 units · 3 notes</div></div></div>
-    <details class="coursemap" open><summary>🗺️ Course map<span class="cm-hint">(click a unit to jump to it)</span></summary><table class="cmtable"><tbody><tr><td class="cm-u"><a href="#c0-0">Why you always feel short on time</a></td><td class="cm-s"></td></tr><tr><td class="cm-u"><a href="#c0-1">The Eisenhower Matrix: separate urgent from important</a></td><td class="cm-s"></td></tr><tr><td class="cm-u"><a href="#c0-2">The Pomodoro technique and deep work</a></td><td class="cm-s"></td></tr></tbody></table></details>
+    <details class="coursemap" open><summary>🗺️ Course map<span class="cm-hint">(click a unit to jump to it)</span></summary><table class="cmtable"><tbody><tr><td class="cm-u"><a href="#c0-0">Why you always feel short on time</a></td><td class="cm-s">Feeling short on time is rarely about the number of hours — it&#39;s about <strong>scattered attention and the absence of clear priorities</strong>.</td></tr><tr><td class="cm-u"><a href="#c0-1">The Eisenhower Matrix: separate urgent from important</a></td><td class="cm-s">Most of your day is spent on the <strong>urgent-but-not-important</strong>, while the important-but-not-urgent work that actually shapes your life keeps getting pushed away.</td></tr><tr><td class="cm-u"><a href="#c0-2">The Pomodoro technique and deep work</a></td><td class="cm-s">High-value output comes from <strong>deep, uninterrupted focus</strong>, and the Pomodoro rhythm is the simplest reliable on-ramp to it.</td></tr></tbody></table></details>
     
       <article class="note" id="c0-0">
         <h3 class="ntitle">Why you always feel short on time</h3>
-        <div class="nbody"><div class="callout cx-note"><div class="cx-t">Time Management in Practice (sample) · Unit 1</div><div class="cx-b"><p>[!KEY] In one sentence Feeling short on time is rarely about the number of hours — it&#39;s about <strong>scattered attention and the absence of clear priorities</strong>. [!KEY] You&#39;ll learn</p>
-<ul><li>Why &quot;no time&quot; is usually a decision problem, not a clock problem</li><li>The three hidden thieves that quietly drain an ordinary day</li><li>The single mindset shift that reframes every busy day</li><li>A first concrete move: building a not-to-do list</li></ul></div></div>
+        <div class="nbody"><div class="callout cx-note"><div class="cx-t">Time Management in Practice (sample) · Unit 1</div></div>
+<div class="callout cx-key"><div class="cx-t">In one sentence</div><div class="cx-b"><p>Feeling short on time is rarely about the number of hours — it&#39;s about <strong>scattered attention and the absence of clear priorities</strong>.</p></div></div>
+<div class="callout cx-key"><div class="cx-t">You&#39;ll learn</div><div class="cx-b"><ul><li>Why &quot;no time&quot; is usually a decision problem, not a clock problem</li><li>The three hidden thieves that quietly drain an ordinary day</li><li>The single mindset shift that reframes every busy day</li><li>A first concrete move: building a not-to-do list</li></ul></div></div>
 <h3>Notes</h3>
 <h4>The clock isn&#39;t the problem</h4>
 <p>People who feel perpetually behind are usually not working fewer hours than everyone else. They are spending those hours on the wrong things, in fragments too small to produce anything. The uncomfortable truth is that &quot;I have no time&quot; almost always means &quot;I haven&#39;t decided this is important enough to protect time for.&quot;</p>
@@ -198,12 +202,13 @@ mark{background:#fde68a;padding:0 2px}
 <p>Once time is framed as a series of decisions rather than a shortage, the question changes. Instead of &quot;how do I fit more in,&quot; you start asking &quot;what earns a place here, and what doesn&#39;t.&quot; That second question is the whole game.</p>
 <h3>Action items</h3>
 <ul><li class="task"><label><input type="checkbox" class="tk">Write a not-to-do list: three things you&#39;ll stop, decline, or hand off this week.</label></li><li class="task"><label><input type="checkbox" class="tk">Turn off non-essential notifications; keep only truly urgent channels alive.</label></li><li class="task"><label><input type="checkbox" class="tk">Before your next task, say out loud why it deserves your time right now.</label></li><li class="task"><label><input type="checkbox" class="tk">Track one full day in 30-minute blocks to see where the thieves strike.</label></li></ul>
-<div class="quiz" id="qz0" data-total="3"><div class="wgh">📝 Quick quiz<span class="wghint">(click an option to answer)</span><span class="qzscore"></span></div><div class="qzq"><div class="qzqt">What does the note say &#39;I have no time&#39; usually really means?</div><div class="qzopts"><button class="qzopt" data-c="0">You are genuinely working more hours than everyone else</button><button class="qzopt" data-c="1">You haven&#39;t decided the task is important enough to protect time for</button><button class="qzopt" data-c="0">You need a faster computer</button><button class="qzopt" data-c="0">Your calendar app is badly designed</button></div><div class="qzex">The note reframes time scarcity as a decision problem: &#39;no time&#39; almost always means the task hasn&#39;t been judged important enough to protect.</div></div><div class="qzq"><div class="qzqt">Why is &#39;fake productivity&#39; called the most dangerous time thief?</div><div class="qzopts"><button class="qzopt" data-c="0">It uses the most electricity</button><button class="qzopt" data-c="1">Being busy feels like progress, so it hides that nothing important actually moved</button><button class="qzopt" data-c="0">It only affects managers</button><button class="qzopt" data-c="0">It is against company policy</button></div><div class="qzex">Because busyness feels like progress, you can finish an exhausting day without ever touching the task that mattered.</div></div><div class="qzq"><div class="qzqt">What is the rough cost of each interruption in the note&#39;s model?</div><div class="qzopts"><button class="qzopt" data-c="0">A few seconds</button><button class="qzopt" data-c="1">About 10+ minutes to rebuild focus</button><button class="qzopt" data-c="0">Exactly one hour</button><button class="qzopt" data-c="0">Nothing measurable</button></div><div class="qzex">The switching-cost thief costs roughly 10+ minutes to get back into flow every time focus breaks.</div></div></div></div>
+<div class="quiz" id="qz0" data-total="3"><div class="wgh">📝 Quick quiz<span class="wghint">(click an option to answer)</span><span class="qzscore"></span><button class="qzretry" style="display:none">↺ Retry</button></div><div class="qzq"><div class="qzqt">What does the note say &#39;I have no time&#39; usually really means?</div><div class="qzopts"><button class="qzopt" data-c="0">You are genuinely working more hours than everyone else</button><button class="qzopt" data-c="1">You haven&#39;t decided the task is important enough to protect time for</button><button class="qzopt" data-c="0">You need a faster computer</button><button class="qzopt" data-c="0">Your calendar app is badly designed</button></div><div class="qzex">The note reframes time scarcity as a decision problem: &#39;no time&#39; almost always means the task hasn&#39;t been judged important enough to protect.</div></div><div class="qzq"><div class="qzqt">Why is &#39;fake productivity&#39; called the most dangerous time thief?</div><div class="qzopts"><button class="qzopt" data-c="0">It uses the most electricity</button><button class="qzopt" data-c="1">Being busy feels like progress, so it hides that nothing important actually moved</button><button class="qzopt" data-c="0">It only affects managers</button><button class="qzopt" data-c="0">It is against company policy</button></div><div class="qzex">Because busyness feels like progress, you can finish an exhausting day without ever touching the task that mattered.</div></div><div class="qzq"><div class="qzqt">What is the rough cost of each interruption in the note&#39;s model?</div><div class="qzopts"><button class="qzopt" data-c="0">A few seconds</button><button class="qzopt" data-c="1">About 10+ minutes to rebuild focus</button><button class="qzopt" data-c="0">Exactly one hour</button><button class="qzopt" data-c="0">Nothing measurable</button></div><div class="qzex">The switching-cost thief costs roughly 10+ minutes to get back into flow every time focus breaks.</div></div></div></div>
       </article>
       <article class="note" id="c0-1">
         <h3 class="ntitle">The Eisenhower Matrix: separate urgent from important</h3>
-        <div class="nbody"><div class="callout cx-note"><div class="cx-t">Time Management in Practice (sample) · Unit 2</div><div class="cx-b"><p>[!KEY] In one sentence Most of your day is spent on the <strong>urgent-but-not-important</strong>, while the important-but-not-urgent work that actually shapes your life keeps getting pushed away. [!KEY] You&#39;ll learn</p>
-<ul><li>The crucial difference between urgent and important</li><li>The four quadrants and what to do with each</li><li>Why Quadrant 2 is where a good life gets built</li><li>How today&#39;s fires are often yesterday&#39;s skipped planning</li></ul></div></div>
+        <div class="nbody"><div class="callout cx-note"><div class="cx-t">Time Management in Practice (sample) · Unit 2</div></div>
+<div class="callout cx-key"><div class="cx-t">In one sentence</div><div class="cx-b"><p>Most of your day is spent on the <strong>urgent-but-not-important</strong>, while the important-but-not-urgent work that actually shapes your life keeps getting pushed away.</p></div></div>
+<div class="callout cx-key"><div class="cx-t">You&#39;ll learn</div><div class="cx-b"><ul><li>The crucial difference between urgent and important</li><li>The four quadrants and what to do with each</li><li>Why Quadrant 2 is where a good life gets built</li><li>How today&#39;s fires are often yesterday&#39;s skipped planning</li></ul></div></div>
 <h3>Notes</h3>
 <h4>Urgent is not the same as important</h4>
 <p>Urgent means something is demanding a response now: a ringing phone, a new message, a looming deadline. Important means it genuinely moves your life or work forward. The two feel similar in the moment because urgency is loud — but loud is not the same as valuable. The habit worth building is to pause and label each incoming task before you react to it.</p>
@@ -219,8 +224,9 @@ mark{background:#fde68a;padding:0 2px}
       </article>
       <article class="note" id="c0-2">
         <h3 class="ntitle">The Pomodoro technique and deep work</h3>
-        <div class="nbody"><div class="callout cx-note"><div class="cx-t">Time Management in Practice (sample) · Unit 3</div><div class="cx-b"><p>[!KEY] In one sentence High-value output comes from <strong>deep, uninterrupted focus</strong>, and the Pomodoro rhythm is the simplest reliable on-ramp to it. [!KEY] You&#39;ll learn</p>
-<ul><li>What deep work is and why it must be protected on purpose</li><li>How to run a Pomodoro without breaking focus</li><li>The three conditions that make deep work actually happen</li><li>How shallow and deep work differ in value</li></ul></div></div>
+        <div class="nbody"><div class="callout cx-note"><div class="cx-t">Time Management in Practice (sample) · Unit 3</div></div>
+<div class="callout cx-key"><div class="cx-t">In one sentence</div><div class="cx-b"><p>High-value output comes from <strong>deep, uninterrupted focus</strong>, and the Pomodoro rhythm is the simplest reliable on-ramp to it.</p></div></div>
+<div class="callout cx-key"><div class="cx-t">You&#39;ll learn</div><div class="cx-b"><ul><li>What deep work is and why it must be protected on purpose</li><li>How to run a Pomodoro without breaking focus</li><li>The three conditions that make deep work actually happen</li><li>How shallow and deep work differ in value</li></ul></div></div>
 <h3>Notes</h3>
 <h4>Shallow work vs deep work</h4>
 <p>Not all work is equal. Shallow work — email, quick replies, small logistics — is easy to do in a distracted state and easy to replicate, so it rarely produces much value. Deep work is cognitively demanding, done in long unbroken stretches, and it&#39;s where real thinking, writing, and building happen.</p>
@@ -240,12 +246,13 @@ mark{background:#fde68a;padding:0 2px}
   </section>
   <section class="course" id="course-c1">
     <div class="coursebar"><span class="cic">📊</span><div><h2 class="ctitle">Slide Design, Illustrated</h2><div class="csub">Sample course · 3 units · 3 notes</div></div></div>
-    <details class="coursemap" open><summary>🗺️ Course map<span class="cm-hint">(click a unit to jump to it)</span></summary><table class="cmtable"><tbody><tr><td class="cm-u"><a href="#c1-0">The three fundamentals of layout</a></td><td class="cm-s"></td></tr><tr><td class="cm-u"><a href="#c1-1">One idea per slide</a></td><td class="cm-s"></td></tr><tr><td class="cm-u"><a href="#c1-2">Data visualization: pick the right chart</a></td><td class="cm-s"></td></tr></tbody></table></details>
+    <details class="coursemap" open><summary>🗺️ Course map<span class="cm-hint">(click a unit to jump to it)</span></summary><table class="cmtable"><tbody><tr><td class="cm-u"><a href="#c1-0">The three fundamentals of layout</a></td><td class="cm-s">Great-looking slides rest on three basics anyone can master: <strong>contrast to set hierarchy, alignment to create order, and white space to give the message room to breathe</strong>.</td></tr><tr><td class="cm-u"><a href="#c1-1">One idea per slide</a></td><td class="cm-s">A slide should carry <strong>exactly one message</strong> — the moment it tries to say three things, it says nothing.</td></tr><tr><td class="cm-u"><a href="#c1-2">Data visualization: pick the right chart</a></td><td class="cm-s">A chart exists to <strong>make one conclusion obvious in a second</strong>, so you choose the chart type from the point you&#39;re making, not from the data you happen to have.</td></tr></tbody></table></details>
     
       <article class="note" id="c1-0">
         <h3 class="ntitle">The three fundamentals of layout</h3>
-        <div class="nbody"><div class="callout cx-note"><div class="cx-t">Slide Design, Illustrated (sample) · Unit 1</div><div class="cx-b"><p>[!KEY] In one sentence Great-looking slides rest on three basics anyone can master: <strong>contrast to set hierarchy, alignment to create order, and white space to give the message room to breathe</strong>. [!KEY] You&#39;ll learn</p>
-<ul><li>How contrast tells the eye what matters most</li><li>How alignment makes a page feel instantly clean</li><li>Why white space is a tool, not wasted space</li><li>The common beginner mistake for each of the three</li></ul></div></div>
+        <div class="nbody"><div class="callout cx-note"><div class="cx-t">Slide Design, Illustrated (sample) · Unit 1</div></div>
+<div class="callout cx-key"><div class="cx-t">In one sentence</div><div class="cx-b"><p>Great-looking slides rest on three basics anyone can master: <strong>contrast to set hierarchy, alignment to create order, and white space to give the message room to breathe</strong>.</p></div></div>
+<div class="callout cx-key"><div class="cx-t">You&#39;ll learn</div><div class="cx-b"><ul><li>How contrast tells the eye what matters most</li><li>How alignment makes a page feel instantly clean</li><li>Why white space is a tool, not wasted space</li><li>The common beginner mistake for each of the three</li></ul></div></div>
 <h3>Notes</h3>
 <h4>The three basics at a glance</h4>
 <p>You don&#39;t need to be a trained designer to make slides that look professional. Getting three fundamentals right does most of the work. The illustration below shows how they combine: contrast pulls the eye to the one thing that matters, alignment settles everything onto shared edges, and white space keeps it all from feeling crowded.</p>
@@ -261,8 +268,9 @@ mark{background:#fde68a;padding:0 2px}
       </article>
       <article class="note" id="c1-1">
         <h3 class="ntitle">One idea per slide</h3>
-        <div class="nbody"><div class="callout cx-note"><div class="cx-t">Slide Design, Illustrated (sample) · Unit 2</div><div class="cx-b"><p>[!KEY] In one sentence A slide should carry <strong>exactly one message</strong> — the moment it tries to say three things, it says nothing. [!KEY] You&#39;ll learn</p>
-<ul><li>Why one message per slide beats a dense slide</li><li>The memory limit that makes crowded slides fail</li><li>A three-step method to strip a slide to its point</li><li>Why splitting slides is almost always the right call</li></ul></div></div>
+        <div class="nbody"><div class="callout cx-note"><div class="cx-t">Slide Design, Illustrated (sample) · Unit 2</div></div>
+<div class="callout cx-key"><div class="cx-t">In one sentence</div><div class="cx-b"><p>A slide should carry <strong>exactly one message</strong> — the moment it tries to say three things, it says nothing.</p></div></div>
+<div class="callout cx-key"><div class="cx-t">You&#39;ll learn</div><div class="cx-b"><ul><li>Why one message per slide beats a dense slide</li><li>The memory limit that makes crowded slides fail</li><li>A three-step method to strip a slide to its point</li><li>Why splitting slides is almost always the right call</li></ul></div></div>
 <h3>Notes</h3>
 <h4>Why one idea wins</h4>
 <p>Your audience can either read the slide or listen to you — not both at full attention. A slide packed with text forces that choice, and usually they read it badly while tuning you out. The slide is there to support your talk, not to be the script.</p>
@@ -277,8 +285,9 @@ mark{background:#fde68a;padding:0 2px}
       </article>
       <article class="note" id="c1-2">
         <h3 class="ntitle">Data visualization: pick the right chart</h3>
-        <div class="nbody"><div class="callout cx-note"><div class="cx-t">Slide Design, Illustrated (sample) · Unit 3</div><div class="cx-b"><p>[!KEY] In one sentence A chart exists to <strong>make one conclusion obvious in a second</strong>, so you choose the chart type from the point you&#39;re making, not from the data you happen to have. [!KEY] You&#39;ll learn</p>
-<ul><li>How to match a chart type to your goal</li><li>Three moves that make any chart hit harder</li><li>Why the title should state the conclusion</li><li>The key vocabulary of clear data visuals</li></ul></div></div>
+        <div class="nbody"><div class="callout cx-note"><div class="cx-t">Slide Design, Illustrated (sample) · Unit 3</div></div>
+<div class="callout cx-key"><div class="cx-t">In one sentence</div><div class="cx-b"><p>A chart exists to <strong>make one conclusion obvious in a second</strong>, so you choose the chart type from the point you&#39;re making, not from the data you happen to have.</p></div></div>
+<div class="callout cx-key"><div class="cx-t">You&#39;ll learn</div><div class="cx-b"><ul><li>How to match a chart type to your goal</li><li>Three moves that make any chart hit harder</li><li>Why the title should state the conclusion</li><li>The key vocabulary of clear data visuals</li></ul></div></div>
 <h3>Notes</h3>
 <h4>Choose the chart from the goal</h4>
 <p>Before picking a chart, decide what the audience should see: are you comparing sizes, showing a trend over time, showing a share of a whole, or showing a relationship between two variables? The goal points to the chart, not the other way around.</p>
@@ -298,8 +307,9 @@ mark{background:#fde68a;padding:0 2px}
     
       <article class="note" id="c2-0">
         <h3 class="ntitle">Personal Branding 101</h3>
-        <div class="nbody"><div class="callout cx-note"><div class="cx-t">Personal Branding (sample) · Standalone talk</div><div class="cx-b"><p>[!KEY] In one sentence A personal brand isn&#39;t packaging yourself — it&#39;s making <strong>the right people think of you for the right reason at the right moment</strong>, built on consistent, genuine, compounding expression of your expertise. [!KEY] You&#39;ll learn</p>
-<ul><li>The three ingredients every personal brand needs</li><li>Why &quot;the right people&quot; beats &quot;lots of people&quot;</li><li>How trust is shown rather than claimed</li><li>How small, steady content compounds over time</li></ul></div></div>
+        <div class="nbody"><div class="callout cx-note"><div class="cx-t">Personal Branding (sample) · Standalone talk</div></div>
+<div class="callout cx-key"><div class="cx-t">In one sentence</div><div class="cx-b"><p>A personal brand isn&#39;t packaging yourself — it&#39;s making <strong>the right people think of you for the right reason at the right moment</strong>, built on consistent, genuine, compounding expression of your expertise.</p></div></div>
+<div class="callout cx-key"><div class="cx-t">You&#39;ll learn</div><div class="cx-b"><ul><li>The three ingredients every personal brand needs</li><li>Why &quot;the right people&quot; beats &quot;lots of people&quot;</li><li>How trust is shown rather than claimed</li><li>How small, steady content compounds over time</li></ul></div></div>
 <h3>Notes</h3>
 <h4>What a personal brand actually is</h4>
 <p>A personal brand is the product of three things multiplied together: your expertise, your recognizability, and other people&#39;s trust in you. Multiplied — not added — because if any one is zero, the whole thing collapses. Deep expertise no one recognizes goes unseen; recognition without trust reads as hype; trust without real expertise doesn&#39;t survive contact.</p>
@@ -343,20 +353,32 @@ document.querySelectorAll('.note').forEach(n=>io.observe(n));
 // back to top
 addEventListener('scroll',()=>{document.getElementById('totop').classList.toggle('show',scrollY>500)});
 // 隨堂測驗：作答即時對錯＋計分；單字卡：點擊翻面
-var QZTPL="{a}/{t} correct";
-function _qzfmt(a,t){return QZTPL.replace('{a}',a).replace('{t}',t);}
+var QZTPL="{a}/{t} correct",QZPROG="{a}/{t} answered";
+function _qzf(tpl,a,t){return tpl.replace('{a}',a).replace('{t}',t);}
 document.querySelectorAll('.quiz').forEach(function(q){
-  var total=+q.getAttribute('data-total'),correct=0,sc=q.querySelector('.qzscore');
+  var total=+q.getAttribute('data-total'),sc=q.querySelector('.qzscore'),rb=q.querySelector('.qzretry');
+  function upd(){
+    var done=q.querySelectorAll('.qzq.done').length,wrong=q.querySelectorAll('.qzq .qzopt.wrong').length;
+    if(!done){sc.textContent='';if(rb)rb.style.display='none';return;}
+    // 沒答完先顯示進度，答完才給總分（避免中途分數被讀成最終成績）
+    sc.textContent=done<total?_qzf(QZPROG,done,total):_qzf(QZTPL,done-wrong,total);
+    if(rb)rb.style.display=done===total?'':'none';
+  }
   q.querySelectorAll('.qzq').forEach(function(qq){
     qq.querySelectorAll('.qzopt').forEach(function(op){
       op.addEventListener('click',function(){
         if(qq.classList.contains('done'))return;
         qq.classList.add('done');
-        if(op.getAttribute('data-c')==='1')correct++;else op.classList.add('wrong');
+        if(op.getAttribute('data-c')!=='1')op.classList.add('wrong');
         qq.querySelectorAll('.qzopt').forEach(function(o){if(o.getAttribute('data-c')==='1')o.classList.add('right');o.disabled=true;});
-        sc.textContent=_qzfmt(correct,total);
+        upd();
       });
     });
+  });
+  if(rb)rb.addEventListener('click',function(){
+    q.querySelectorAll('.qzq').forEach(function(qq){qq.classList.remove('done');
+      qq.querySelectorAll('.qzopt').forEach(function(o){o.classList.remove('right','wrong');o.disabled=false;});});
+    upd();
   });
 });
 document.querySelectorAll('.fc').forEach(function(c){c.addEventListener('click',function(){c.classList.toggle('flipped');});});
@@ -365,9 +387,10 @@ document.querySelectorAll('.fc').forEach(function(c){c.addEventListener('click',
 document.querySelectorAll('.nbody figure.fig img').forEach(function(img){img.addEventListener('click',function(){li.src=img.src;lb.classList.add('show')})});
 lb.addEventListener('click',function(){lb.classList.remove('show');li.src='';});
 document.addEventListener('keydown',function(e){if(e.key==='Escape'){lb.classList.remove('show');li.src='';}});})();
-// 待辦勾選狀態持久化（key＝標題＋筆記 id＋項次；localStorage 優先於 markdown 的 [x]）
+// 待辦勾選狀態持久化（key＝標題+輸出檔名鹽＋筆記 id＋項次，避免兩份同名筆記在同 origin 下互相污染；localStorage 優先於 markdown 的 [x]）
+var TKSALT="Course2Notes Sample Notes|sample-notes-en.html";
 document.querySelectorAll('.note').forEach(n=>{[...n.querySelectorAll('input.tk')].forEach((cb,idx)=>{
-  const k='c2n_tk:'+document.title+':'+n.id+':'+idx;const v=lsGet(k);if(v==='1')cb.checked=true;else if(v==='0')cb.checked=false;
+  const k='c2n_tk:'+TKSALT+':'+n.id+':'+idx;const v=lsGet(k);if(v==='1')cb.checked=true;else if(v==='0')cb.checked=false;
   cb.addEventListener('change',()=>lsSet(k,cb.checked?'1':'0'));});});
 // search: 隱藏不含關鍵字的 note
 function doSearch(q){q=q.trim().toLowerCase();let shown=0;

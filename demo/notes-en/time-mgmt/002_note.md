@@ -1,8 +1,10 @@
 # The Eisenhower Matrix: separate urgent from important
 
 > [!NOTE] Time Management in Practice (sample) · Unit 2
+
 > [!KEY] In one sentence
 > Most of your day is spent on the **urgent-but-not-important**, while the important-but-not-urgent work that actually shapes your life keeps getting pushed away.
+
 > [!KEY] You'll learn
 > - The crucial difference between urgent and important
 > - The four quadrants and what to do with each
