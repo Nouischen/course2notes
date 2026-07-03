@@ -6,7 +6,7 @@ const { chromium } = require('playwright-core');
 const { classify } = require('./sniff.js');
 
 const URL_ = process.argv[2];
-const CDP = process.argv[3] || 'http://localhost:9222';
+const CDP = process.argv[3] || 'http://127.0.0.1:9222'; // 用 127.0.0.1 不用 localhost：Node<20 可能先解析到 ::1 → ECONNREFUSED
 if (!URL_) { console.error('usage: node recon.js <url> [cdpEndpoint]'); process.exit(1); }
 
 (async () => {

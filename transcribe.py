@@ -26,14 +26,19 @@ def sep_for(lang, text=""):
 def ts(s):
     h=int(s//3600); m=int((s%3600)//60); s=int(s%60); return f"{h:02d}:{m:02d}:{s:02d}"
 
+def _atomic_write(path, text):
+    # 先寫 .tmp 再 os.replace：中途當掉（睡眠/斷電/Ctrl-C）不會留下半截檔被下次執行當成「已完成」而 skip
+    tmp = path + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as fh:
+        fh.write(text)
+    os.replace(tmp, path)
+
 def write_local_outputs(base, rows, detected_lang):
-    # 本機後端（faster-whisper／mlx-whisper）共用：寫 timestamped / json / fulltext 三個檔
-    with open(base + ".timestamped.txt", "w", encoding="utf-8") as tf:
-        for r in rows:
-            tf.write(f"[{ts(r['start'])}] {r['text']}\n")
-    json.dump(rows, open(base + ".json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    # 本機後端（faster-whisper／mlx-whisper）共用：寫 timestamped / json / fulltext 三個檔（皆原子寫）
     texts = [r["text"] for r in rows]
-    open(base + ".fulltext.txt", "w", encoding="utf-8").write(sep_for(detected_lang, "".join(texts)).join(texts))
+    _atomic_write(base + ".timestamped.txt", "".join(f"[{ts(r['start'])}] {r['text']}\n" for r in rows))
+    _atomic_write(base + ".json", json.dumps(rows, ensure_ascii=False, indent=1))
+    _atomic_write(base + ".fulltext.txt", sep_for(detected_lang, "".join(texts)).join(texts))
 
 def is_apple_silicon():
     # 判斷「硬體」是不是 Apple Silicon——連 Rosetta 下跑 x86_64 Python 的情況也要認出來
@@ -69,9 +74,21 @@ if not jobs:
 def has_gpu():
     try:
         import ctypes
+        lib = None
         for dll in ("nvcuda.dll", "libcuda.so", "libcuda.so.1"):
-            try: ctypes.CDLL(dll); return True
+            try: lib = ctypes.CDLL(dll); break
             except Exception: pass
+        if not lib:
+            return False
+        # DLL 載得到 ≠ 有能用的 GPU（Optimus 筆電、驅動太舊、只有內顯卻殘留 nvidia dll）。
+        # 真的初始化 CUDA 並數一下裝置，數得到 ≥1 才算數。
+        try:
+            n = ctypes.c_int(0)
+            if lib.cuInit(0) == 0 and lib.cuDeviceGetCount(ctypes.byref(n)) == 0 and n.value >= 1:
+                return True
+        except Exception:
+            return True  # 少數平台沒有 cuInit 符號時，退回「載得到就當有」（原行為）
+        return False
     except Exception:
         pass
     return False
@@ -120,7 +137,9 @@ if backend == "api":
             src = comp if (r is not None and r.returncode == 0 and os.path.exists(comp)) else audio
             if os.path.getsize(src) <= MAX_API_BYTES:
                 return api_one(client, src)
-            # 仍超過上限（超長課程）→ 用 ffmpeg 切成約 10 分鐘一段，分批送再拼接
+            # 仍超過上限（超長課程）→ 需要 ffmpeg 壓縮/切段；沒有 ffmpeg 就處理不了大檔，明講而不是把原檔硬送給 OpenAI 被拒
+            if r is None:
+                raise RuntimeError(f"這個音檔約 {os.path.getsize(src)//(1024*1024)}MB、超過 OpenAI API 25MB 上限，需要 ffmpeg 壓縮／切段，但系統找不到 ffmpeg。請先安裝 ffmpeg 再重跑。")
             seg = os.path.join(tmpd, "seg_%03d.m4a")
             _ff(["-i", src, "-f", "segment", "-segment_time", "600", "-c", "copy", seg])
             parts = sorted(glob.glob(os.path.join(tmpd, "seg_*.m4a"))) or [src]
@@ -137,7 +156,7 @@ if backend == "api":
         print(f"[job] {os.path.basename(audio)} -> {name} (API)", flush=True)
         try:
             text = api_transcribe(client, audio)
-            open(base + ".fulltext.txt", "w", encoding="utf-8").write(text)
+            _atomic_write(base + ".fulltext.txt", text)
             print(f"[done] {name}", flush=True)
         except Exception as e:
             fails.append(name); print(f"[ERR] {name}: {e}", flush=True)
@@ -146,6 +165,11 @@ if backend == "api":
                                      "insufficient_quota", "exceeded your current quota", " 429")):
                 print("[需要] 看起來是 OpenAI 金鑰無效或額度用完——先到 platform.openai.com 檢查金鑰與 Billing，"
                       "修好再重跑（已完成的單元會自動跳過）。先停下，免得整批都撞同一個錯。", flush=True)
+                sys.exit(2)
+            if any(k in _m for k in ("apiconnectionerror", "connection error", "failed to connect",
+                                     "max retries", "unsupported_country", "unsupported_region", "getaddrinfo")):
+                print("[需要] 連不上 OpenAI API（多半是防火牆／公司或醫院網路擋了 api.openai.com，或所在地區不支援）。"
+                      "換一個網路、或設定 proxy 後重跑（已完成的單元會自動跳過）。先停下，免得整批都撞同一個錯。", flush=True)
                 sys.exit(2)
     if fails:
         print(f"[WARN] {len(fails)} 個單元轉錄失敗（未產生逐字稿）：{', '.join(fails)}", flush=True)
@@ -165,7 +189,7 @@ if backend == "mlx":
               "請 pip3 install -r requirements-mac.txt（若報 externally-managed-environment 就加 --break-system-packages），或改用 --api。", flush=True)
         sys.exit(2)
     MLX_REPO = os.environ.get("COURSE2NOTES_MLX_MODEL", "mlx-community/whisper-large-v3-mlx")
-    print(f"[model] MLX {MLX_REPO}（Apple Silicon 本機）", flush=True)
+    print(f"[model] MLX {MLX_REPO}（Apple Silicon 本機；第一次會從 huggingface.co 下載約 1–3GB 模型、只需一次，網路慢請耐心等）", flush=True)
     fails = []
     for audio, base in jobs:
         name = os.path.basename(base)
@@ -182,6 +206,11 @@ if backend == "mlx":
             print(f"[done] {name}: {len(rows)} segments", flush=True)
         except Exception as e:
             fails.append(name); print(f"[ERR] {name}: {e}", flush=True)
+            _m = str(e).lower()
+            if any(k in _m for k in ("huggingface", "hf.co", "connection", "max retries", "ssl", "getaddrinfo", "timed out")):
+                print("[需要] 模型下載失敗（網路／防火牆問題）——第一次要從 huggingface.co 下載約 3GB 模型。"
+                      "可設 HF_ENDPOINT=https://hf-mirror.com 換鏡像、或換網路重跑；模型只需下載一次。先停下，免得整批都撞同一個錯。", flush=True)
+                sys.exit(2)
     if fails:
         print(f"[WARN] {len(fails)} 個單元轉錄失敗（未產生逐字稿）：{', '.join(fails)}", flush=True)
         print("[ALLDONE]", flush=True); sys.exit(1)
@@ -223,10 +252,19 @@ except Exception as e:
         print(f"[model] CUDA 失敗({e})，改用 CPU（large-v3 在 CPU 上非常慢）", flush=True)
         model = WhisperModel("large-v3", device="cpu", compute_type="int8")
     else:
-        print(f"[需要] CUDA 初始化失敗({e})。若是 'Unable to load cudnn/cublas' 這類："
-              "腳本已自動把 pip 的 nvidia DLL 目錄加進搜尋路徑，若還是失敗，多半是沒裝 requirements-gpu.txt"
-              "（含 nvidia-cudnn-cu12 nvidia-cublas-cu12），或裝到了跟這支腳本不同的 Python。"
-              "large-v3 在 CPU 上會非常慢，也可改用 --api；真的要用 CPU 設 COURSE2NOTES_ALLOW_CPU=1 再重跑。", flush=True)
+        _m = str(e).lower()
+        if any(k in _m for k in ("huggingface", "hf.co", "connection", "max retries", "ssl", "getaddrinfo", "timed out", "read timed out")):
+            # 第一次載入模型要從 huggingface.co 下載 ~3GB——被防火牆/TLS 攔或該地區封鎖時，錯誤看起來像 CUDA 失敗，其實是網路
+            print(f"[需要] 模型下載失敗（網路／防火牆問題，不是顯卡問題）：{e}。"
+                  "第一次跑要從 huggingface.co 下載約 3GB 模型。公司／醫院網路常擋 HuggingFace——可設 HF_ENDPOINT=https://hf-mirror.com 換鏡像、或換一個網路重跑；模型只需下載一次。", flush=True)
+        elif any(k in _m for k in ("no cuda-capable device", "insufficient", "driver version", "cuda driver", "cuda_error")):
+            print(f"[需要] CUDA 執行失敗({e})——多半是你的 NVIDIA 顯示卡驅動太舊，帶不動 CUDA 12。"
+                  "請到 nvidia.com 更新顯卡驅動後重跑；或先改用 --api（雲端轉錄）。", flush=True)
+        else:
+            print(f"[需要] CUDA 初始化失敗({e})。若是 'Unable to load cudnn/cublas' 這類："
+                  "腳本已自動把 pip 的 nvidia DLL 目錄加進搜尋路徑，若還是失敗，多半是沒裝 requirements-gpu.txt"
+                  "（含 nvidia-cudnn-cu12 nvidia-cublas-cu12），或裝到了跟這支腳本不同的 Python。"
+                  "large-v3 在 CPU 上會非常慢，也可改用 --api；真的要用 CPU 設 COURSE2NOTES_ALLOW_CPU=1 再重跑。", flush=True)
         sys.exit(2)
 
 fails = []

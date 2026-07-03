@@ -17,15 +17,17 @@ const DL_TIMEOUT = (parseInt(process.env.COURSE2NOTES_DL_TIMEOUT_MIN, 10) || 20)
 const PY_CANDIDATES = process.platform === 'win32' ? ['python', 'py', 'python3'] : ['python3', 'python'];
 let PY = null, sawPython = false;
 for (const c of PY_CANDIDATES) {
-  const r = spawnSync(c, ['-m', 'yt_dlp', '--version'], { encoding: 'utf8', timeout: 30000 });
-  if (r.error) continue;
+  // 先確認是「真的 Python」而非微軟商店的假殼（stub 執行 --version 不會回 0、也印不出版本）
+  const v = spawnSync(c, ['--version'], { encoding: 'utf8', timeout: 30000 });
+  if (v.error || v.status !== 0 || !/Python \d/.test((v.stdout || '') + (v.stderr || ''))) continue;
   sawPython = true;
-  if (r.status === 0) { PY = c; break; }
+  const r = spawnSync(c, ['-m', 'yt_dlp', '--version'], { encoding: 'utf8', timeout: 30000 });
+  if (!r.error && r.status === 0) { PY = c; break; }
 }
 if (!PY) {
   console.error(sawPython
     ? '[需要] 有 Python 但缺 yt-dlp 模組。請安裝：pip install -U yt-dlp（Mac/Linux 用 pip3 install -U yt-dlp）。'
-    : `[需要] 找不到 Python（試過 ${PY_CANDIDATES.join(' / ')}）。請先安裝 Python 並確認在 PATH。`);
+    : `[需要] 找不到可用的 Python（試過 ${PY_CANDIDATES.join(' / ')}）。若你在 Windows 打 python 會跳出「Microsoft Store」，那是假的佔位程式——請到 python.org 裝真正的 Python，或用 winget install Python.Python.3.12。`);
   process.exit(2);
 }
 function ytdlp(args) { return spawnSync(PY, ['-m', 'yt_dlp', ...args], { encoding: 'utf8', maxBuffer: 1 << 28, timeout: DL_TIMEOUT }); }

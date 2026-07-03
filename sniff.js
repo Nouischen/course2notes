@@ -44,7 +44,7 @@ if (require.main === module) {
   const { chromium } = require('playwright-core');
   const URLS = process.argv[2], OUT = process.argv[3];
   const ORIGIN = process.argv[4] || '';
-  const CDP = process.argv[5] || 'http://localhost:9222';
+  const CDP = process.argv[5] || 'http://127.0.0.1:9222'; // 127.0.0.1 不用 localhost（Node<20 的 ::1 陷阱）
   if (!URLS || !OUT) { console.error('usage: node sniff.js <urls.txt> <out.json> [platformOrigin] [cdp]'); process.exit(1); }
   const rows = fs.readFileSync(URLS, 'utf8').split(/\r?\n/).filter(Boolean).map(l => { const [url, title] = l.split('\t'); return { url: url.trim(), title: (title || '').trim() }; });
   const CONC = 4;
@@ -62,7 +62,8 @@ if (require.main === module) {
         page.on('request', r => onUrl(r.url())); page.on('response', r => onUrl(r.url()));
         try {
           await page.goto(it.url, { waitUntil: 'domcontentloaded', timeout: 45000 });
-          for (let k = 0; k < 16 && !hits.length; k++) await page.waitForTimeout(500);
+          const WAIT = Math.max(1, parseInt(process.env.COURSE2NOTES_SNIFF_WAIT_S, 10) || 8) * 2; // 慢網路/SSO 可用 COURSE2NOTES_SNIFF_WAIT_S 加大
+          for (let k = 0; k < WAIT && !hits.length; k++) await page.waitForTimeout(500);
           if (hits.length) await page.waitForTimeout(400); // 多等一下，收集更好的候選再挑
           if (!hits.length) { const srcs = await page.$$eval('iframe', els => els.map(e => e.src || e.getAttribute('data-src') || '')).catch(() => []); for (const s of srcs) { const c = classify(s); if (c) hits.push(c); } }
         } catch (_) {}

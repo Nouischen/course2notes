@@ -5,6 +5,9 @@
   "description": "Turn online courses you own into clean, self-contained HTML study notes. A Claude Code skill.",
   "license": "MIT",
   "homepage": "https://github.com/Nouischen/course2notes",
+  "engines": {
+    "node": ">=18"
+  },
   "dependencies": {
     "playwright-core": "^1.49.0"
   }
