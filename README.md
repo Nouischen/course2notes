@@ -21,7 +21,7 @@ You don't run any commands or need any tech skills: you just **talk to Claude Co
 ## What you need
 
 - **Claude Code** — the **desktop app (Local mode)** or the **CLI**. *(The web version, claude.ai/code, runs in the cloud and can't reach your computer, so it won't work.)*
-- **Node.js**, **Python**, **ffmpeg**, and **Google Chrome** — you don't need to know what these are or install them yourself: the first time it runs, Claude Code checks for them and offers to install any that are missing (you just approve).
+- **Node.js**, **Python**, **ffmpeg**, and **Chrome (or Edge / Brave)** — you don't need to know what these are or install them yourself: the first time it runs, Claude Code checks for them and offers to install any that are missing (you just approve).
 - **Transcription**: an **NVIDIA GPU** (Windows/Linux) **or an Apple Silicon Mac** — both do free, local Whisper, and the skill installs what each one needs — or, with no GPU / on an Intel Mac, an **`OPENAI_API_KEY`** (create one at [platform.openai.com/api-keys](https://platform.openai.com/api-keys), billing required; ~US$0.006/min).
 - Desktop only. You must own the course and be able to log in to it.
 
@@ -134,7 +134,7 @@ Course2Notes 是一個開源的 **[Claude Code](https://www.claude.com/product/c
 
 ## 你需要
 - **Claude Code**——**桌面版 App（Local 本機模式）** 或 **CLI 終端機版**。*（網頁版 claude.ai/code 跑在雲端、碰不到你的電腦，不能用。）*
-- **Node.js**、**Python**、**ffmpeg**、**Google Chrome**——你不用懂這些是什麼、也不用自己裝：第一次執行時 Claude Code 會檢查，缺哪個就徵求你同意後幫你裝（你只要按同意）。
+- **Node.js**、**Python**、**ffmpeg**、**Chrome（或 Edge／Brave）**——你不用懂這些是什麼、也不用自己裝：第一次執行時 Claude Code 會檢查，缺哪個就徵求你同意後幫你裝（你只要按同意）。
 - **轉錄**：**NVIDIA 顯卡（Windows/Linux）** 或 **Apple Silicon Mac（M 系列）** 都能免費本機轉錄（技能會裝好各自需要的東西）；**Intel Mac 或沒顯卡** 則需 **`OPENAI_API_KEY`**（到 [platform.openai.com/api-keys](https://platform.openai.com/api-keys) 申請、需綁付款；約 US$0.006/分）。
 - 桌機用。你必須擁有該課程並能登入。
 
