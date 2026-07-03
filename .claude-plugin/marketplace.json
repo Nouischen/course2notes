@@ -1,5 +1,6 @@
 {
   "name": "course2notes",
+  "description": "Course2Notes — turn online courses you've bought into clean, self-contained HTML study notes, from inside Claude Code.",
   "owner": {
     "name": "Nouischen",
     "url": "https://github.com/Nouischen"
@@ -8,8 +9,8 @@
     {
       "name": "course2notes",
       "source": {
-        "source": "github",
-        "repo": "Nouischen/course2notes"
+        "source": "url",
+        "url": "https://github.com/Nouischen/course2notes.git"
       },
       "description": "Turn courses you've bought into clean, self-contained HTML study notes, from inside Claude Code.",
       "version": "1.0.0"
