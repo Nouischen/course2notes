@@ -104,6 +104,16 @@ else:
     backend = "api"
     print("[model] 未偵測到可用的本機 GPU（無 NVIDIA CUDA，也非 Apple Silicon）。", flush=True)
 
+# ---- 明確宣告本次後端：讓使用者一眼看出走了哪條路（速度／費用／音檔是否離開本機）----
+_BACKEND_BANNER = {
+    "cuda": "本機 NVIDIA GPU · faster-whisper large-v3（免費、音檔不離開這台電腦、最快）",
+    "mlx":  "本機 Apple Silicon · mlx-whisper large-v3（免費、音檔不離開這台電腦）",
+    "api":  "OpenAI Whisper API · whisper-1（付費約 US$0.006/分鐘、音檔會上傳到 OpenAI、速度取決於網路）",
+}
+print(f"[backend] 本次轉錄後端 = {backend.upper()}｜{_BACKEND_BANNER.get(backend, backend)}", flush=True)
+if backend == "api" and not USE_API:
+    print("[backend] （這台沒有可用的本機 GPU，才自動改走雲端 API；想免費本機轉錄請換有 NVIDIA 顯卡或 Apple Silicon 的電腦）", flush=True)
+
 # ---- API 路徑 ----
 if backend == "api":
     if not os.environ.get("OPENAI_API_KEY"):
@@ -251,6 +261,8 @@ except Exception as e:
     if os.environ.get("COURSE2NOTES_ALLOW_CPU"):
         print(f"[model] CUDA 失敗({e})，改用 CPU（large-v3 在 CPU 上非常慢）", flush=True)
         model = WhisperModel("large-v3", device="cpu", compute_type="int8")
+        # 前面的 [backend] 橫幅在模型初始化前就印了 CUDA；這裡實際退回 CPU，補一行更正，讓「本次真正的後端」不被誤判
+        print("[backend] ⚠ 實際後端 = CPU（前面宣告的 CUDA 初始化失敗、已改用 CPU；large-v3 在 CPU 上非常慢，這才是本次真正使用的後端）", flush=True)
     else:
         _m = str(e).lower()
         if any(k in _m for k in ("huggingface", "hf.co", "connection", "max retries", "ssl", "getaddrinfo", "timed out", "read timed out")):
